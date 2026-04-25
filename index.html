@@ -3148,12 +3148,13 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzu7MdN6YVe4APMlo64Y
 function sheetsPost(payload) {
   if (!SHEETS_URL || SHEETS_URL === 'COLLE_TON_URL_ICI') return;
   try {
+    // Utilise fetch avec Content-Type text/plain pour éviter le preflight CORS
+    // Apps Script accepte ce format et peut lire e.postData.contents
     fetch(SHEETS_URL, {
       method: 'POST',
-      mode: 'no-cors', // Apps Script ne supporte pas CORS standard
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
-    }).catch(() => {}); // silencieux si offline
+    }).catch(function() {});
   } catch(e) {}
 }
 
