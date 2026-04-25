@@ -3141,18 +3141,16 @@ function generateQR(text){
 
 // ═══════════════════════════════════════════════════════
 // FLOWIN — GOOGLE SHEETS SYNC
-// Remplace SHEETS_URL par ton URL Apps Script
 // ═══════════════════════════════════════════════════════
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzM4mIDsQJJAs_Dkf3PW9nxyllLR3jqiSjr5QUyIYTTlv0TnPsztPHN2aGiQGeBHixm/exec'; // ← à remplir après setup Apps Script
+// FLOWIN — FORMSPREE SYNC (remplace Google Sheets)
+// ═══════════════════════════════════════════════════════
+const FORMSPREE_URL = 'https://formspree.io/f/mvzdyzzd';
 
-function sheetsPost(payload) {
-  if (!SHEETS_URL || SHEETS_URL === 'COLLE_TON_URL_ICI') return;
+function formspreePost(payload) {
   try {
-    // Utilise fetch avec Content-Type text/plain pour éviter le preflight CORS
-    // Apps Script accepte ce format et peut lire e.postData.contents
-    fetch(SHEETS_URL, {
+    fetch(FORMSPREE_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     }).catch(function() {});
   } catch(e) {}
@@ -3160,7 +3158,8 @@ function sheetsPost(payload) {
 
 // Sauvegarde profil joueur (à l'inscription)
 function saveProfileToSheets(profile) {
-  sheetsPost({
+  formspreePost({
+    _subject: 'Nouveau joueur Flowin : ' + (profile.pseudo || profile.prenom),
     type: 'signup',
     ts: new Date().toISOString(),
     pseudo:  profile.pseudo  || '',
@@ -3176,7 +3175,8 @@ function saveProfileToSheets(profile) {
 
 // Sauvegarde session quiz (à la fin de chaque round)
 function saveSessionToSheets(qs, profile) {
-  sheetsPost({
+  formspreePost({
+    _subject: 'Session quiz Flowin : ' + (profile.pseudo || profile.prenom),
     type: 'session',
     ts: new Date().toISOString(),
     pseudo:      profile.pseudo  || profile.prenom || 'Anonyme',
