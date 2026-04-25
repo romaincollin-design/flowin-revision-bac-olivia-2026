@@ -1091,7 +1091,7 @@ img { max-width:100%; height:auto; }
             <div><div class="qsv">14</div><div class="qsl">thèmes<br>Hist-Géo-EMC</div></div>
           </div>
           <div class="q-spill">
-            <div><div class="qsv" id="qStatScore">1850</div><div class="qsl">mon score<br>cumulé</div></div>
+            <div><div class="qsv" id="qStatScore">0</div><div class="qsl">mon score<br>cumulé</div></div>
           </div>
         </div>
         <div class="q-mybadge">
@@ -1100,7 +1100,7 @@ img { max-width:100%; height:auto; }
             <div class="qmnam">League Or</div>
             <div class="qmsub">Objectif : 6/8 par thème avant le Bac !</div>
           </div>
-          <div class="qmrk">#4</div>
+          <div class="qmrk">#1</div>
         </div>
         <div class="q-land-foot">
           <button class="q-btn-play" onclick="qGo('spin')">🎲 Tourner la roue !</button>
@@ -1152,7 +1152,7 @@ img { max-width:100%; height:auto; }
                 <div class="q-ret-name" id="retName">Olivia L.</div>
                 <div class="q-ret-sub" id="retSub">Lycée de Vence · Terminale Bac Pro</div>
               </div>
-              <div class="q-ret-score" id="retScore">1850 pts</div>
+              <div class="q-ret-score" id="retScore">0 pts</div>
             </div>
             <div style="background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;">
               <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600;">Pas toi ?</div>
@@ -1231,9 +1231,9 @@ img { max-width:100%; height:auto; }
         <div class="q-score-live">
           <div class="q-sl-item"><div class="q-sl-val" id="slScore">0</div><div class="q-sl-lbl">pts round</div></div>
           <div class="q-sl-div"></div>
-          <div class="q-sl-item"><div class="q-sl-val" id="slTotal">1850</div><div class="q-sl-lbl">total cumulé</div></div>
+          <div class="q-sl-item"><div class="q-sl-val" id="slTotal">0</div><div class="q-sl-lbl">total cumulé</div></div>
           <div class="q-sl-div"></div>
-          <div class="q-sl-item"><div class="q-sl-val" id="slRank">#4</div><div class="q-sl-lbl">classement</div></div>
+          <div class="q-sl-item"><div class="q-sl-val" id="slRank">#1</div><div class="q-sl-lbl">classement</div></div>
         </div>
       </div>
     </div>
@@ -2402,19 +2402,22 @@ const QS = {
   qIdx: 0,
   answered: false,
   score: 0,            // score round courant
-  totalScore: 1850,    // score cumulé démo
+  totalScore: 0,       // score cumulé
   streak: 0,
   bestStreak: 0,
   correctCount: 0,
   timeLeft: 30,
   timerInterval: null,
   times: [],
-  rank: 4,
-  league: 'gold',
+  rank: 1,
+  league: 'bronze',
   spinning: false,
   spinAngle: 0,
   roundsPlayed: 0,
-  playerName: 'Olivia',
+  totalPts: 0,
+  corrects: 0,
+  roundPts: 0,
+  playerName: '',
 };
 
 // Inscription côté Flowin → si TRUE, on skip le CRM du quiz
@@ -2433,16 +2436,7 @@ let userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' 
 
 // Leaderboard démo
 const PLAYERS = [
-  {name:'Marie V.',  emoji:'👩', pts:2840, streak:5, rounds:8},
-  {name:'Thomas B.', emoji:'👨', pts:2610, streak:3, rounds:7},
-  {name:'Karim D.',  emoji:'🧔', pts:2200, streak:4, rounds:6},
-  {name:'Olivia',    emoji:'😊', pts:1850, streak:2, rounds:5, me:true},
-  {name:'Nadia O.',  emoji:'👩', pts:1720, streak:1, rounds:4},
-  {name:'Luc B.',    emoji:'👨', pts:1400, streak:0, rounds:3},
-  {name:'Sophie M.', emoji:'👩', pts:1200, streak:2, rounds:4},
-  {name:'Paul R.',   emoji:'👨', pts:980,  streak:0, rounds:2},
-  {name:'Julie F.',  emoji:'👩', pts:750,  streak:1, rounds:2},
-  {name:'Marc T.',   emoji:'👨', pts:520,  streak:0, rounds:1},
+  {name:'Toi',  emoji:'😊', pts:0, streak:0, rounds:0, me:true},
 ];
 
 // ── ENTRÉES vers le quiz depuis Flowin ──
