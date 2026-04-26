@@ -2716,7 +2716,11 @@ function nextQuestion(){
   else renderQuestion();
 }
 function endRound(){
+  QS.roundPts = QS.score;
   QS.totalScore += QS.score;
+  QS.totalPts = QS.totalScore;
+  QS.corrects = QS.correctCount;
+  QS.streak = QS.bestStreak;
   QS.roundsPlayed++;
   if(QS.score > 800) QS.rank = Math.max(1, QS.rank-1);
   qGo('round');
