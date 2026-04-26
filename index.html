@@ -2618,6 +2618,8 @@ function startQuiz(){
   }
   QS.qIdx = 0; QS.score = 0; QS.streak = 0; QS.bestStreak = 0;
   QS.correctCount = 0; QS.times = [];
+  QS.themeName = theme.titre || b.shortName || '';
+  QS.matiere = b.matiere || b.cat || '';
   document.getElementById('qBanqueChip').textContent = b.icon+' '+b.shortName;
   document.getElementById('slTotal').textContent = QS.totalScore;
   document.getElementById('slRank').textContent = '#'+QS.rank;
