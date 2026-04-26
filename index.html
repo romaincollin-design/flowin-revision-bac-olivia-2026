@@ -813,6 +813,20 @@ img { max-width:100%; height:auto; }
 </style>
 </head>
 <body>
+<!-- Netlify Forms détection -->
+<form name="flowin-signup" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="type"/><input type="text" name="ts"/><input type="text" name="pseudo"/>
+  <input type="text" name="prenom"/><input type="text" name="nom"/><input type="text" name="email"/>
+  <input type="text" name="ecole"/><input type="text" name="classe"/><input type="text" name="genre"/>
+  <input type="text" name="ref"/>
+</form>
+<form name="flowin-session" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="type"/><input type="text" name="ts"/><input type="text" name="pseudo"/>
+  <input type="text" name="ecole"/><input type="text" name="classe"/><input type="text" name="theme"/>
+  <input type="text" name="matiere"/><input type="text" name="score_pct"/><input type="text" name="pts_round"/>
+  <input type="text" name="pts_total"/><input type="text" name="streak"/><input type="text" name="nb_questions"/>
+  <input type="text" name="ref"/>
+</form>
 
 <!-- ═══ LANDING ═══ -->
 <div class="view active" id="v-landing">
@@ -3140,17 +3154,21 @@ function generateQR(text){
 })();
 
 // ═══════════════════════════════════════════════════════
-// FLOWIN — GOOGLE SHEETS SYNC
+// FLOWIN — SUPABASE SYNC
 // ═══════════════════════════════════════════════════════
-// FLOWIN — FORMSPREE SYNC (remplace Google Sheets)
-// ═══════════════════════════════════════════════════════
-const FORMSPREE_URL = 'https://formspree.io/f/mvzdyzzd';
+const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
 
-function formspreePost(payload) {
+function supabaseInsert(table, payload) {
   try {
-    fetch(FORMSPREE_URL, {
+    fetch(SUPABASE_URL + '/rest/v1/' + table, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
       body: JSON.stringify(payload)
     }).catch(function() {});
   } catch(e) {}
@@ -3158,9 +3176,7 @@ function formspreePost(payload) {
 
 // Sauvegarde profil joueur (à l'inscription)
 function saveProfileToSheets(profile) {
-  formspreePost({
-    _subject: 'Nouveau joueur Flowin : ' + (profile.pseudo || profile.prenom),
-    type: 'signup',
+  supabaseInsert('joueurs', {
     ts: new Date().toISOString(),
     pseudo:  profile.pseudo  || '',
     prenom:  profile.prenom  || '',
@@ -3175,9 +3191,7 @@ function saveProfileToSheets(profile) {
 
 // Sauvegarde session quiz (à la fin de chaque round)
 function saveSessionToSheets(qs, profile) {
-  formspreePost({
-    _subject: 'Session quiz Flowin : ' + (profile.pseudo || profile.prenom),
-    type: 'session',
+  supabaseInsert('sessions', {
     ts: new Date().toISOString(),
     pseudo:      profile.pseudo  || profile.prenom || 'Anonyme',
     ecole:       profile.ecole   || '',
