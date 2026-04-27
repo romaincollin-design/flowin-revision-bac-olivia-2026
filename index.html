@@ -3781,6 +3781,17 @@ function trackShare(method){
       }, '*');
     }
   } catch(e){}
+  // Sauvegarder dans Supabase
+  try {
+    supabaseInsert('parrainage', {
+      ts: new Date().toISOString(),
+      sender: entry.sender,
+      sender_etab: (userProfile && userProfile.ecole) || '',
+      destinataire: entry.destinataire,
+      channel: entry.method,
+      pts: entry.pts
+    });
+  } catch(e){}
   // Cumuler les points dans QS
   try {
     QS.totalScore = (QS.totalScore||0) + SHARE_PTS;
