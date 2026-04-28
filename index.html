@@ -2736,7 +2736,43 @@ let userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' 
 const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
 
+// ── BARÈME (chargé depuis Supabase table config, fallback hardcodé) ──
+let BAREME_CONFIG = {
+  pts_bonne_reponse:     15,
+  pts_streak_bonus_2e:   5,
+  pts_streak_bonus_sup:  2,
+  pts_perfect_bonus:     10,
+  pts_parrainage:        100,
+  pts_rare_multiplier:   1.5,
+  nb_questions_quiz:     5
+};
+
+let LIGUES_CONFIG = [
+  {name:'Bronze',  key:'bronze',  min:0,    max:499  },
+  {name:'Argent',  key:'silver',  min:500,  max:1499 },
+  {name:'Or',      key:'gold',    min:1500, max:2999 },
+  {name:'Platine', key:'diamond', min:3000, max:4999 },
+  {name:'Légende', key:'legend',  min:5000, max:99999}
+];
+
+async function loadConfigFromSupabase() {
+  try {
+    const hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    const r = await fetch(SUPABASE_URL + '/rest/v1/config?key=in.(bareme,ligues_seuils)&select=key,value', {headers: hdrs});
+    if (!r.ok) return;
+    const rows = await r.json();
+    rows.forEach(row => {
+      if (row.key === 'bareme' && row.value) BAREME_CONFIG = {...BAREME_CONFIG, ...row.value};
+      if (row.key === 'ligues_seuils' && Array.isArray(row.value)) LIGUES_CONFIG = row.value;
+    });
+  } catch(e) {
+    // Utilise les valeurs par défaut
+  }
+}
+
 (function restoreProfile(){
+  // Charger le barème depuis Supabase en arrière-plan
+  loadConfigFromSupabase();
   try {
     const saved = localStorage.getItem('flowin_profile');
     if(saved) {
@@ -2780,8 +2816,8 @@ async function loadPlayerStatsFromSupabase(pseudo) {
       }
     }
 
-    // Ligue automatique
-    const lgMap = [{k:'bronze',min:0},{k:'silver',min:500},{k:'gold',min:1500},{k:'diamond',min:3000},{k:'legend',min:5000}];
+    // Ligue automatique (depuis LIGUES_CONFIG chargé via Supabase)
+    const lgMap = LIGUES_CONFIG.map(l => ({k: l.key, min: l.min}));
     const lg = lgMap.slice().reverse().find(l => totalPts >= l.min) || lgMap[0];
 
     // Mettre à jour QS
@@ -3304,17 +3340,17 @@ function answerQ(idx){
     QS.streak++;
     QS.correctCount++;
     if(QS.streak > QS.bestStreak) QS.bestStreak = QS.streak;
-    // ── Nouveau barème ──
-    // +15 base, +5 dès la 2e bonne consécutive, +2 supplémentaires par bonne en plus
-    pts = 15;
+    // ── Barème chargé depuis Supabase (BAREME_CONFIG) ──
+    const base = BAREME_CONFIG.pts_bonne_reponse;
+    pts = base;
     if(QS.streak >= 2){
-      pts += 5;
+      pts += BAREME_CONFIG.pts_streak_bonus_2e;
       if(QS.streak >= 3){
-        pts += 2 * (QS.streak - 2);
+        pts += BAREME_CONFIG.pts_streak_bonus_sup * (QS.streak - 2);
       }
-      breakdown = ' <span style="opacity:.85;font-size:11px">(15 base +'+(pts-15)+' série ×'+QS.streak+')</span>';
+      breakdown = ' <span style="opacity:.85;font-size:11px">('+base+' base +'+(pts-base)+' série ×'+QS.streak+')</span>';
     }
-    if(BANQUES[QS.banqueIdx].rare) pts = Math.round(pts*1.5);
+    if(BANQUES[QS.banqueIdx].rare) pts = Math.round(pts * BAREME_CONFIG.pts_rare_multiplier);
     fb.className='q-feedback show ok';
     const expl = q.exp || q.expl || '';
     fb.innerHTML = '<b style="font-size:15px;">🌟 Bravo ! Bonne réponse !</b> <span style="background:var(--green);color:#fff;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:800;margin-left:6px;">+'+pts+' pts</span>'+breakdown+(expl?'<span class="q-expl-txt">💡 '+expl+'</span>':'');
@@ -3344,10 +3380,10 @@ function nextQuestion(){
 }
 function endRound(){
   QS.roundPts = QS.score;
-  // Bonus quiz parfait (+10 pts si toutes les questions sont correctes)
+  // Bonus quiz parfait (configurable via Supabase)
   let perfectBonus = 0;
   if(QS.correctCount === QS.questions.length){
-    perfectBonus = 10;
+    perfectBonus = BAREME_CONFIG.pts_perfect_bonus;
     QS.score += perfectBonus;
     QS.roundPts = QS.score;
   }
@@ -3995,6 +4031,7 @@ function trackShare(method){
     supabaseInsert('parrainage', {
       ts: new Date().toISOString(),
       sender: entry.sender,
+      sender_email: (userProfile && userProfile.email) || '',
       sender_etab: (userProfile && userProfile.ecole) || '',
       destinataire: entry.destinataire,
       channel: entry.method,
