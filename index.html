@@ -902,13 +902,19 @@ img { max-width:100%; height:auto; }
 
 /* Visuels SVG responsive */
 .fiche-body svg { max-width:100%; height:auto; }
-.visual-block { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-.visual-block svg { min-width:300px; }
+.visual-block { overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; box-sizing:border-box; }
+.visual-block > * { min-width:0; max-width:100%; box-sizing:border-box; }
+.visual-block svg { min-width:280px; max-width:100%; height:auto; }
+.visual-block div { max-width:100%; box-sizing:border-box; }
+.visual-block table { width:100%; max-width:100%; table-layout:fixed; font-size:11px; }
+.visual-block td, .visual-block th { word-wrap:break-word; overflow-wrap:break-word; }
 .visual-label { font-size:15px !important; padding:10px 14px !important; font-weight:800 !important; }
 
 /* Visual block text scaling */
 @media (max-width:500px) {
   .visual-block svg text { font-size:10px !important; }
+  .visual-block { padding:0 !important; }
+  .visual-block > div { width:100% !important; max-width:100% !important; overflow-x:auto; }
   .visual-label { font-size:14px !important; }
 }
 /* Ensure insc form select readable */  
@@ -1311,7 +1317,7 @@ window.addEventListener('unhandledrejection', function(e){
       </div>
       <div class="fiche-tabs-bar" id="ficheTabsBar">
         <div class="ftab act" id="ftab-rev" onclick="switchFicheTab('rev')">📖 Révision</div>
-        <div class="ftab" id="ftab-cours" onclick="switchFicheTab('cours')">📷 Cours</div>
+        <div class="ftab" id="ftab-cours" onclick="switchFicheTab('cours')" style="display:none">📷 Cours</div>
         <div class="ftab" id="ftab-vis" onclick="switchFicheTab('vis')">📊 Visuels</div>
       </div>
       <div class="fiche-body" id="ficheBody"></div>
