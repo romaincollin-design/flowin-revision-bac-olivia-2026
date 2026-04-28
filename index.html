@@ -723,6 +723,7 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 
 /* Stats dashboard */
 #userMenu.open{display:block !important}
+#userMenu-backdrop{position:fixed;inset:0;z-index:9998;background:transparent}
 #userMenuBtn:hover{background:rgba(255,255,255,.14) !important}
 @keyframes palierPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 
@@ -960,20 +961,20 @@ window.addEventListener('unhandledrejection', function(e){
     <div class="orb" style="width:400px;height:400px;background:rgba(43,134,197,.14);bottom:-80px;right:-100px"></div>
 
     <!-- Nav avec menu user -->
-    <nav style="position:relative;z-index:5">
+    <nav style="position:relative;z-index:100">
       <div class="lnav-logo">Flowin</div>
       <div style="position:relative">
-        <button onclick="document.getElementById('userMenu').classList.toggle('open')" id="userMenuBtn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center" title="Mon compte">
+        <button onclick="toggleUserMenu()" id="userMenuBtn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center" title="Mon compte">
           <span id="welcomeAvatar">OL</span>
         </button>
-        <div id="userMenu" style="display:none;position:absolute;top:46px;right:0;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 12px 36px rgba(0,0,0,.5);z-index:10">
+        <div id="userMenu" style="display:none;position:absolute;top:46px;right:0;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:210px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999">
           <div id="userMenuName" style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px">
             <div style="font-size:14px;font-weight:700;color:#fff" id="welcomeNameMenu">Olivia</div>
             <div style="font-size:11px;color:rgba(255,255,255,.5)" id="welcomeEmailMenu">olivia.l@mail.com</div>
           </div>
-          <button onclick="switchMode('app');document.getElementById('userMenu').classList.remove('open')" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>
-          <button onclick="switchMode('stats');document.getElementById('userMenu').classList.remove('open')" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>
-          <button onclick="openShare();document.getElementById('userMenu').classList.remove('open')" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>
+          <button onclick="switchMode('app');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>
+          <button onclick="switchMode('stats');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>
+          <button onclick="openShare();document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>
           <div style="height:1px;background:rgba(255,255,255,.08);margin:4px 0"></div>
           <button onclick="logoutUser()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🚪 Déconnexion</button>
         </div>
@@ -2957,6 +2958,24 @@ function populateWelcomeBack(){
   setText('welcomeLastTheme', lastTxt);
 }
 
+
+function toggleUserMenu() {
+  const menu = document.getElementById('userMenu');
+  const isOpen = menu.classList.contains('open');
+  if(isOpen) {
+    menu.classList.remove('open');
+    const bd = document.getElementById('userMenu-backdrop');
+    if(bd) bd.remove();
+  } else {
+    menu.classList.add('open');
+    // Add backdrop to close on outside click
+    const bd = document.createElement('div');
+    bd.id = 'userMenu-backdrop';
+    bd.onclick = () => { menu.classList.remove('open'); bd.remove(); };
+    document.body.appendChild(bd);
+  }
+}
+
 function logoutUser(){
   if(!confirm('Te déconnecter de Flowin ? Tes scores resteront sauvegardés sur ce navigateur.')) return;
   try {
@@ -2967,7 +2986,7 @@ function logoutUser(){
   // Retour à la landing
   document.getElementById('v-welcome').classList.remove('active');
   document.getElementById('v-landing').classList.add('active');
-  document.getElementById('userMenu').classList.remove('open');
+  document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove();
 }
 
 // Fermer le menu user quand on clique ailleurs
