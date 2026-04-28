@@ -4027,7 +4027,7 @@ function getShareLink(){
 }
 function openShare(){
   const link=getShareLink();
-  document.getElementById('shareLinkBox').textContent=link;
+  const lbEl=document.getElementById('shareLinkBox');lbEl.textContent=link;lbEl.onclick=()=>copyShareLink(true);
   document.getElementById('shareOverlay').classList.add('show');
   generateQR(link);
   refreshShareStats();
@@ -4036,20 +4036,32 @@ function closeShare(){document.getElementById('shareOverlay').classList.remove('
 function copyShareLink(skipTrack){
   if(!skipTrack) trackShare('copy');
   const link=getShareLink();
-  navigator.clipboard?.writeText(link).then(()=>{
+  const doCopy=()=>{
     const b=document.getElementById('shareLinkBox');
-    b.textContent='✅ Lien copié !';b.style.background='#f0fff8';
-    setTimeout(()=>{b.textContent=link;b.style.background='';},2000);
-  }).catch(()=>{});
+    b.textContent='✅ Lien copié !';b.style.color='#0a7a55';
+    setTimeout(()=>{b.textContent=link;b.style.color='';},2500);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(doCopy).catch(()=>{
+      // Fallback
+      const ta=document.createElement('textarea');ta.value=link;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');document.body.removeChild(ta);doCopy();
+    });
+  } else {
+    const ta=document.createElement('textarea');ta.value=link;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');document.body.removeChild(ta);doCopy();
+  }
 }
 function shareWA(){
   trackShare('whatsapp');
   const msg=encodeURIComponent('🌊 Révise le bac avec Flowin ! → '+getShareLink());
-  window.open('https://wa.me/?text='+msg,'_blank');
+  const url='https://wa.me/?text='+msg;
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
 function shareTG(){
   trackShare('telegram');
-  window.open('https://t.me/share/url?url='+encodeURIComponent(getShareLink())+'&text='+encodeURIComponent('🌊 Rejoins Flowin pour réviser !'),'_blank');
+  const url='https://t.me/share/url?url='+encodeURIComponent(getShareLink())+'&text='+encodeURIComponent('🌊 Rejoins Flowin pour réviser !');
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
 function shareNative(){
   trackShare('native');
