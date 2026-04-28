@@ -791,13 +791,22 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 .df-player-status{font-size:11px;color:#22C9A0;font-weight:700}
 
 /* Live scores overlay (pendant le quiz défi) */
-.df-live{position:fixed;top:50px;left:8px;right:8px;background:rgba(30,16,72,.95);border-radius:14px;padding:10px 12px;z-index:25;backdrop-filter:blur(8px);box-shadow:0 4px 18px rgba(0,0,0,.4)}
-.df-live-hdr{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.7);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.df-live-rows{display:flex;flex-direction:column;gap:4px}
-.df-live-row{display:flex;align-items:center;gap:8px;font-size:12px}
-.df-live-row.me{background:rgba(176,108,228,.25);border-radius:8px;padding:3px 6px;margin:-3px -6px}
+/* LIVE SCORES — rétractable */
+.df-live{position:fixed;top:12px;right:10px;background:rgba(30,16,72,.96);border-radius:12px;z-index:25;backdrop-filter:blur(10px);box-shadow:0 4px 18px rgba(0,0,0,.4);overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);min-width:42px}
+.df-live.collapsed .df-live-rows{display:none}
+.df-live.collapsed .df-live-hdr-label{display:none}
+.df-live.collapsed{min-width:42px}
+.df-live-hdr{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;cursor:pointer;user-select:none}
+.df-live-hdr-icon{font-size:14px;flex-shrink:0}
+.df-live-hdr-label{font-size:10px;color:rgba(255,255,255,.8);font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.df-live-hdr-q{font-size:9px;color:rgba(255,255,255,.5);white-space:nowrap}
+.df-live-hdr-toggle{font-size:10px;color:rgba(255,255,255,.5);flex-shrink:0;transition:transform .3s}
+.df-live.collapsed .df-live-hdr-toggle{transform:rotate(180deg)}
+.df-live-rows{display:flex;flex-direction:column;gap:3px;padding:0 10px 8px;min-width:160px}
+.df-live-row{display:flex;align-items:center;gap:7px;font-size:12px}
+.df-live-row.me{background:rgba(176,108,228,.25);border-radius:7px;padding:3px 6px;margin:0 -6px}
 .df-live-rank{width:18px;text-align:center;font-weight:800;color:rgba(255,255,255,.6);font-size:11px}
-.df-live-name{flex:1;color:#fff;font-weight:600}
+.df-live-name{flex:1;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px}
 .df-live-pts{color:#F4A83A;font-weight:800;font-family:'Calibri','Trebuchet MS',Arial,sans-serif}
 
 /* Écran de fin de défi */
@@ -2706,6 +2715,81 @@ let userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' 
       const p = JSON.parse(saved);
       userProfile = p; userInscribed = true;
       QS.playerName = p.pseudo || p.prenom;
+      // Charger les vraies stats depuis Supabase
+
+// ── STATS RÉELLES DEPUIS SUPABASE ──
+async function loadPlayerStatsFromSupabase(pseudo) {
+  if(!pseudo) return;
+  try {
+    const hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/sessions?pseudo=eq.' + encodeURIComponent(pseudo) + '&order=ts.desc&limit=200',
+      { headers: hdrs }
+    );
+    if(!res.ok) return;
+    const sessions = await res.json();
+    if(!Array.isArray(sessions) || sessions.length === 0) return;
+
+    // Vraies stats
+    const totalPts   = Math.max(...sessions.map(s => s.pts_total||0), 0);
+    const nbSessions = sessions.length;
+    const maxStreak  = Math.max(...sessions.map(s => s.streak||0), 0);
+
+    // Streak journalier réel
+    const days = [...new Set(sessions.map(s => s.ts ? s.ts.slice(0,10) : null).filter(Boolean))].sort();
+    let dailyStreak = 0;
+    if(days.length > 0) {
+      const today = new Date().toISOString().slice(0,10);
+      const yest  = new Date(Date.now()-86400000).toISOString().slice(0,10);
+      const lastDay = days[days.length-1];
+      if(lastDay === today || lastDay === yest) {
+        dailyStreak = 1;
+        for(let i = days.length-2; i >= 0; i--) {
+          const diff = Math.round((new Date(days[i+1]) - new Date(days[i])) / 86400000);
+          if(diff === 1) dailyStreak++;
+          else break;
+        }
+      }
+    }
+
+    // Ligue automatique
+    const lgMap = [{k:'bronze',min:0},{k:'silver',min:500},{k:'gold',min:1500},{k:'diamond',min:3000},{k:'legend',min:5000}];
+    const lg = lgMap.slice().reverse().find(l => totalPts >= l.min) || lgMap[0];
+
+    // Mettre à jour QS
+    QS.totalScore   = totalPts;
+    QS.totalPts     = totalPts;
+    QS.roundsPlayed = nbSessions;
+    QS.dailyStreak  = dailyStreak;
+    QS.league       = lg.k;
+
+    // PLAYERS[me]
+    const me = PLAYERS.find(p => p.me);
+    if(me) { me.pts = totalPts; me.streak = dailyStreak; me.rounds = nbSessions; }
+
+    // Affichage bienvenue
+    const ptsEl    = document.getElementById('welcomePts');
+    const strkEl   = document.getElementById('welcomeStreak');
+    const quizEl   = document.getElementById('welcomeQuiz');
+    if(ptsEl)  ptsEl.textContent  = totalPts.toLocaleString('fr');
+    if(strkEl) strkEl.textContent = dailyStreak;
+    if(quizEl) quizEl.textContent = nbSessions;
+
+    // Streak assiduité locale en sync
+    try {
+      const assid = getAssiduity();
+      assid.streak = dailyStreak;
+      assid.lastDay = days[days.length-1] || '';
+      saveAssiduity(assid);
+    } catch(e){}
+
+    console.log('[Flowin] Stats Supabase:', { totalPts, nbSessions, dailyStreak, league: lg.k });
+  } catch(err) {
+    console.warn('[Flowin] Stats Supabase indisponible:', err);
+  }
+}
+
+      loadPlayerStatsFromSupabase(p.pseudo || p.prenom);
       // Bascule vers la vue welcome au lieu de la landing
       if(document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
@@ -2822,15 +2906,10 @@ function populateWelcomeBack(){
   setText('welcomeNameMenu', prenom);
   setText('welcomeEmailMenu', userProfile.email || '');
 
-  // Stats
-  let pts = 0, streak = 0, quiz = 0;
-  try {
-    const stats = JSON.parse(localStorage.getItem('olivia_stats')||'{}');
-    pts = stats.totalScore || (QS && QS.totalScore) || 0;
-    streak = stats.streak || 0;
-    quiz = stats.roundsPlayed || (QS && QS.roundsPlayed) || 0;
-  } catch(e){}
-  if(pts === 0 && QS) pts = QS.totalScore || 0;
+  // Stats — toujours depuis QS (lui-même chargé depuis Supabase)
+  let pts    = (QS && QS.totalScore) || 0;
+  let streak = (QS && QS.dailyStreak) || getAssiduity().streak || 0;
+  let quiz   = (QS && QS.roundsPlayed) || 0;
 
   setText('welcomePts', pts.toLocaleString('fr'));
   setText('welcomeStreak', streak);
@@ -2877,6 +2956,73 @@ document.addEventListener('click', function(e){
 const PLAYERS = [
   {name:'Toi',  emoji:'😊', pts:0, streak:0, rounds:0, me:true},
 ];
+
+
+// ── LEADERBOARD RÉEL DEPUIS SUPABASE ──
+async function loadLeaderboardFromSupabase() {
+  // Joueurs fictifs de base — toujours présents pour que l'app ne soit pas vide
+  const FICTIF_PLAYERS = [
+    {name:'Marine T.',  emoji:'🌊', pts:3240, streak:12, rounds:18, me:false},
+    {name:'Lucas M.',   emoji:'⚡', pts:2890, streak:8,  rounds:15, me:false},
+    {name:'Chloé R.',   emoji:'🎯', pts:2540, streak:6,  rounds:12, me:false},
+    {name:'Emma D.',    emoji:'📚', pts:2180, streak:5,  rounds:10, me:false},
+    {name:'Théo P.',    emoji:'🔥', pts:1760, streak:4,  rounds:9,  me:false},
+    {name:'Lina G.',    emoji:'💎', pts:1340, streak:3,  rounds:7,  me:false},
+    {name:'Sarah L.',   emoji:'🌟', pts:980,  streak:2,  rounds:5,  me:false},
+    {name:'Hugo B.',    emoji:'🎮', pts:620,  streak:1,  rounds:4,  me:false},
+  ];
+
+  try {
+    const hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/sessions?select=pseudo,pts_total,streak,ecole&order=pts_total.desc&limit=50',
+      { headers: hdrs }
+    );
+
+    // Commencer avec les joueurs fictifs
+    const baseList = [...FICTIF_PLAYERS];
+
+    if(res.ok) {
+      const rows = await res.json();
+      if(Array.isArray(rows) && rows.length > 0) {
+        // Dédupliquer par pseudo — garder le max pts_total
+        const byPseudo = {};
+        rows.forEach(r => {
+          const isMe = r.pseudo === (userProfile.pseudo||userProfile.prenom);
+          if(!byPseudo[r.pseudo] || (r.pts_total||0) > byPseudo[r.pseudo].pts) {
+            byPseudo[r.pseudo] = { name: r.pseudo, pts: r.pts_total||0, streak: r.streak||0, me: isMe };
+          }
+        });
+        // Ajouter les vrais joueurs Supabase (sauf "moi" — géré séparément)
+        Object.values(byPseudo).filter(p => !p.me).forEach(p => {
+          // Si le pseudo fictif existe déjà, le remplacer par le vrai
+          const existing = baseList.findIndex(f => f.name === p.name);
+          if(existing >= 0) baseList[existing] = { name: p.name, emoji:'🎓', pts: p.pts, streak: p.streak, rounds: 0, me: false };
+          else baseList.push({ name: p.name, emoji:'🎓', pts: p.pts, streak: p.streak, rounds: 0, me: false });
+        });
+      }
+    }
+
+    // Moi — toujours avec les vraies stats Supabase
+    const me = { name: userProfile.pseudo||userProfile.prenom||'Toi', emoji:'😊', pts: QS.totalScore||0, streak: QS.dailyStreak||0, rounds: QS.roundsPlayed||0, me: true };
+
+    PLAYERS.length = 0;
+    PLAYERS.push(me, ...baseList);
+    PLAYERS.sort((a,b) => b.pts - a.pts);
+
+    const myIdx = PLAYERS.findIndex(p => p.me);
+    QS.rank = myIdx >= 0 ? myIdx + 1 : 1;
+
+    console.log('[Flowin] Leaderboard:', PLAYERS.length, 'joueurs (fictifs + Supabase)');
+  } catch(err) {
+    // En cas d'erreur : joueurs fictifs + moi
+    const me = { name: userProfile.pseudo||userProfile.prenom||'Toi', emoji:'😊', pts: QS.totalScore||0, streak: QS.dailyStreak||0, rounds: QS.roundsPlayed||0, me: true };
+    PLAYERS.length = 0;
+    PLAYERS.push(me, ...FICTIF_PLAYERS);
+    PLAYERS.sort((a,b) => b.pts - a.pts);
+    console.warn('[Flowin] Leaderboard fictif (Supabase indisponible):', err);
+  }
+}
 
 // ── ENTRÉES vers le quiz depuis Flowin ──
 function startQuizFromFiche(){
@@ -3389,7 +3535,23 @@ function renderMiniLeague(myIdx){
 // ── LEAGUE ──
 function renderLeague(league){
   QS.league = league;
+  // Charger le classement réel depuis Supabase à chaque affichage
+  loadLeaderboardFromSupabase().then(() => {
+    // Re-render après chargement
+    const realPts = QS.totalScore || 0;
+    const autoLg = [{k:'bronze',min:0},{k:'silver',min:500},{k:'gold',min:1500},{k:'diamond',min:3000},{k:'legend',min:5000}].slice().reverse().find(l=>realPts>=l.min);
+    if(autoLg) renderLeagueUI(autoLg.k);
+  });
+  renderLeagueUI(league);
+}
+function renderLeagueUI(league){
+  QS.league = league;
   document.querySelectorAll('.q-tier').forEach(p=>p.classList.remove('active'));
+  // Recalculer la ligue depuis les pts réels Supabase
+  const realPts = QS.totalScore || 0;
+  const leagueThresholds = [{k:'bronze',min:0},{k:'silver',min:500},{k:'gold',min:1500},{k:'diamond',min:3000},{k:'legend',min:5000}];
+  const autoLeague = leagueThresholds.slice().reverse().find(l => realPts >= l.min);
+  if(autoLeague && autoLeague.k !== league) league = autoLeague.k;
   const leagueNames = {bronze:'Bronze',silver:'Argent',gold:'Or',diamond:'Diamant',legend:'Légendaire'};
   const leagueEmojis = {bronze:'🥉',silver:'🥈',gold:'🥇',diamond:'💎',legend:'👑'};
   const tiers = ['bronze','silver','gold','diamond','legend'];
@@ -3474,8 +3636,9 @@ function renderStats(){
   try{saved=JSON.parse(localStorage.getItem('olivia_stats')||'{}');}catch(e){}
   var done=THEMES.filter(function(t){return t.score>0;});
   var avg=done.length?Math.round(done.reduce(function(s,t){return s+t.score;},0)/done.length):0;
-  var totalMins=saved.totalMins||QS.roundsPlayed*4+18;
-  var streak=saved.streak||3;
+  var totalMins=QS.roundsPlayed*4+18;
+  // Utiliser les vraies valeurs depuis Supabase (chargées dans QS)
+  var streak = QS.dailyStreak || saved.streak || getAssiduity().streak || 0;
   var myRank=QS.rank||4;
   document.getElementById('sk-themes').textContent=done.length+'/'+THEMES.length;
   document.getElementById('sk-avg').textContent=avg+'%';
@@ -3892,8 +4055,62 @@ function generateQR(text){
 // ═══════════════════════════════════════════════════════════
 
 // Solde du joueur (en localStorage). Démarrage à 1240 pts pour la démo.
+
+// ── MES DEFIS ──
+function dfGetMyDefis(){try{return JSON.parse(localStorage.getItem('flowin_my_defis')||'[]');}catch(e){return[];}}
+function dfSaveMyDefis(list){try{localStorage.setItem('flowin_my_defis',JSON.stringify(list.slice(0,50)));}catch(e){}}
+function dfAddToMyDefis(defi){
+  var list=dfGetMyDefis();
+  var idx=list.findIndex(function(d){return d.id===defi.id;});
+  if(idx>=0)list[idx]=Object.assign({},list[idx],defi);
+  else list.unshift(defi);
+  dfSaveMyDefis(list);
+}
+function dfUpdateMyDefi(id,updates){
+  var list=dfGetMyDefis();
+  var idx=list.findIndex(function(d){return d.id===id;});
+  if(idx>=0){list[idx]=Object.assign({},list[idx],updates);dfSaveMyDefis(list);}
+}
+function dfRenderMyDefis(){
+  var list=dfGetMyDefis();
+  var container=document.getElementById('dfRoomsList');
+  if(!container)return;
+  if(list.length===0){
+    container.innerHTML='<div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,.4);font-size:13px">Aucun defi pour l'instant.<br><span style="font-size:11px">Cree ou rejoins un defi dans le lobby !</span></div>';
+    return;
+  }
+  var tEmoji={roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️'};
+  container.innerHTML=list.map(function(d){
+    var isWin=d.resultat==='gagne';
+    var isLoss=d.resultat==='perdu';
+    var canReplay=isLoss;
+    var html='<div style="background:rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,.08)">';
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
+    html+='<div style="font-size:14px;font-weight:700;color:#fff">'+(tEmoji[d.theme]||'🎯')+' '+d.name+'</div>';
+    html+='<div style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:'+(isWin?'rgba(34,197,94,.2)':isLoss?'rgba(239,68,68,.2)':'rgba(255,255,255,.1)')+';color:'+(isWin?'#4ade80':isLoss?'#f87171':'rgba(255,255,255,.6)')+'">'+( isWin?'🏆 Gagne':isLoss?'😅 Perdu':'⏳ En attente')+'</div>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:12px;font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px">';
+    html+='<span>💰 Mise : '+d.mise+' pts</span>';
+    html+='<span>📅 '+(d.ts?new Date(d.ts).toLocaleDateString('fr-FR'):'—')+'</span>';
+    html+='<span>'+(d.role==='createur'?'👑 Createur':'🎮 Participant')+'</span>';
+    html+='</div>';
+    if(d.resultat)html+='<div style="font-size:12px;font-weight:700;color:'+(isWin?'#4ade80':'#f87171')+'">'+(isWin?'+'+( d.gain||0):'−'+d.mise)+' pts</div>';
+    if(canReplay)html+='<button onclick="dfReplaySetup(''+d.id+'','+d.mise+',''+d.theme+'')" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#7B4FBF,#9B6FDF);color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">🔄 Revanche — relancer ce defi</button>';
+    html+='</div>';
+    return html;
+  }).join('');
+}
+function dfReplaySetup(id,mise,theme){
+  dfSelMise(mise);
+  dfSelTheme(theme);
+  var nameInput=document.getElementById('dfRoomName');
+  var orig=dfGetMyDefis().find(function(d){return d.id===id;});
+  if(nameInput&&orig)nameInput.value='Revanche — '+orig.name;
+  dfTab('create');
+}
+
 function dfGetBalance(){
-  try { var b = localStorage.getItem('flowin_balance'); return b !== null ? parseInt(b) : 1240; }
+  try { var b = localStorage.getItem('flowin_balance'); return b !== null ? parseInt(b) : (QS && QS.totalScore > 0 ? QS.totalScore : 1240); }
   catch(e){ return 1240; }
 }
 function dfSetBalance(v){
@@ -3986,7 +4203,7 @@ function dfTab(name){
   // Onglet actif
   document.querySelectorAll('.df-tab').forEach(t => t.classList.remove('act'));
   if(name==='lobby'){ document.getElementById('dfTabLobby')?.classList.add('act'); dfRenderLobby(); }
-  if(name==='my'){ document.getElementById('dfTabMy')?.classList.add('act'); dfRenderLobby(true); }
+  if(name==='my'){ document.getElementById('dfTabMy')?.classList.add('act'); dfRenderMyDefis(); }
   if(name==='waiting') dfRenderWaiting();
 }
 
@@ -4092,22 +4309,37 @@ function dfCreateRoom(){
   dfSetBalance(bal - DF_FORM.mise);
 
   // Crée la room avec moi comme hôte
+  const roomNameInput = document.getElementById('dfRoomName');
+  const roomName = (roomNameInput && roomNameInput.value.trim()) || ('Defi de ' + (userProfile.pseudo||userProfile.prenom||'Toi'));
   const myName = (userProfile.pseudo || userProfile.prenom || 'Toi');
   const myAva = ((userProfile.prenom||'O').charAt(0) + (userProfile.nom||'').charAt(0)).toUpperCase() || 'OL';
+  const roomId = 'room_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
   const room = {
-    id: 'room_mine_' + Date.now(),
+    id: roomId,
+    name: roomName,
     host: {name:myName, ava:myAva, color:'#7B4FBF', isMe:true},
     mise: DF_FORM.mise,
     theme: DF_FORM.theme,
     cap: DF_FORM.cap,
     players: [{name:myName, ava:myAva, color:'#7B4FBF', isMe:true, isHost:true}],
-    isMine: true
+    isMine: true,
+    status: 'waiting',
+    ts: new Date().toISOString()
   };
   DF_ROOMS.unshift(room);
   DF_CURRENT = room;
 
+  // Sauvegarder dans Supabase table defis
+  supabaseInsert('defis', {
+    id: roomId, ts: room.ts, nom: roomName,
+    createur: myName, mise: room.mise, theme: room.theme,
+    nb_joueurs: room.cap, status: 'waiting', ecole: userProfile.ecole||''
+  });
+
+  // Ajouter a mes defis
+  dfAddToMyDefis({id:roomId, name:roomName, role:'createur', mise:room.mise, theme:room.theme, status:'waiting', ts:room.ts, resultat:null});
+
   dfTab('waiting');
-  // Simuler des bots qui rejoignent progressivement
   dfSimulateBotJoins();
 }
 
@@ -4212,6 +4444,8 @@ function dfJoinRoom(roomId){
   // Note : le host reste le bot, mais on peut quand même afficher la salle d'attente
   room.iJoined = true;
   DF_CURRENT = room;
+  // Ajouter a mes defis comme participant
+  dfAddToMyDefis({id:room.id, name:room.name||('Defi '+room.host.name), role:'participant', mise:room.mise, theme:room.theme, status:'en_cours', ts:new Date().toISOString(), resultat:null});
   dfTab('waiting');
 
   // Le bot host est "patient" : il lance le défi après 4-6s,
@@ -4360,11 +4594,22 @@ function dfPrepareQuizUI(){
     live = document.createElement('div');
     live.id = 'dfLiveOverlay';
     live.className = 'df-live';
-    live.innerHTML = '<div class="df-live-hdr"><span>🏆 Scores live</span><span id="dfLiveQ">Q 1/10</span></div><div class="df-live-rows" id="dfLiveRows"></div>';
+    live.innerHTML = '<div class="df-live-hdr" onclick="dfToggleLive()"><span class="df-live-hdr-icon">🏆</span><span class="df-live-hdr-label">Scores live</span><span class="df-live-hdr-q" id="dfLiveQ">Q 1/10</span><span class="df-live-hdr-toggle">▲</span></div><div class="df-live-rows" id="dfLiveRows"></div>';
     document.body.appendChild(live);
   }
   live.style.display = 'block';
+  // Restaurer état rétracté si déjà préféré
+  if(sessionStorage.getItem('dfLiveCollapsed')==='1') live.classList.add('collapsed');
+  else live.classList.remove('collapsed');
   dfUpdateLiveScores();
+}
+
+function dfToggleLive(){
+  const live = document.getElementById('dfLiveOverlay');
+  if(!live) return;
+  live.classList.toggle('collapsed');
+  // Sauvegarder préférence
+  sessionStorage.setItem('dfLiveCollapsed', live.classList.contains('collapsed')?'1':'0');
 }
 
 function dfUpdateLiveScores(){
@@ -4517,10 +4762,51 @@ function dfEndGame(){
   const finalWinner = sorted[0];
   const meWon = finalWinner.isMe;
 
-  // Crédite gagnant
+  // Crédite/debite le joueur selon résultat
+  const gain = meWon ? cagnotte : 0;
   if(meWon){
     dfSetBalance(dfGetBalance() + cagnotte);
+    // Ajouter les points gagnés au total Supabase
+    QS.totalScore += cagnotte;
+    QS.totalPts   += cagnotte;
+    // Mettre à jour PLAYERS[me]
+    var meP = PLAYERS.find(function(p){return p.me;});
+    if(meP) meP.pts = QS.totalScore;
   }
+
+  // Enregistrer dans mes défis
+  dfUpdateMyDefi(room.id, {
+    resultat: meWon ? 'gagne' : 'perdu',
+    gain: gain,
+    status: 'termine',
+    score: myScore,
+    players: sorted.map(function(p){return p.name;})
+  });
+
+  // Sauvegarder résultat dans Supabase
+  supabaseInsert('sessions', {
+    ts: new Date().toISOString(),
+    pseudo:      userProfile.pseudo || userProfile.prenom || 'Anonyme',
+    ecole:       userProfile.ecole  || '',
+    classe:      userProfile.classe || '',
+    theme:       'Defi ' + room.theme + ' — ' + (room.name||room.id),
+    matiere:     room.theme === 'hist' ? 'Histoire' : room.theme === 'geo' ? 'Geographie' : room.theme === 'emc' ? 'EMC' : 'Roulette',
+    score_pct:   room.players.length > 0 ? Math.round(myScore / Math.max(topScore,1) * 100) : 0,
+    pts_round:   meWon ? cagnotte : -room.mise,
+    pts_total:   QS.totalScore,
+    streak:      QS.dailyStreak || 0,
+    nb_questions: 10,
+    ref:         'defi'
+  });
+
+  // Aussi mettre à jour la table defis
+  supabaseUpsert('defis', {
+    id:         room.id,
+    status:     'termine',
+    gagnant:    finalWinner.name,
+    score_moi:  myScore,
+    score_max:  topScore
+  });
 
   // Affichage écran fin
   document.getElementById('dfEndEmoji').textContent = meWon ? '🏆' : '😅';
@@ -4558,6 +4844,20 @@ function dfEndGame(){
 const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
 
+function supabaseUpsert(table, payload) {
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/' + table, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  } catch(e){}
+}
 function supabaseInsert(table, payload) {
   try {
     fetch(SUPABASE_URL + '/rest/v1/' + table, {
@@ -4590,20 +4890,31 @@ function saveProfileToSheets(profile) {
 
 // Sauvegarde session quiz (à la fin de chaque round)
 function saveSessionToSheets(qs, profile) {
+  // pts_total = score cumulé réel (chargé depuis Supabase + round actuel)
+  const realTotalPts = qs.totalScore || qs.totalPts || 0;
+  const scorePct = qs.questions?.length
+    ? Math.round((qs.corrects||0) / qs.questions.length * 100)
+    : (qs.correctCount && qs.questions?.length ? Math.round(qs.correctCount/qs.questions.length*100) : 0);
+
   supabaseInsert('sessions', {
-    ts: new Date().toISOString(),
-    pseudo:      profile.pseudo  || profile.prenom || 'Anonyme',
-    ecole:       profile.ecole   || '',
-    classe:      profile.classe  || '',
-    theme:       qs.themeName    || '',
-    matiere:     qs.matiere      || '',
-    score_pct:   qs.questions?.length ? Math.round((qs.corrects||0) / qs.questions.length * 100) : 0,
-    pts_round:   qs.roundPts     || 0,
-    pts_total:   qs.totalPts     || 0,
-    streak:      qs.streak       || 0,
+    ts:           new Date().toISOString(),
+    pseudo:       profile.pseudo  || profile.prenom || 'Anonyme',
+    ecole:        profile.ecole   || '',
+    classe:       profile.classe  || '',
+    theme:        qs.themeName    || '',
+    matiere:      qs.matiere      || '',
+    score_pct:    scorePct,
+    pts_round:    qs.roundPts     || 0,
+    pts_total:    realTotalPts,
+    streak:       qs.dailyStreak  || qs.streak || 0,
     nb_questions: qs.questions?.length || 0,
-    ref:         (() => { try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
+    ref:          (() => { try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
   });
+
+  // Recharger les stats depuis Supabase après sauvegarde pour rester en sync
+  setTimeout(() => {
+    loadPlayerStatsFromSupabase(profile.pseudo || profile.prenom);
+  }, 1500);
 }
 </script>
 
@@ -4639,6 +4950,13 @@ function saveSessionToSheets(qs, profile) {
     <div class="df-screen hidden" id="dfScreenCreate">
       <button class="df-back" onclick="dfTab('lobby')" style="background:#fff;color:#7B4FBF;border-color:rgba(123,79,191,.2);margin-bottom:12px">← Annuler</button>
 
+      <div class="df-form-block" style="margin-bottom:12px">
+        <div class="df-form-lbl">🏷️ Nom de la room</div>
+        <input id="dfRoomName" placeholder="Ex: Révision Guerre Froide, Défi EMC…" maxlength="40"
+          style="width:100%;background:#fff;border:2px solid rgba(123,79,191,.2);border-radius:14px;padding:12px 16px;font-size:14px;font-family:inherit;color:#1e1046;outline:none;box-sizing:border-box"
+          onfocus="this.style.borderColor='#7B4FBF'" onblur="this.style.borderColor='rgba(123,79,191,.2)'">
+        <div style="font-size:11px;color:rgba(123,79,191,.6);margin-top:5px;padding-left:4px">Visible par les autres joueurs dans le lobby</div>
+      </div>
       <div class="df-form-block">
         <div class="df-form-lbl">💰 Ta mise (par joueur)</div>
         <div class="df-pills" id="dfMisePills">
