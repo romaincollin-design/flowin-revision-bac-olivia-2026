@@ -3885,6 +3885,17 @@ window.addEventListener('appinstalled', function() {
   try { localStorage.setItem('pwa_installed', '1'); } catch(e) {}
   dismissPWANudge();
   document.getElementById('pwaOverlay').classList.remove('show');
+  // Notifier Supabase que cet élève a installé l'app
+  try {
+    const p = JSON.parse(localStorage.getItem('flowin_profile')||'{}');
+    if(p.pseudo || p.email) {
+      fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(p.pseudo||p.prenom||''), {
+        method: 'PATCH',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ pwa_installed: true, pwa_installed_at: new Date().toISOString() })
+      }).catch(function(){});
+    }
+  } catch(e) {}
 });
 
 function showPWANudge() {
