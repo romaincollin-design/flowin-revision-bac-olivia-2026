@@ -856,6 +856,8 @@ img { max-width:100%; height:auto; }
 
 /* Spin wheel responsive */
 #spinCanvas { max-width:280px; max-height:280px; }
+.spin-mode-btn{padding:5px 11px;border-radius:20px;border:2px solid rgba(0,0,0,.15);background:var(--surf2);color:var(--ink);font-size:10px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Calibri','Trebuchet MS',Arial,sans-serif}
+.spin-mode-btn.active{background:var(--violet);color:#fff;border-color:var(--violet);box-shadow:0 2px 8px rgba(107,92,231,.35)}
 
 @media (max-width:380px) {
   .hero-title { font-size:34px !important; }
@@ -1287,6 +1289,7 @@ window.addEventListener('unhandledrejection', function(e){
           <button class="fp" id="fp-hist" onclick="filterThemes('hist')">📘 Histoire</button>
           <button class="fp" id="fp-geo" onclick="filterThemes('geo')">🌍 Géographie</button>
           <button class="fp" id="fp-emc" onclick="filterThemes('emc')">⚖️ EMC</button>
+          <button class="fp" id="fp-pse" onclick="filterThemes('pse')">🩺 PSE</button>
         </div>
 
       </div>
@@ -1372,6 +1375,14 @@ window.addEventListener('unhandledrejection', function(e){
         <div class="q-spin-hdr">
           <h2>Quel thème aujourd'hui ?</h2>
           <p>La roue choisit ton thème de révision</p>
+        </div>
+        <!-- Sélecteur de mode roue -->
+        <div id="spinModeSelector" style="display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:10px">
+          <button class="spin-mode-btn active" id="smode-all" onclick="setSpinMode('all')">🎲 Tout</button>
+          <button class="spin-mode-btn" id="smode-hist" onclick="setSpinMode('hist')">📘 Histoire</button>
+          <button class="spin-mode-btn" id="smode-geo" onclick="setSpinMode('geo')">🌍 Géo</button>
+          <button class="spin-mode-btn" id="smode-emc" onclick="setSpinMode('emc')">⚖️ EMC</button>
+          <button class="spin-mode-btn" id="smode-pse" onclick="setSpinMode('pse')">🩺 PSE</button>
         </div>
         <div class="q-wheel-wrap">
           <div class="q-spin-ptr"></div>
@@ -2508,6 +2519,222 @@ questions:[ // Bioéthique (RARE)
   ]}
 ];
 
+
+// Ajout PSE après chargement THEMES
+(function() {
+  const pseModules = [
+    {id:'pse1',num:101,color:'#E84855',mat:'🩺 PSE',title:'Le système de santé',emoji:'🏥',score:0,
+     essentiel:`La <b>santé</b> selon l'OMS : bien-être <b>physique, mental et social</b>. La <b>Sécurité sociale</b> repose sur la <b>solidarité</b>. Déclarer un <b>médecin traitant</b> dès 16 ans : <b>70%</b> de remboursement en parcours coordonné, <b>30%</b> hors parcours. Le <b>DMP</b> est sur monespacesante.fr.`,
+     chrono:[['Dès 16 ans','Obligation de déclarer un médecin traitant'],['Parcours coordonné','Remboursement 70% −1€'],['Hors parcours','Remboursement 30% −1€'],['DMP','Dossier Médical Partagé — monespacesante.fr'],['Plans santé','Programmes collectifs de prévention 4-5 ans']],
+     dates:[['OMS','Organisation Mondiale de la Santé'],['70%','Remboursement parcours coordonné'],['30%','Remboursement hors parcours'],['−1€','Participation forfaitaire'],['DMP','Dossier Médical Partagé']],
+     vocab:[['Capital santé','Facteurs influençant la santé : comportements, environnement, génétique, soins'],['Médecin traitant','Déclaré dès 16 ans, coordonne les soins'],['DMP','Dossier Médical Partagé — monespacesante.fr'],['Solidarité','Chacun cotise selon ses moyens et est couvert selon ses besoins'],['Plans santé','Programmes de prévention collective par l\'État']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#E84855">🏥 Le système de santé</div><svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><rect x="20" y="20" width="200" height="80" rx="12" fill="#FFE8EA" stroke="#E84855" stroke-width="2"/><text x="120" y="50" text-anchor="middle" font-size="13" font-weight="800" fill="#E84855">Médecin traitant</text><text x="120" y="68" text-anchor="middle" font-size="11" fill="#4A4670">Déclaré dès 16 ans</text><text x="120" y="84" text-anchor="middle" font-size="11" fill="#4A4670">Coordonne les soins</text><rect x="30" y="148" width="160" height="68" rx="12" fill="#E6F7F1" stroke="#1DB87A" stroke-width="2"/><text x="110" y="176" text-anchor="middle" font-size="12" font-weight="800" fill="#1DB87A">✅ Coordonné</text><text x="110" y="200" text-anchor="middle" font-size="16" font-weight="800" fill="#1DB87A">70% −1€</text><rect x="230" y="148" width="160" height="68" rx="12" fill="#FFF0F0" stroke="#E84855" stroke-width="2"/><text x="310" y="176" text-anchor="middle" font-size="12" font-weight="800" fill="#E84855">❌ Hors parcours</text><text x="310" y="200" text-anchor="middle" font-size="16" font-weight="800" fill="#E84855">30% −1€</text><rect x="450" y="20" width="230" height="220" rx="12" fill="#F5F4FF" stroke="#6B5CE7" stroke-width="1.5"/><text x="565" y="50" text-anchor="middle" font-size="13" font-weight="800" fill="#6B5CE7">Bien-être OMS</text><text x="565" y="95" text-anchor="middle" font-size="28">💪</text><text x="565" y="115" text-anchor="middle" font-size="11" font-weight="700" fill="#E84855">Physique</text><text x="565" y="150" text-anchor="middle" font-size="28">🧠</text><text x="565" y="170" text-anchor="middle" font-size="11" font-weight="700" fill="#2B8EF0">Mental</text><text x="565" y="205" text-anchor="middle" font-size="28">👥</text><text x="565" y="225" text-anchor="middle" font-size="11" font-weight="700" fill="#1DB87A">Social</text></svg></div>`,
+     questions:[
+       {q:'Définition de la santé selon l\'OMS ?',opts:['Absence de maladie','État de complet bien-être physique, mental et social','Bonne condition physique','Absence de symptômes'],bon:1,expl:'L\'OMS définit la santé comme un état de complet bien-être physique, mental et social.'},
+       {q:'Taux de remboursement parcours coordonné ?',opts:['50%','30%','70%','100%'],bon:2,expl:'Parcours coordonné = 70% remboursé moins 1€ de participation forfaitaire.'},
+       {q:'À partir de quel âge déclarer un médecin traitant ?',opts:['18 ans','21 ans','16 ans','14 ans'],bon:2,expl:'L\'obligation de déclarer un médecin traitant s\'applique dès 16 ans.'},
+       {q:'Que signifie DMP ?',opts:['Déclaration Médicale de Pénibilité','Dossier Médical Partagé','Document de Mise en Protection','Dispositif de Médecine Préventive'],bon:1,expl:'Le Dossier Médical Partagé sur monespacesante.fr permet de partager vos données de santé.'},
+       {q:'Principe de la protection sociale ?',opts:['Liberté','Solidarité','Responsabilité individuelle','Profitabilité'],bon:1,expl:'Protection sociale = solidarité : chacun cotise selon ses moyens et est couvert selon ses besoins.'},
+     ,
+       {q:'Quel est l\'objectif de l\'examen de prévention en santé (EPS) ?',opts:['Vacciner gratuitement','Faire le point sur sa santé et s\'inscrire dans le parcours de soins','Réaliser un bilan sanguin complet','Obtenir des arrêts maladie'],bon:1,expl:'L\'EPS permet de faire le point sur sa santé et de s\'inscrire dans le parcours de soins coordonnés par un médecin traitant. Il est pris en charge à 100% par l\'Assurance maladie.'},
+       {q:'Quel organisme prend en charge l\'examen de prévention en santé ?',opts:['L\'État','La mutuelle','L\'Assurance maladie','Le médecin traitant'],bon:2,expl:'L\'examen de prévention en santé est totalement pris en charge par l\'Assurance maladie, sans avancer les frais.'},
+       {q:'Quels types de bien-être composent la définition de la santé selon l\'OMS ?',opts:['Physique, sportif, nutritionnel','Physique, mental, social','Physique, émotionnel, financier','Médical, psychologique, économique'],bon:1,expl:'L\'OMS définit la santé comme un état de complet bien-être physique, mental ET social. Ces trois dimensions sont indissociables.'},
+       {q:'Le tabagisme actif est responsable de combien de décès prématurés par an en France ?',opts:['15 000','50 000','73 000','100 000'],bon:2,expl:'Le tabagisme est responsable de 73 000 décès prématurés par an en France (cancers 44 000, maladies cardiovasculaires 18 000, maladies respiratoires 8 000, infectieuses 3 000).'},
+       {q:'Quel est l\'objectif général des plans santé mis en place par l\'État ?',opts:['Réduire les dépenses de santé','Protéger la santé des individus via la prévention collective','Former plus de médecins','Construire des hôpitaux'],bon:1,expl:'Les plans santé sont des programmes conçus par l\'État pour établir les orientations en matière de santé sur plusieurs années. Ils s\'inscrivent dans une démarche de prévention collective.'},
+       {q:'Pourquoi le montant des cotisations de Sécurité sociale varie-t-il d\'un salarié à l\'autre ?',opts:['Selon l\'ancienneté dans l\'entreprise','Selon l\'état de santé du salarié','Selon le salaire brut perçu','Selon le type de contrat'],bon:2,expl:'Les cotisations de Sécurité sociale représentent un pourcentage du salaire brut. Plus le salaire est élevé, plus le montant des cotisations est important. C\'est le principe de solidarité.'},
+       {q:'Rosa, enceinte, est suivie par une gynécologue sans passer par son médecin traitant. Le parcours de soins coordonnés est-il respecté ?',opts:['Non, elle aurait dû passer par son médecin traitant','Oui, la gynécologue est un médecin en libre accès','Non, elle devrait aller aux urgences','Oui, car la grossesse est une urgence'],bon:1,expl:'Oui, le parcours est respecté car la gynécologue est un médecin en libre accès, comme les ophtalmologistes et les psychiatres. On peut les consulter directement sans passer par le médecin traitant.'},
+       {q:'Quel est le montant restant à charge lors d\'une consultation de 26,50€ dans le parcours de soins coordonnés ?',opts:['5€','8,75€','12€','19,55€'],bon:1,expl:'Hors parcours coordonné : 70% de 26,50€ = 18,55€ − 1€ de participation forfaitaire = 17,55€ remboursé. Reste à charge = 26,50 − 17,55 = 8,75€.'},
+       {q:'Quels sont les intérêts du Dossier Médical Partagé (DMP) ?',opts:['Il remplace le médecin traitant','Il permet le partage des données de santé entre professionnels et évite les examens inutiles','Il donne accès aux médicaments sans ordonnance','Il finance les soins non remboursés'],bon:1,expl:'Le DMP permet aux professionnels de santé de partager les données utiles à la prise en charge du patient. Il évite les examens inutiles, les interactions médicamenteuses et assure la continuité des soins.'},
+       {q:'Quelles solutions peut-on mettre en œuvre pour préserver son capital santé ?',opts:['Éviter tout effort physique','Avoir une activité sportive régulière, manger équilibré, dormir suffisamment, faire des bilans de santé','Prendre des compléments alimentaires uniquement','Consulter un médecin uniquement en cas de maladie'],bon:1,expl:'Pour préserver son capital santé : activité sportive régulière, alimentation équilibrée, sommeil suffisant, bilans de santé réguliers, limiter l\'alcool, entretenir ses liens sociaux.'}
+     ]},
+    {id:'pse2',num:102,color:'#7B5FD4',mat:'🩺 PSE',title:'Les rythmes biologiques – Le sommeil',emoji:'😴',score:0,
+     essentiel:`Les <b>rythmes biologiques</b> sont gérés par l'horloge biologique (hypothalamus). Le <b>rythme circadien</b> = veille/sommeil toutes les 24h. Une nuit = <b>4 à 6 cycles de 90 minutes</b>. Le <b>sommeil lent très profond</b> assure la récupération physique, le <b>sommeil paradoxal</b> la récupération mentale. La <b>mélatonine</b> est bloquée par la lumière bleue des écrans.`,
+     chrono:[['Rythme circadien','Veille/sommeil toutes les 24h'],['1 cycle','90 minutes — 4 à 6 cycles par nuit'],['Sommeil très profond','Récupération physique'],['Sommeil paradoxal','Récupération mentale (rêves)'],['Mélatonine','Hormone du sommeil bloquée par lumière bleue']],
+     dates:[['90 min','Durée d\'un cycle'],['4-6','Nombre de cycles par nuit'],['17°C','Température idéale pour dormir'],['24h','Durée du rythme circadien'],['Mélatonine','Bloquée par lumière bleue des écrans']],
+     vocab:[['Rythme biologique','Variation périodique d\'une fonction d\'un être vivant'],['Rythme circadien','Rythme veille/sommeil toutes les 24h'],['Mélatonine','Hormone sécrétée dans l\'obscurité qui favorise le sommeil'],['Désynchronisation','Décalage entre rythmes biologiques et contraintes de la vie'],['C2P','Compte Professionnel de Prévention — le travail de nuit y ouvre des droits']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#7B5FD4">😴 Les cycles du sommeil (90 min)</div><svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><text x="350" y="25" text-anchor="middle" font-size="13" font-weight="800" fill="#7B5FD4">Un cycle = 90 min · Répété 4-6 fois par nuit</text><rect x="10" y="40" width="110" height="110" rx="10" fill="#E8E4FF" stroke="#7B5FD4" stroke-width="1.5"/><text x="65" y="97" text-anchor="middle" font-size="9" font-weight="700" fill="#7B5FD4">Lent très léger</text><rect x="130" y="30" width="110" height="120" rx="10" fill="#C8C0F0" stroke="#7B5FD4" stroke-width="1.5"/><text x="185" y="95" text-anchor="middle" font-size="9" font-weight="700" fill="#4A3A90">Lent léger</text><rect x="250" y="18" width="110" height="132" rx="10" fill="#9080E0" stroke="#6B5CE7" stroke-width="2"/><text x="305" y="85" text-anchor="middle" font-size="9" font-weight="800" fill="white">Lent profond</text><rect x="370" y="5" width="110" height="145" rx="10" fill="#6B5CE7" stroke="#4B3BC7" stroke-width="2"/><text x="425" y="72" text-anchor="middle" font-size="9" font-weight="800" fill="white">Lent très</text><text x="425" y="85" text-anchor="middle" font-size="9" font-weight="800" fill="white">profond</text><text x="425" y="102" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.85)">💪 Récup. physique</text><rect x="490" y="25" width="110" height="125" rx="10" fill="#E84855" stroke="#C0392B" stroke-width="2"/><text x="545" y="87" text-anchor="middle" font-size="9" font-weight="800" fill="white">Paradoxal</text><text x="545" y="103" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.85)">🧠 Récup. mentale</text><text x="350" y="190" text-anchor="middle" font-size="11" fill="#9896B0">Règles : 17°C, obscurité, pas d\'écrans, horaires réguliers</text><text x="350" y="212" text-anchor="middle" font-size="11" fill="#E84855" font-weight="700">📵 Lumière bleue = mélatonine bloquée</text></svg></div>`,
+     questions:[
+       {q:'Durée d\'un cycle de sommeil ?',opts:['60 min','45 min','90 min','120 min'],bon:2,expl:'Un cycle dure 90 minutes en moyenne et se répète 4 à 6 fois par nuit.'},
+       {q:'Phase permettant la récupération physique ?',opts:['Sommeil paradoxal','Lent léger','Lent très profond','Lent très léger'],bon:2,expl:'Le sommeil lent très profond = récupération physique. Le paradoxal = récupération mentale.'},
+       {q:'Pourquoi éviter les écrans avant de dormir ?',opts:['Ils chauffent','La lumière bleue bloque la mélatonine','Ils font du bruit','Ils fatiguent uniquement les yeux'],bon:1,expl:'La lumière bleue des écrans bloque la mélatonine, l\'hormone du sommeil, retardant l\'endormissement.'},
+       {q:'Qu\'est-ce que le rythme circadien ?',opts:['Rythme cardiaque','Cycle menstruel','Rythme veille/sommeil toutes les 24h','Rythme saisonnier'],bon:2,expl:'Le rythme circadien = rythme biologique veille/sommeil toutes les 24h, synchronisé par la lumière.'},
+       {q:'Température idéale de la chambre pour dormir ?',opts:['22°C','25°C','17°C','20°C'],bon:2,expl:'17°C dans l\'obscurité favorise la baisse de la température corporelle pendant le sommeil.'},
+     ,
+       {q:'Où est localisée l\'horloge biologique dans le corps humain ?',opts:['Dans le cœur','Dans l\'hypothalamus (cerveau)','Dans le foie','Dans la moelle épinière'],bon:1,expl:'L\'horloge biologique est localisée dans le cerveau, au niveau de l\'hypothalamus. Elle synchronise tous les rythmes biologiques de l\'organisme grâce aux signaux de l\'environnement (lumière, repas…).'},
+       {q:'Quel synchroniseur externe est le plus important pour régler les rythmes biologiques ?',opts:['La température','La lumière','L\'alimentation','Le bruit'],bon:1,expl:'La lumière est le synchroniseur externe le plus important. Elle est détectée par l\'œil qui envoie des signaux à l\'horloge interne (hypothalamus) pour régler le rythme veille/sommeil.'},
+       {q:'Quelle est la fréquence du rythme cardiaque ?',opts:['Toutes les 24 heures','Tous les mois','Moins d\'une minute','Toutes les semaines'],bon:2,expl:'Le rythme cardiaque est un rythme ultradien : il se répète plusieurs fois par heure (moins d\'une minute entre chaque battement). Par opposition, le rythme circadien dure 24h et le cycle menstruel est mensuel.'},
+       {q:'Combien d\'heures de sommeil sont nécessaires pour un adolescent ?',opts:['5 à 6 heures','6 à 7 heures','8 à 10 heures','12 à 14 heures'],bon:2,expl:'L\'OMS recommande 8 à 10 heures de sommeil par nuit pour un adolescent, contre 8 heures environ pour un adulte. Les adolescents ont un besoin de sommeil plus important lié à leur développement.'},
+       {q:'Pourquoi la première partie de la nuit est-elle plus favorable à la récupération physique ?',opts:['On rêve davantage en début de nuit','Le sommeil lent très profond prédomine en début de nuit','La mélatonine est absente en début de nuit','Le corps ne récupère pas en début de nuit'],bon:1,expl:'Le sommeil lent très profond, qui assure la récupération physique, prédomine pendant la première partie de la nuit. Le sommeil paradoxal (récupération mentale) s\'allonge progressivement en fin de nuit.'},
+       {q:'Qu\'est-ce que la désynchronisation des rythmes biologiques ?',opts:['L\'absence totale de sommeil','Le décalage entre rythmes biologiques et contraintes de la vie quotidienne','Une maladie du cœur','L\'accélération du rythme cardiaque'],bon:1,expl:'La désynchronisation est le décalage entre nos rythmes biologiques et ceux imposés par la vie quotidienne (travail de nuit, décalage horaire, écrans...). Elle entraîne des troubles du sommeil, digestifs et psychiques.'},
+       {q:'Quelles sont les conséquences de la désynchronisation sur la santé ?',opts:['Amélioration de la mémoire','Troubles du sommeil, irritabilité, troubles digestifs','Augmentation de la force physique','Meilleure concentration'],bon:1,expl:'La désynchronisation provoque des troubles du sommeil (difficultés d\'endormissement, réveils fréquents), des troubles neuropsychiques (irritabilité, agressivité) et des troubles digestifs (gastrite, ulcère).'},
+       {q:'Quels droits et garanties a un travailleur de nuit ?',opts:['Aucun droit spécifique','Repos compensateur, visite médicale préalable, droits dans le C2P','Seulement une prime de nuit','Possibilité de refuser tout travail de nuit'],bon:1,expl:'Le travailleur de nuit bénéficie d\'un repos quotidien de 11h, de repos compensateurs, d\'une visite d\'information et de prévention préalable à l\'affectation, et de droits dans le Compte Professionnel de Prévention (C2P).'},
+       {q:'Pourquoi le travail posté est-il considéré comme un travail pénible ?',opts:['Il est trop bien payé','Il entraîne une désynchronisation des rythmes biologiques pouvant causer des problèmes de santé','Il nécessite des compétences particulières','Il oblige à travailler debout'],bon:1,expl:'Le travail posté provoque une désynchronisation des rythmes biologiques liée aux changements d\'horaires, entraînant des décalages de sommeil pouvant causer des problèmes de santé. C\'est pourquoi il est reconnu comme pénible.'},
+       {q:'Quels conseils donner à un salarié en horaires décalés pour gérer son sommeil ?',opts:['Boire du café pour rester éveillé','Dormir au moins 7h/24h dont sieste, dans endroit calme et obscur, éviter la double journée','Prendre des somnifères régulièrement','Regarder la télévision pour s\'endormir'],bon:1,expl:'Pour les travailleurs en horaires décalés : dormir au moins 7h par 24h (incluant une sieste), dans un endroit calme et obscur, et éviter la double journée (travailler puis être actif longtemps avant de dormir).'}
+     ]},
+    {id:'pse3',num:103,color:'#F5A623',mat:'🩺 PSE',title:"L'activité physique",emoji:'🏃',score:0,
+     essentiel:`L'<b>activité physique</b> = tout mouvement musculaire augmentant la dépense d'énergie. Muscles striés : <b>contractiles, élastiques, excitables, toniques</b>. Contraction = <b>glucose + O₂ → CO₂</b>. OMS : <b>1h/jour</b> (ados), <b>30 min × 5/sem</b> (adultes). Bénéfices sur les 3 composantes de la santé.`,
+     chrono:[['Ados','1h/jour (OMS)'],['Adultes','30 min × 5/semaine (OMS)'],['Effort','Fréquence cardiaque + respiratoire augmentent'],['Contraction','Actine + Myosine : glucose + O₂ → CO₂'],['Transpiration','Régule la température interne']],
+     dates:[['1h/j','Recommandation OMS ados'],['30 min','Recommandation OMS adultes (×5/sem)'],['O₂','Consommé lors de la contraction'],['CO₂','Rejeté lors de la contraction'],['4 propriétés','Contractile, élastique, excitable, tonique']],
+     vocab:[['Activité physique','Tout mouvement musculaire augmentant la dépense d\'énergie'],['Contraction musculaire','Glissement actine/myosine — consomme glucose + O₂, rejette CO₂'],['Sédentarité','Insuffisance d\'activité physique'],['Muscles striés squelettiques','Contractiles, élastiques, excitables, toniques'],['Fréquence cardiaque','Accélère lors d\'un effort pour apporter O₂ et glucose aux muscles']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#F5A623">🏃 La contraction musculaire</div><svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><rect x="10" y="35" width="160" height="160" rx="14" fill="#FFF3E0" stroke="#F5A623" stroke-width="2"/><text x="90" y="65" text-anchor="middle" font-size="12" font-weight="800" fill="#F5A623">ENTRÉES</text><text x="90" y="100" text-anchor="middle" font-size="22">🍬</text><text x="90" y="120" text-anchor="middle" font-size="11" fill="#4A4670">Glucose</text><text x="90" y="150" text-anchor="middle" font-size="22">💨</text><text x="90" y="170" text-anchor="middle" font-size="11" fill="#4A4670">O₂</text><rect x="230" y="55" width="200" height="120" rx="14" fill="#F5A623" fill-opacity=".15" stroke="#F5A623" stroke-width="2.5"/><text x="330" y="100" text-anchor="middle" font-size="14" font-weight="800" fill="#F5A623">MUSCLE</text><text x="330" y="118" text-anchor="middle" font-size="11" fill="#4A4670">Actine + Myosine</text><text x="330" y="134" text-anchor="middle" font-size="11" fill="#4A4670">Contraction</text><path d="M170 115 L230 115" stroke="#F5A623" stroke-width="2" marker-end="url(#pm2)"/><path d="M430 115 L490 115" stroke="#F5A623" stroke-width="2" marker-end="url(#pm2)"/><rect x="490" y="35" width="200" height="160" rx="14" fill="#FFF0F0" stroke="#E84855" stroke-width="2"/><text x="590" y="65" text-anchor="middle" font-size="12" font-weight="800" fill="#E84855">SORTIES</text><text x="590" y="100" text-anchor="middle" font-size="22">💧</text><text x="590" y="120" text-anchor="middle" font-size="11" fill="#4A4670">Chaleur (sueur)</text><text x="590" y="150" text-anchor="middle" font-size="22">☁️</text><text x="590" y="170" text-anchor="middle" font-size="11" fill="#4A4670">CO₂</text><text x="350" y="215" text-anchor="middle" font-size="11" fill="#F5A623" font-weight="700">OMS : Ados 1h/jour · Adultes 30 min × 5/semaine</text><defs><marker id="pm2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#F5A623"/></marker></defs></svg></div>`,
+     questions:[
+       {q:'Recommandation OMS pour un adulte ?',opts:['1h/jour','2h/semaine','30 min × 5/semaine','15 min/jour'],bon:2,expl:'OMS : 30 minutes d\'activité physique, 5 fois par semaine pour un adulte. Pour un ado : 1h/jour.'},
+       {q:'Que consomme le muscle lors de la contraction ?',opts:['Eau et vitamines','Glucose et O₂','Protéines et calcium','Sel et minéraux'],bon:1,expl:'La contraction musculaire consomme du glucose et du dioxygène (O₂) et rejette du CO₂.'},
+       {q:'Pourquoi s\'essouffle-t-on lors d\'un effort ?',opts:['Manque d\'eau','Fréquence cardiaque et respiratoire augmentent pour apporter O₂ aux muscles','Les muscles se contractent trop','La température baisse'],bon:1,expl:'L\'effort accélère le cœur et la respiration pour fournir plus de glucose et d\'O₂ aux muscles.'},
+       {q:'4 propriétés des muscles striés squelettiques ?',opts:['Rapides, lents, lisses, striés','Contractiles, élastiques, excitables, toniques','Volontaires, involontaires, cardiaques, lisses','Forts, faibles, rapides, lents'],bon:1,expl:'Les muscles striés sont contractiles, élastiques, excitables et toniques.'},
+       {q:'Effet de l\'activité physique sur le cœur ?',opts:['Augmente le cholestérol','Il devient plus puissant et les artères s\'assouplissent','Aucun effet','Diminue la capacité pulmonaire'],bon:1,expl:'L\'activité physique régulière renforce le cœur et assouplit les artères.'},
+     ,
+       {q:'L\'activité physique comprend-elle uniquement les sports de compétition ?',opts:['Oui, seuls les sports comptent','Non, elle comprend tous les mouvements : travail, loisirs, déplacements','Oui, uniquement les activités en salle','Non, mais les loisirs passifs ne comptent pas'],bon:1,expl:'L\'activité physique comprend tous les mouvements produits par les muscles : marche, ménage, jardinage, déplacements, travail, loisirs sportifs. Ce n\'est pas limité aux sports de compétition.'},
+       {q:'Qu\'est-ce qui déclenche la contraction musculaire ?',opts:['Une stimulation chimique par l\'alimentation','Une excitation nerveuse (influx nerveux)','La chaleur corporelle','La pression sanguine'],bon:1,expl:'La contraction musculaire correspond au glissement des filaments d\'actine et de myosine SOUS L\'ACTION d\'une excitation nerveuse (influx nerveux). Sans signal nerveux, pas de contraction.'},
+       {q:'Quelle modification physiologique permet la thermorégulation lors d\'un effort ?',opts:['L\'accélération du rythme cardiaque','L\'augmentation de la transpiration','L\'accélération de la digestion','La réduction de la fréquence respiratoire'],bon:1,expl:'Lors d\'un effort, la transpiration augmente pour maintenir la température interne à 37°C (thermorégulation). La chaleur produite par les muscles est éliminée par la sueur qui s\'évapore.'},
+       {q:'Quels sont les effets de l\'activité physique sur le bien-être social ?',opts:['Elle isole l\'individu','Elle permet une meilleure intégration sociale','Elle améliore uniquement la condition physique','Elle n\'a aucun effet social'],bon:1,expl:'L\'activité physique améliore le bien-être social en permettant une meilleure intégration sociale (sports collectifs, clubs, associations), en favorisant les rencontres et en renforçant le sentiment d\'appartenance à un groupe.'},
+       {q:'Comment augmenter son activité physique au quotidien si on a un travail sédentaire ?',opts:['Prendre des médicaments','Marcher pendant les pauses, prendre les escaliers, aller au travail à vélo ou à pied','Faire uniquement du sport le week-end','Réduire son temps de travail'],bon:1,expl:'Pour augmenter l\'activité physique avec un travail sédentaire : marcher pendant les pauses, utiliser les escaliers plutôt que l\'ascenseur, aller au travail à pied/vélo, descendre à un arrêt avant et continuer à pied.'},
+       {q:'Quelle est la recommandation OMS en matière d\'activité physique pour un adolescent ?',opts:['30 min/jour','45 min × 3/semaine','1h/jour','2h/semaine'],bon:2,expl:'L\'OMS recommande 1 heure d\'activité physique par jour pour les adolescents. Cette activité doit être d\'intensité modérée à élevée et comprendre des activités de renforcement musculaire.'},
+       {q:'Quels sont les effets de l\'activité physique sur le risque de maladies ?',opts:['Elle augmente le risque d\'hypertension','Elle diminue les risques de maladies cardiovasculaires, d\'hypertension et de diabète','Elle n\'a aucun effet préventif','Elle augmente le risque de diabète'],bon:1,expl:'L\'activité physique régulière diminue significativement le risque de maladies cardiovasculaires, d\'hypertension artérielle, de diabète de type 2, de certains cancers et d\'ostéoporose.'},
+       {q:'Quel est l\'effet de la sédentarité sur la mortalité ?',opts:['Elle n\'a aucun effet','Elle réduit le risque de mortalité','Les personnes inactives ont un risque de décès majoré de 20 à 30%','Elle améliore la longévité'],bon:2,expl:'Selon l\'OMS, les personnes ayant une activité physique insuffisante ont un risque de décès majoré de 20 à 30% par rapport à celles qui sont suffisamment actives. La sédentarité est un des dix principaux facteurs de risque de mortalité mondiale.'}
+     ]},
+    {id:'pse4',num:104,color:'#E84855',mat:'🩺 PSE',title:'Les addictions',emoji:'🚫',score:0,
+     essentiel:`L'<b>addiction</b> = dépendance <b>physique + psychologique</b>. La <b>polyconsommation</b> multiplie les risques (81% des consommateurs de cannabis consomment aussi de l'alcool). L'alcool réduit le champ visuel de <b>170° à 30°</b>. Taux légal : <b>0,5 g/L</b> (adulte), <b>0,2 g/L</b> (jeune conducteur).`,
+     chrono:[['1ère conso','Point d\'entrée — la prévention s\'y joue'],['Tolérance','Le corps réclame des doses croissantes'],['Dépendance','Physique + psychologique'],['Polyconsommation','Les effets s\'additionnent'],['Prévention','CJC, Alcool Info Service, Tabac Info Service']],
+     dates:[['0,5 g/L','Taux légal alcool adulte'],['0,2 g/L','Taux légal jeune conducteur'],['170° → 30°','Réduction champ visuel sous alcool'],['81%','Consommateurs cannabis + alcool'],['CJC','Consultation Jeunes Consommateurs']],
+     vocab:[['Addiction','Dépendance physique et psychologique malgré les conséquences nocives'],['Dépendance physique','Le corps a besoin de la substance pour fonctionner'],['Polyconsommation','Consommation simultanée de plusieurs substances psychoactives'],['Alcoolémie','Taux d\'alcool dans le sang'],['Prévention collective','Campagnes, lois, structures d\'aide (CJC)']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#E84855">🚫 Le mécanisme de l\'addiction</div><svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><circle cx="110" cy="100" r="78" fill="#FFF0F0" stroke="#E84855" stroke-width="2"/><text x="110" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="#E84855">1ère consommation</text><text x="110" y="108" text-anchor="middle" font-size="20">😊</text><path d="M188 100 L235 100" stroke="#E84855" stroke-width="2" marker-end="url(#pm3)"/><circle cx="315" cy="100" r="78" fill="#FFE0E2" stroke="#E84855" stroke-width="2"/><text x="315" y="88" text-anchor="middle" font-size="11" font-weight="700" fill="#E84855">Tolérance</text><text x="315" y="103" text-anchor="middle" font-size="10" fill="#4A4670">besoin de + en +</text><text x="315" y="120" text-anchor="middle" font-size="20">😐</text><path d="M393 100 L437 100" stroke="#E84855" stroke-width="2" marker-end="url(#pm3)"/><circle cx="525" cy="100" r="78" fill="#E84855" stroke="#C0392B" stroke-width="2"/><text x="525" y="85" text-anchor="middle" font-size="12" font-weight="800" fill="white">Dépendance</text><text x="525" y="101" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.85)">Physique + Psychologique</text><text x="525" y="120" text-anchor="middle" font-size="20">😰</text><text x="350" y="200" text-anchor="middle" font-size="11" fill="#E84855" font-weight="700">0,5 g/L légal · Champ visuel 170° → 30°</text><defs><marker id="pm3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#E84855"/></marker></defs></svg></div>`,
+     questions:[
+       {q:'Qu\'est-ce qu\'une addiction ?',opts:['Habitude bénéfique','Dépendance physique et psychologique malgré les conséquences nocives','Maladie génétique','Passe-temps'],bon:1,expl:'L\'addiction = dépendance physique ET psychologique à une substance malgré les conséquences nocives.'},
+       {q:'Taux légal alcool pour conduire (adulte) ?',opts:['0,8 g/L','0,2 g/L','0,5 g/L','1 g/L'],bon:2,expl:'Taux légal : 0,5 g/L pour un adulte, 0,2 g/L pour un jeune conducteur.'},
+       {q:'Qu\'est-ce que la polyconsommation ?',opts:['Manger varié','Consommer simultanément plusieurs substances psychoactives','Prendre plusieurs médicaments','Pratiquer plusieurs sports'],bon:1,expl:'Polyconsommation = plusieurs substances en même temps. Les effets s\'additionnent, les risques sont multipliés.'},
+       {q:'Effet de l\'alcool sur le champ visuel ?',opts:['Améliore la vision','Réduit de 170° à 30°','Aucun effet','Augmente la concentration'],bon:1,expl:'L\'alcool rétrécit le champ visuel de 170° à seulement 30°, augmentant fortement le risque d\'accident.'},
+       {q:'Prévention individuelle contre les addictions ?',opts:['Interdire la pub alcool','Taxer le tabac','Ne pas céder à la 1ère consommation','Fermer les bars'],bon:2,expl:'Prévention individuelle : refuser la 1ère consommation et recourir aux structures d\'aide (CJC).'},
+     ,
+       {q:'Comment les substances psychoactives agissent-elles sur le cerveau ?',opts:['Elles détruisent les neurones immédiatement','Elles augmentent la production de dopamine, provoquant une sensation de bien-être qui pousse à consommer plus','Elles bloquent toute activité cérébrale','Elles améliorent durablement les capacités cognitives'],bon:1,expl:'Les substances psychoactives agissent sur le circuit de la récompense en augmentant la production de dopamine (neurotransmetteur). Cette sensation de bien-être conduit l\'individu à vouloir consommer toujours plus.'},
+       {q:'Quels facteurs peuvent conduire à une addiction ?',opts:['Uniquement le type de substance','Facteurs liés au produit, à l\'environnement ET à l\'individu','Uniquement des facteurs génétiques','Uniquement la pression des pairs'],bon:1,expl:'L\'addiction résulte de l\'interaction de trois types de facteurs : liés au produit (puissance addictive), à l\'environnement (entourage, disponibilité) et à l\'individu (personnalité, génétique, histoire personnelle).'},
+       {q:'À quel âge en moyenne les adolescents ont-ils leur premier téléphone portable ?',opts:['6-8 ans','10-12 ans','14-16 ans','18 ans'],bon:1,expl:'L\'âge du premier portable est désormais entre 10 et 12 ans. Les adolescents passent en moyenne jusqu\'à 4h par jour sur leur smartphone, ce qui peut conduire à une addiction comportementale.'},
+       {q:'Quelles sont les conséquences personnelles et sociales des addictions ?',opts:['Uniquement des problèmes de santé physique','Isolement, perte d\'emploi, difficultés financières, accidents, problèmes de santé, séparation','Uniquement des problèmes financiers','Elles n\'ont que des conséquences positives à court terme'],bon:1,expl:'Les addictions ont de nombreuses conséquences : isolement social, perte d\'emploi, difficultés financières, accidents, problèmes de santé (maladies, troubles neurologiques), ruptures familiales, risques d\'emprisonnement.'},
+       {q:'Quelles sont les mesures préventives collectives contre les addictions ?',opts:['Autoriser toutes les substances','Campagnes de sensibilisation, structures d\'aide (CJC), lois restrictives','Uniquement punir les consommateurs','Fermer tous les débits de boisson'],bon:1,expl:'Prévention collective : campagnes publicitaires d\'information, lois pour limiter et sanctionner les abus, structures d\'aide comme les CJC (Consultations Jeunes Consommateurs), numéros d\'appel spécialisés.'},
+       {q:'Quel taux d\'alcoolémie est légal pour un jeune conducteur (permis depuis moins de 3 ans) ?',opts:['0,5 g/L','0,8 g/L','0,2 g/L','0 g/L'],bon:2,expl:'Pour un jeune conducteur (permis depuis moins de 3 ans), le taux légal d\'alcoolémie est de 0,2 g/L, soit beaucoup plus strict que pour les conducteurs confirmés (0,5 g/L).'},
+       {q:'Quel est l\'effet du cannabis sur la distance d\'arrêt d\'un véhicule à 90 km/h ?',opts:['Il la diminue','Il n\'a aucun effet','Il l\'augmente significativement (5 μg/L : distance plus longue qu\'à 0 μg/L)','Il améliore les réflexes'],bon:2,expl:'Le cannabis augmente significativement la distance d\'arrêt : à 5 μg/L de THC dans le sang à 90 km/h, la distance d\'arrêt est nettement plus longue qu\'à 0 μg/L. Il ralentit le temps de réaction.'},
+       {q:'Quel est le résultat d\'une polyconsommation cannabis + alcool selon les données ?',opts:['Les effets s\'annulent','81% des consommateurs réguliers de cannabis consomment aussi de l\'alcool, les risques sont multipliés','Les effets sont identiques à une consommation seule','La polyconsommation est moins dangereuse'],bon:1,expl:'81% des consommateurs réguliers de cannabis consomment également de l\'alcool. Les effets des substances s\'additionnent, multipliant les risques sanitaires et sociaux.'}
+     ]},
+    {id:'pse5',num:105,color:'#E040A0',mat:'🩺 PSE',title:'La sexualité – La contraception',emoji:'💊',score:0,
+     essentiel:`Cycle menstruel : <b>28 jours</b>. Ovulation : <b>jour 14</b>. Période fertile : <b>7 jours</b>. <b>Fécondation</b> dans les trompes. <b>Nidation</b> (implantation embryon) = <b>J+7</b>. <b>Contraception</b> = infécondité temporaire. <b>Préservatif</b> = seule double protection grossesse + IST.`,
+     chrono:[['Jours 1-5','Règles'],['Jours 6-13','Phase folliculaire'],['Jour 14','Ovulation'],['Jours 15-28','Phase lutéale'],['J+7','Nidation']],
+     dates:[['28 jours','Durée cycle menstruel'],['Jour 14','Ovulation'],['7 jours','Période fertile'],['J+7','Nidation'],['99%','Efficacité théorique pilule']],
+     vocab:[['Ovulation','Libération d\'un ovule (≈ jour 14)'],['Fécondation','Union ovule + spermatozoïde dans les trompes'],['Nidation','Implantation embryon dans l\'utérus — J+7'],['Contraception','Ensemble des moyens d\'infécondité temporaire'],['IST','Infections Sexuellement Transmissibles — seul le préservatif les prévient']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#E040A0">💊 Cycle menstruel et contraception</div><svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><rect x="10" y="20" width="90" height="90" rx="10" fill="#FFE8F5" stroke="#E040A0" stroke-width="1.5"/><text x="55" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#E040A0">Règles</text><text x="55" y="76" text-anchor="middle" font-size="10" fill="#9896B0">J1-J5</text><rect x="110" y="10" width="150" height="110" rx="10" fill="#F5F4FF" stroke="#6B5CE7" stroke-width="1.5"/><text x="185" y="53" text-anchor="middle" font-size="11" font-weight="700" fill="#6B5CE7">Folliculaire</text><text x="185" y="68" text-anchor="middle" font-size="10" fill="#9896B0">J6-J13</text><circle cx="310" cy="65" r="50" fill="#E040A0" fill-opacity=".12" stroke="#E040A0" stroke-width="2.5"/><text x="310" y="56" text-anchor="middle" font-size="20">🥚</text><text x="310" y="76" text-anchor="middle" font-size="11" font-weight="800" fill="#E040A0">Ovulation J14</text><rect x="375" y="10" width="170" height="110" rx="10" fill="#E6F7F1" stroke="#1DB87A" stroke-width="1.5"/><text x="460" y="53" text-anchor="middle" font-size="11" font-weight="700" fill="#1DB87A">Lutéale</text><text x="460" y="68" text-anchor="middle" font-size="10" fill="#9896B0">J15-J28</text><rect x="10" y="143" width="670" height="75" rx="10" fill="#F5F4FF" stroke="#6B5CE7" stroke-width="1"/><text x="345" y="166" text-anchor="middle" font-size="11" font-weight="800" fill="#6B5CE7">Méthodes contraceptives</text><text x="115" y="196" text-anchor="middle" font-size="11" fill="#4A4670">💊 Pilule ~99%</text><text x="265" y="196" text-anchor="middle" font-size="11" fill="#4A4670">🩹 Patch ~99%</text><text x="415" y="196" text-anchor="middle" font-size="11" fill="#4A4670">🔵 DIU ~99%</text><text x="575" y="196" text-anchor="middle" font-size="11" fill="#E84855" font-weight="700">🛡️ Préservatif + IST</text></svg></div>`,
+     questions:[
+       {q:'Jour de l\'ovulation dans un cycle de 28 jours ?',opts:['Jour 7','Jour 1','Jour 21','Jour 14'],bon:3,expl:'L\'ovulation a lieu environ au jour 14. Période fertile = 5 jours avant + 1 jour après.'},
+       {q:'Qu\'est-ce que la nidation ?',opts:['Fécondation dans les trompes','Ovulation','Implantation de l\'embryon dans la paroi utérine','Formation du placenta'],bon:2,expl:'Nidation = implantation de l\'embryon dans la paroi utérine, 7 jours après la fécondation.'},
+       {q:'Méthode protégeant IST ET grossesses ?',opts:['Pilule','Préservatif','Implant','Stérilet'],bon:1,expl:'Le préservatif est la seule méthode offrant une double protection : grossesse + IST.'},
+       {q:'Durée de la période fertile ?',opts:['3 jours','5 jours','7 jours','10 jours'],bon:2,expl:'Période fertile = 7 jours : 5 jours avant + 1 jour après l\'ovulation.'},
+       {q:'Qu\'est-ce que la contraception ?',opts:['L\'IVG','Ensemble des moyens d\'infécondité temporaire','Traitement hormonal permanent','Dispositif chirurgical définitif'],bon:1,expl:'La contraception = ensemble des moyens provoquant une infécondité temporaire.'},
+     ,
+       {q:'Quel est le délai d\'utilisation de la contraception d\'urgence après un rapport sexuel ?',opts:['12 heures maximum','24 heures maximum','3 à 5 jours selon le type de pilule','1 semaine maximum'],bon:2,expl:'La contraception d\'urgence peut être utilisée dans un délai de 3 à 5 jours selon le type de pilule d\'urgence. Plus elle est prise tôt, plus elle est efficace.'},
+       {q:'Où peut-on se procurer la contraception d\'urgence ?',opts:['Uniquement chez le médecin','Centres de santé sexuelle, pharmacies, infirmeries scolaires, CeGIDD','Uniquement aux urgences hospitalières','Uniquement en prescription médicale'],bon:1,expl:'La contraception d\'urgence est disponible dans les centres de santé sexuelle, les pharmacies, les infirmeries scolaires ou universitaires et les CeGIDD (centres gratuits d\'information, de dépistage et de diagnostic).'},
+       {q:'Qu\'est-ce que la durée de vie d\'un ovule après l\'ovulation ?',opts:['1 à 2 jours','3 à 5 jours','7 jours','1 heure'],bon:0,expl:'L\'ovule a une durée de vie de 1 à 2 jours après l\'ovulation. Les spermatozoïdes, eux, vivent 2 à 5 jours. C\'est pourquoi la période fertile couvre 7 jours au total (5j avant + 1j après l\'ovulation).'},
+       {q:'Qu\'arrive-t-il à l\'embryon entre la fécondation et la nidation ?',opts:['Il reste dans les trompes','La cellule-œuf se divise et progresse dans les trompes pour arriver dans la cavité utérine au 5e jour','Il est immédiatement expulsé si non voulu','Il se développe directement dans l\'ovaire'],bon:1,expl:'Après la fécondation, la cellule-œuf se divise en plusieurs cellules tout en progressant dans les trompes. Elle arrive dans la cavité utérine au 5e jour, puis s\'implante dans la paroi utérine (nidation) au 7e jour.'},
+       {q:'Quel est le mécanisme d\'action du préservatif ?',opts:['Il empêche l\'ovulation','Il empêche le sperme d\'entrer dans le vagin','Il élimine les spermatozoïdes chimiquement','Il modifie le cycle hormonal'],bon:1,expl:'Le préservatif est une méthode mécanique qui empêche le sperme d\'entrer dans le vagin. C\'est la seule méthode offrant une double protection : contre les grossesses ET contre les IST.'},
+       {q:'Quel moyen de contraception convient le mieux à Clara, 43 ans, avec contre-indication aux hormones et dont le conjoint refuse les préservatifs ?',opts:['La pilule','Le patch','Le dispositif intra-utérin (DIU) au cuivre','L\'implant'],bon:2,expl:'Le DIU (stérilet) au cuivre est non hormonal et très efficace (99%+). Il convient parfaitement aux femmes ayant des contre-indications aux méthodes hormonales. Il s\'insère dans l\'utérus et agit mécaniquement.'},
+       {q:'Quelle est la différence entre l\'efficacité théorique et l\'efficacité pratique du patch contraceptif ?',opts:['Il n\'y a pas de différence','L\'efficacité pratique est moindre à cause du risque de décollement','L\'efficacité pratique est meilleure car le patch s\'adapte au corps','Le patch a une efficacité théorique de 80% seulement'],bon:1,expl:'L\'efficacité théorique du patch est d\'environ 99%, mais l\'efficacité pratique est moindre car le patch peut se décoller (lors de la douche, sport...), réduisant ainsi sa protection contraceptive.'},
+       {q:'Depuis quand la contraception est-elle accessible gratuitement aux moins de 26 ans en France ?',opts:['Depuis 2010','Depuis 2015','Depuis le 1er janvier 2023','Depuis 2020'],bon:2,expl:'Depuis le 1er janvier 2023, la contraception est accessible gratuitement pour toutes les femmes jusqu\'à 25 ans (étendue aux moins de 26 ans). Cela inclut les consultations, les analyses et les contraceptifs remboursés.'},
+       {q:'Quelle est la mission principale des centres de santé sexuelle ?',opts:['Uniquement pratiquer les IVG','Soutien sur la sexualité, accompagnement IVG, dépistage IST, prescription contraception','Uniquement traiter les maladies sexuelles','Uniquement conseiller les couples'],bon:1,expl:'Les centres de santé sexuelle assurent : le soutien sur la sexualité et la vie affective, l\'accompagnement à l\'IVG, le dépistage et traitement des IST, la prescription et délivrance de contraception.'}
+     ]},
+    {id:'pse6',num:106,color:'#2B8EF0',mat:'🩺 PSE',title:"L'alimentation écoresponsable",emoji:'🌱',score:0,
+     essentiel:`Le <b>gaspillage alimentaire</b> = <b>3,3 Gt CO₂/an</b>, <b>1,4 milliard ha</b>, <b>250 km³ eau</b>. France : <b>−50%</b> d'ici 2025. Loi <b>Garot (2016)</b> = dons associations obligatoires. Loi <b>EGALIM (2018)</b> = doggy bag au restaurant. Label : ⭐ Engagement · ⭐⭐ Maîtrise · ⭐⭐⭐ Exemplaire.`,
+     chrono:[['2013','Pacte national antigaspillage'],['2016','Loi Garot — dons associations'],['2018','Loi EGALIM — doggy bag'],['2020','Loi AGEC — économie circulaire'],['2025','Objectif −50% gaspillage']],
+     dates:[['3,3 Gt','CO₂/an gaspillage mondial'],['1,4 Mds ha','Terres inutilement utilisées'],['250 km³','Eau gaspillée'],['−50%','Objectif France 2025'],['⭐⭐⭐','Niveau Exemplaire label']],
+     vocab:[['Alimentation écoresponsable','Choix alimentaires réduisant l\'impact environnemental'],['Gaspillage alimentaire','Nourriture consommable jetée à toutes les étapes'],['Loi Garot','Interdit rendre impropre nourriture non consommée (2016)'],['Doggy bag','Emporter les restes du restaurant — obligatoire depuis 2018'],['Label antigaspillage','⭐ Engagement · ⭐⭐ Maîtrise · ⭐⭐⭐ Exemplaire']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#2B8EF0">🌱 Impact du gaspillage alimentaire mondial</div><svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><rect x="10" y="20" width="210" height="145" rx="14" fill="#FFF3E0" stroke="#F5A623" stroke-width="2"/><text x="115" y="55" text-anchor="middle" font-size="26">🌡️</text><text x="115" y="86" text-anchor="middle" font-size="19" font-weight="800" fill="#F5A623">3,3 Gt CO₂</text><text x="115" y="106" text-anchor="middle" font-size="11" fill="#4A4670">par an</text><text x="115" y="148" text-anchor="middle" font-size="10" fill="#9896B0">Réchauffement climatique</text><rect x="240" y="20" width="210" height="145" rx="14" fill="#E8F4FD" stroke="#2B8EF0" stroke-width="2"/><text x="345" y="55" text-anchor="middle" font-size="26">🌊</text><text x="345" y="86" text-anchor="middle" font-size="19" font-weight="800" fill="#2B8EF0">250 km³ eau</text><text x="345" y="106" text-anchor="middle" font-size="11" fill="#4A4670">par an</text><text x="345" y="148" text-anchor="middle" font-size="10" fill="#9896B0">≈ 3× lac Léman</text><rect x="470" y="20" width="210" height="145" rx="14" fill="#E8F5E9" stroke="#1DB87A" stroke-width="2"/><text x="575" y="55" text-anchor="middle" font-size="26">🌾</text><text x="575" y="86" text-anchor="middle" font-size="19" font-weight="800" fill="#1DB87A">1,4 Mds ha</text><text x="575" y="106" text-anchor="middle" font-size="11" fill="#4A4670">terres agricoles</text><text x="575" y="148" text-anchor="middle" font-size="10" fill="#9896B0">28% des terres</text><text x="350" y="196" text-anchor="middle" font-size="12" fill="#E84855" font-weight="700">Objectif France : −50% gaspillage d\'ici 2025</text></svg></div>`,
+     questions:[
+       {q:'CO₂ émis par le gaspillage alimentaire mondial/an ?',opts:['0,5 Gt','1 Gt','3,3 Gt','10 Gt'],bon:2,expl:'Le gaspillage alimentaire mondial rejette 3,3 Gt de CO₂ par an.'},
+       {q:'Objectif France de réduction du gaspillage pour 2025 ?',opts:['-10%','-25%','-50%','-75%'],bon:2,expl:'La France vise -50% de gaspillage d\'ici 2025 pour la distribution et la restauration collective.'},
+       {q:'Ce que prévoit la Loi Garot (2016) ?',opts:['Interdire pesticides','Doggy bag obligatoire','Interdire rendre impropre la nourriture non consommée + dons obligatoires','Taxer le sucre'],bon:2,expl:'Loi Garot : interdit rendre impropre la nourriture non consommée et oblige les dons aux associations.'},
+       {q:'Niveau Exemplaire du label antigaspillage ?',opts:['1 étoile','2 étoiles','3 étoiles','4 étoiles'],bon:2,expl:'Label antigaspillage : ⭐ Engagement · ⭐⭐ Maîtrise · ⭐⭐⭐ Exemplaire.'},
+       {q:'Surface inutilement utilisée par le gaspillage mondial ?',opts:['500 000 ha','1,4 milliard ha','50 millions ha','10 milliards ha'],bon:1,expl:'Le gaspillage monopolise 1,4 milliard d\'hectares = 28% des terres agricoles mondiales.'},
+     ,
+       {q:'Qu\'est-ce qu\'un circuit court de distribution alimentaire ?',opts:['Un circuit de moins de 100 km','Un circuit comportant au plus un intermédiaire entre le producteur et le consommateur','Un circuit exclusivement biologique','Un circuit passant par un hypermarché'],bon:1,expl:'Un circuit court comporte au plus un intermédiaire entre le producteur et le consommateur. Cela peut être la vente directe à la ferme, les AMAP, les marchés locaux ou la livraison directe.'},
+       {q:'Pourquoi s\'approvisionner directement chez le producteur est-il écoresponsable ?',opts:['Les produits sont moins chers','Réduction du CO₂ (produits locaux et de saison), moins d\'emballages, moins de gaspillage (produits abîmés vendus)','Les produits durent plus longtemps','Les quantités sont plus grandes'],bon:1,expl:'Le circuit court réduit le CO₂ (produits locaux et de saison), préfère des contenants réemployables (moins de déchets), et valorise les produits de trop petits calibres ou abîmés qui seraient jetés en grande distribution.'},
+       {q:'Quelles sont les causes du gaspillage alimentaire au niveau individuel ?',opts:['Uniquement les mauvaises habitudes de cuisson','Mauvaise gestion des stocks, surconsommation, non-respect de la chaîne du froid','Uniquement le refus des fruits et légumes moches','Trop de diversité dans les repas'],bon:1,expl:'Au niveau individuel, le gaspillage vient de la mauvaise gestion des stocks (acheter plus que nécessaire), de la surconsommation, du non-respect de la chaîne du froid et d\'un mauvais rangement du réfrigérateur.'},
+       {q:'Qu\'est-ce que la DLC et pourquoi est-elle importante ?',opts:['La Distance Limite de Commercialisation — délimite les zones de vente','La Date Limite de Consommation — après cette date, le produit peut être dangereux','La Déclaration Légale de Composition — informe sur les ingrédients','La Durée Légale de Conservation — s\'applique aux conserves'],bon:1,expl:'La DLC (Date Limite de Consommation) indique la date après laquelle le produit peut être dangereux pour la santé. Vérifier la DLC avant d\'acheter et de consommer permet d\'éviter les intoxications et le gaspillage.'},
+       {q:'Quels comportements d\'un consommateur écoresponsable permettent de réduire le gaspillage ?',opts:['Acheter en grande quantité pour faire des économies','Faire une liste de courses, adapter les quantités à ses besoins, bien ranger son réfrigérateur, acheter des fruits moches','Acheter uniquement des produits importés','Jeter systématiquement les restes'],bon:1,expl:'Comportements écoresponsables : liste de courses précise, adapter les quantités, vérifier les DLC, bien ranger le réfrigérateur, acheter les produits \'moches\', acheter en vrac, prévoir les menus de la semaine.'},
+       {q:'Combien représente le gaspillage alimentaire en France en termes économiques ?',opts:['1 milliard d\'euros','5 milliards d\'euros','16 milliards d\'euros','100 milliards d\'euros'],bon:2,expl:'En France, 10 millions de tonnes d\'aliments sont gaspillées chaque année, représentant 16 milliards d\'euros jetés. Cela représente 20% de la nourriture produite.'},
+       {q:'Qu\'est-ce qu\'une alimentation écoresponsable doit privilégier ?',opts:['Les produits exotiques importés pour la diversité','Les produits locaux et de saison, l\'agriculture bio ou raisonnée, peu d\'emballages, les protéines végétales','Les produits en grande quantité pour économiser','Les produits transformés car plus durables'],bon:1,expl:'L\'alimentation écoresponsable privilégie : produits locaux et de saison (faible empreinte carbone), agriculture biologique ou raisonnée (peu de pesticides), produits avec peu d\'emballages, protéines d\'origine végétale.'}
+     ]},
+    {id:'pse7',num:107,color:'#FF6B35',mat:'🩺 PSE',title:'Les risques majeurs',emoji:'⚠️',score:0,
+     essentiel:`Un <b>risque majeur</b> = événement soudain entraînant des dégâts importants. Naturels (inondation, séisme, tempête) ou technologiques (accident industriel). Signal d'alerte = son modulé <b>3 × 1min41s</b>. Fin = son continu <b>30s</b>. <b>FR-Alert</b> notifie par téléphone. <b>DICRIM</b> en mairie.`,
+     chrono:[['Naturels','Inondations, séismes, tempêtes, feux de forêt'],['Technologiques','Accidents industriels, transport matières dangereuses'],['Signal alerte','Son modulé 3 × 1min41s (intervalles 5s)'],['Fin alerte','Son continu 30 secondes'],['FR-Alert','Notification téléphone dans la zone de danger']],
+     dates:[['3 × 1min41s','Signal début alerte'],['30s','Signal fin alerte'],['DICRIM','Document Information Communal Risques Majeurs'],['PPMS','Plan Particulier Mise en Sûreté scolaire'],['FR-Alert','Alerte par notification téléphonique']],
+     vocab:[['Risque majeur','Événement soudain entraînant dégâts matériels et/ou humains importants'],['DICRIM','Document d\'Info Communal sur les Risques Majeurs — disponible en mairie'],['PPMS','Plan Particulier de Mise en Sûreté — plan d\'urgence scolaire'],['FR-Alert','Alertes notifications téléphoniques dans les zones concernées'],['Confinement','Se mettre à l\'abri, couper la ventilation']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#FF6B35">⚠️ Le signal national d\'alerte</div><svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><text x="350" y="28" text-anchor="middle" font-size="14" font-weight="800" fill="#FF6B35">Signal DÉBUT d\'alerte</text><path d="M20,90 Q55,35 90,90 Q125,35 160,90" stroke="#FF6B35" stroke-width="3" fill="none"/><path d="M185,90 Q220,35 255,90 Q290,35 325,90" stroke="#FF6B35" stroke-width="3" fill="none"/><path d="M350,90 Q385,35 420,90 Q455,35 490,90" stroke="#FF6B35" stroke-width="3" fill="none"/><line x1="20" y1="90" x2="500" y2="90" stroke="#E5E3F5" stroke-width="1"/><text x="255" y="118" text-anchor="middle" font-size="10" fill="#9896B0">3 × 1 min 41s — Son MODULÉ montant et descendant</text><rect x="540" y="48" width="140" height="55" rx="10" fill="#E6F7F1" stroke="#1DB87A" stroke-width="2"/><text x="610" y="74" text-anchor="middle" font-size="11" font-weight="800" fill="#1DB87A">FIN d\'alerte</text><text x="610" y="91" text-anchor="middle" font-size="10" fill="#1DB87A">Son continu 30s</text><text x="350" y="155" text-anchor="middle" font-size="13" font-weight="800" fill="#E84855">Que faire ?</text><text x="90" y="178" text-anchor="middle" font-size="10" fill="#1DB87A">✅ Se confiner</text><text x="240" y="178" text-anchor="middle" font-size="10" fill="#1DB87A">✅ Écouter la radio</text><text x="450" y="178" text-anchor="middle" font-size="10" fill="#E84855">❌ Ne pas aller chercher les enfants</text><text x="620" y="178" text-anchor="middle" font-size="10" fill="#1DB87A">✅ Couper ventilation</text></svg></div>`,
+     questions:[
+       {q:"Signal d'alerte aux populations ?",opts:['Son continu 3 min','3 coups sirène','Son modulé 3 × 1min41s séparées de 5s','Alarme 5 min'],bon:2,expl:"Signal = son modulé montant et descendant, 3 séquences d\'1min41s séparées de 5 secondes."},
+       {q:"Signal de FIN d'alerte ?",opts:['Silence 1 min','Son continu 30s','3 sonneries courtes','Même son que début'],bon:1,expl:"Fin d\'alerte = son continu de 30 secondes, distinct du signal de début."},
+       {q:"Qu'est-ce que le DICRIM ?",opts:["Plan d'évacuation","Document d'Info Communal sur les Risques Majeurs","Règlement de sécurité","Code alerte incendie"],bon:1,expl:"DICRIM disponible en mairie : identifie les risques locaux et informe les citoyens."},
+       {q:"Qu'est-ce que FR-Alert ?",opts:['Réseau sirènes','Alertes notifications téléphone mobile','Application météo','Canal radio urgence'],bon:1,expl:"FR-Alert envoie des notifications sur les téléphones dans la zone de danger."},
+       {q:"À NE PAS faire en cas d'alerte risque majeur ?",opts:["Se mettre à l'abri","Écouter la radio","Aller chercher ses enfants à l'école","Couper la ventilation"],bon:2,expl:"Ne pas aller chercher les enfants à l'école : ils y sont en sécurité. Se déplacer vous exposerait au danger."},
+     ,
+       {q:'Comment se définit un risque majeur ?',opts:['Un risque fréquent et peu grave','Un événement rare mais d\'une grande gravité dépassant les capacités de réaction de la société','Un accident du travail grave','Un risque uniquement naturel'],bon:1,expl:'Un risque majeur se caractérise par une faible fréquence (il arrive rarement) et une importante gravité (conséquences humaines et matérielles qui dépassent les capacités de réaction de la société).'},
+       {q:'Quelles sont les deux grandes familles de risques majeurs ?',opts:['Terrestres et marins','Naturels et technologiques','Locaux et nationaux','Prévisibles et imprévisibles'],bon:1,expl:'Les risques majeurs se divisent en deux familles : naturels (liés à l\'environnement : inondations, séismes, incendies, tempêtes) et technologiques (liés à l\'activité humaine : accidents industriels, rupture de barrage, transport de matières dangereuses).'},
+       {q:'Qu\'est-ce qu\'un PPMS et qui l\'établit ?',opts:['Un plan de prévention médicale — par le médecin scolaire','Un Plan Particulier de Mise en Sûreté — établi par le chef d\'établissement scolaire','Un protocole de premiers secours — par les pompiers','Un programme pédagogique — par l\'inspecteur'],bon:1,expl:'Le PPMS (Plan Particulier de Mise en Sûreté) est établi par le chef d\'établissement scolaire. Il protège personnel et élèves face aux risques majeurs identifiés. Il définit les zones de mise à l\'abri et les rôles de chacun.'},
+       {q:'Combien de zones de mise à l\'abri prévoit généralement un PPMS dans un établissement scolaire ?',opts:['Une seule zone centrale','Deux zones minimum','Trois zones retenues habituellement','Autant que de classes'],bon:2,expl:'Un PPMS prévoit généralement trois zones de mise à l\'abri dans l\'établissement scolaire. Ces zones sont définies en fonction des risques identifiés localement et permettent d\'accueillir l\'ensemble des occupants.'},
+       {q:'Quel outil d\'information préventive permet au citoyen de connaître les risques majeurs de sa commune ?',opts:['La météo locale','Le DICRIM (Document d\'Information Communal sur les Risques Majeurs)','Le règlement intérieur de la mairie','Le plan de circulation'],bon:1,expl:'Le DICRIM est disponible en mairie. Il identifie les risques majeurs au niveau local (naturels et technologiques), informe les citoyens des dangers auxquels ils sont exposés et leur indique les conduites à tenir.'},
+       {q:'Quels sont les différents vecteurs du Système d\'Alerte et d\'Information aux Populations (SAIP) ?',opts:['Uniquement les sirènes','Sirènes, messages sur panneaux lumineux, radio, télévision, téléphone (FR-Alert)','Uniquement la radio et la télévision','Uniquement les réseaux sociaux'],bon:1,expl:'Le SAIP (Système d\'Alerte et d\'Information aux Populations) utilise plusieurs vecteurs : sirènes, messages sur véhicules motorisés ou panneaux lumineux, radio, télévision, téléphone (FR-Alert). Cette multidiffusion assure que tous les habitants soient alertés.'},
+       {q:'Quelles consignes spécifiques s\'appliquent en cas d\'inondation ?',opts:['Nager vers la sortie','Ne pas s\'approcher des cours d\'eau, couper l\'électricité, monter dans les étages','Conduire rapidement pour s\'éloigner','Ouvrir toutes les fenêtres'],bon:1,expl:'En cas d\'inondation : ne pas s\'approcher des cours d\'eau, couper l\'électricité et le gaz, monter dans les étages, ne pas prendre sa voiture (le courant peut emporter les véhicules), écouter les consignes officielles.'},
+       {q:'Pourquoi ne faut-il pas téléphoner lors d\'une alerte risque majeur ?',opts:['Pour économiser la batterie','Pour ne pas paniquer','Pour ne pas saturer le réseau téléphonique et laisser la priorité aux secours','Il est autorisé de téléphoner'],bon:2,expl:'Il ne faut pas téléphoner car cela sature le réseau téléphonique et empêche les secours de communiquer efficacement. Il faut écouter la radio pour suivre les consignes officielles.'}
+     ]},
+    {id:'pse8',num:108,color:'#1DB87A',mat:'🩺 PSE',title:'Santé et sécurité au travail',emoji:'👷',score:0,
+     essentiel:`L'<b>employeur</b> doit protéger la santé des travailleurs (art. <b>L.4121-1</b>). Il établit le <b>DUERP</b> (obligatoire partout). Le salarié a le <b>droit de retrait</b> (danger grave et imminent) et le <b>droit d'alerte</b>. <b>6 critères de pénibilité</b> ouvrent des droits dans le <b>C2P</b>.`,
+     chrono:[['Employeur','Obligation de résultat — responsabilité civile/pénale'],['DUERP','Obligatoire dans toutes les entreprises'],['Salarié','Droit de retrait + droit d\'alerte'],['Pénibilité','6 critères → points C2P'],['C2P','Retraite anticipée, formation, temps partiel']],
+     dates:[['L.4121-1','Article Code du travail — obligation employeur'],['6 critères','Pénibilité reconnus C2P'],['DUERP','Document Unique Évaluation Risques Professionnels'],['C2P','Compte Professionnel de Prévention'],['Resp. civile/pénale','Engagement employeur si manquement']],
+     vocab:[['DUERP','Document Unique d\'Évaluation des Risques Professionnels — obligatoire partout'],['Droit de retrait','Quitter son poste face à un danger grave et imminent, sans sanction'],['Droit d\'alerte','Signaler immédiatement à l\'employeur toute situation dangereuse'],['Pénibilité','6 critères : nuit, horaires alternants, bruit, répétitif, hyperbare, températures extrêmes'],['C2P','Compte Professionnel de Prévention : retraite, formation ou temps partiel']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#1DB87A">👷 Droits et obligations au travail</div><svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><rect x="220" y="10" width="240" height="55" rx="12" fill="#1DB87A" fill-opacity=".15" stroke="#1DB87A" stroke-width="2"/><text x="340" y="36" text-anchor="middle" font-size="13" font-weight="800" fill="#1DB87A">EMPLOYEUR</text><text x="340" y="53" text-anchor="middle" font-size="10" fill="#4A4670">Obligation résultat (art. L.4121-1)</text><rect x="10" y="92" width="310" height="118" rx="12" fill="#E6F7F1" stroke="#1DB87A" stroke-width="1.5"/><text x="165" y="116" text-anchor="middle" font-size="12" font-weight="800" fill="#1DB87A">Obligations employeur</text><text x="165" y="138" text-anchor="middle" font-size="10" fill="#4A4670">✅ Informer des risques</text><text x="165" y="156" text-anchor="middle" font-size="10" fill="#4A4670">✅ Former à la sécurité</text><text x="165" y="174" text-anchor="middle" font-size="10" fill="#4A4670">✅ Établir le DUERP</text><text x="165" y="192" text-anchor="middle" font-size="10" fill="#4A4670">✅ Déclarer la pénibilité (C2P)</text><rect x="370" y="92" width="310" height="118" rx="12" fill="#F0FFF8" stroke="#1DB87A" stroke-width="1.5"/><text x="525" y="116" text-anchor="middle" font-size="12" font-weight="800" fill="#1DB87A">Droits du salarié</text><text x="525" y="140" text-anchor="middle" font-size="10" fill="#4A4670">⚠️ Droit de retrait (danger grave et imminent)</text><text x="525" y="162" text-anchor="middle" font-size="10" fill="#4A4670">📢 Droit d\'alerte (signaler à l\'employeur)</text><text x="525" y="184" text-anchor="middle" font-size="10" fill="#4A4670">🩺 Visites médicales obligatoires</text><path d="M340 65 L165 92" stroke="#9896B0" stroke-width="1" stroke-dasharray="4,2"/><path d="M340 65 L525 92" stroke="#9896B0" stroke-width="1" stroke-dasharray="4,2"/></svg></div>`,
+     questions:[
+       {q:"Article Code du travail — obligation sécurité de l'employeur ?",opts:['Art. L.1234-5','Art. L.4121-1','Art. L.2312-4','Art. L.6321-1'],bon:1,expl:"Art. L.4121-1 = l\'employeur doit assurer la sécurité et protéger la santé physique et mentale des travailleurs."},
+       {q:"Qu'est-ce que le droit de retrait ?",opts:['Refuser une mutation','Quitter son poste en cas de danger grave et imminent sans sanction','Partir en retraite anticipée','Refuser les heures supp.'],bon:1,expl:"Droit de retrait = quitter son poste face à un danger grave et imminent, sans risquer de sanction."},
+       {q:'Combien de critères de pénibilité reconnus dans le C2P ?',opts:['3','4','6','8'],bon:2,expl:'C2P : 6 critères — nuit, horaires alternants, bruit, répétitif, hyperbare, températures extrêmes.'},
+       {q:"Qu'engage l'employeur en cas de non-respect de ses obligations ?",opts:['Uniquement une amende','Sa responsabilité civile ou pénale','Un avertissement','Rien'],bon:1,expl:"L\'employeur engage sa responsabilité civile (réparation) ou pénale en cas de manquement."},
+       {q:"Qu'est-ce que le DUERP ?",opts:["Document Unique d'Évaluation des Risques Professionnels","Déclaration Unique d'Emploi à Risques","Dispositif Unifié d'Évacuation","Dossier Uniformisé d'Évaluation Risques"],bon:0,expl:"DUERP = Document Unique d\'Évaluation des Risques Professionnels. Obligatoire dans toutes les entreprises."},
+     ,
+       {q:'Qu\'est-ce qu\'un accident du travail ?',opts:['Tout incident survenant en dehors du lieu de travail','Un accident survenu au salarié par le fait ou à l\'occasion de son travail, quelle qu\'en soit la cause','Uniquement un accident grave avec hospitalisation','Un accident uniquement survenu à cause d\'une faute du salarié'],bon:1,expl:'Un accident du travail est un accident survenu au salarié par le fait ou à l\'occasion de son travail, quelle qu\'en soit la cause. Il peut survenir lors du déplacement domicile-travail (accident de trajet).'},
+       {q:'Qu\'est-ce qu\'une maladie professionnelle ?',opts:['Toute maladie contractée pendant la vie active','Une maladie contractée par un salarié en lien direct avec son activité professionnelle, figurant au tableau des maladies professionnelles','Une maladie contagieuse attrapée au travail','Tout problème de santé lié au stress'],bon:1,expl:'Une maladie professionnelle est une maladie contractée par un salarié en lien direct avec son activité professionnelle. Elle doit figurer au tableau des maladies professionnelles de la Sécurité sociale.'},
+       {q:'Quelles dispositions s\'appliquent spécifiquement aux nouveaux embauchés en matière de sécurité ?',opts:['Aucune disposition spécifique','Information et formation à la sécurité par l\'employeur + visite d\'information et de prévention','Uniquement la signature d\'un contrat de travail','Uniquement le port obligatoire d\'EPI'],bon:1,expl:'Les nouveaux embauchés bénéficient d\'une information et formation à la sécurité par l\'employeur (pour connaître les dangers et les mesures de prévention) et d\'une visite d\'information et de prévention réalisée par un professionnel de santé.'},
+       {q:'Quelles dispositions protègent spécifiquement les jeunes travailleurs de moins de 18 ans ?',opts:['Aucune protection particulière','Interdiction du travail de nuit de 22h à 6h (sauf exceptions)','Droit à 3 heures de pause par jour','Réduction automatique du temps de travail de 50%'],bon:1,expl:'Les jeunes travailleurs de moins de 18 ans sont protégés par des dispositions spécifiques du Code du travail, notamment l\'interdiction de travailler de 22h à 6h (sauf exceptions dans certains secteurs).'},
+       {q:'Quel est l\'enjeu humain de la santé et sécurité au travail pour le salarié ?',opts:['Uniquement conserver son emploi','Préserver son intégrité physique et mentale pour éviter handicaps, souffrances et usure professionnelle','Obtenir une promotion','Bénéficier de congés supplémentaires'],bon:1,expl:'L\'enjeu humain pour le salarié est de préserver son intégrité physique et mentale : éviter les handicaps, la souffrance et l\'usure professionnelle. L\'enjeu socio-économique est de conserver son emploi et son salaire intégral.'},
+       {q:'Qui est concerné par les chiffres d\'accidents du travail ?',opts:['Uniquement les secteurs du BTP','Uniquement les usines','Tous les secteurs professionnels sont touchés','Uniquement les travailleurs de moins de 25 ans'],bon:2,expl:'Tous les secteurs professionnels sont touchés par les accidents du travail (AT) et les maladies professionnelles (MP). Les salariés de 18 à 24 ans ont près de deux fois plus d\'accidents du travail que l\'ensemble des salariés.'},
+       {q:'Quelle est la différence entre l\'accident du travail et l\'accident de trajet ?',opts:['Ce sont des synonymes','L\'AT survient sur le lieu de travail, l\'accident de trajet survient lors du déplacement domicile-travail','L\'accident de trajet n\'est pas indemnisé','Seul l\'AT est reconnu par la Sécurité sociale'],bon:1,expl:'L\'accident du travail survient sur le lieu de travail ou à l\'occasion du travail. L\'accident de trajet survient lors du déplacement entre le domicile et le lieu de travail (ou la cantine). Les deux sont reconnus et indemnisés par la Sécurité sociale.'},
+       {q:'Qu\'est-ce que le tableau des maladies professionnelles ?',opts:['Un registre des accidents dans chaque entreprise','Un tableau officiel listant les maladies reconnues comme professionnelles et les conditions de prise en charge','Un planning des visites médicales','Un document rédigé par l\'employeur'],bon:1,expl:'Le tableau des maladies professionnelles est un document officiel (annexé au Code de la Sécurité sociale) qui liste les maladies reconnues comme professionnelles, avec leurs conditions de prise en charge : délai de prise en charge, liste des travaux exposants...'},
+       {q:'Que peut faire un salarié s\'il ne respecte pas les consignes de sécurité de l\'employeur ?',opts:['Rien, il est libre de ses actes','Il risque une sanction disciplinaire de l\'employeur','Il risque une amende pénale directe','Il perd automatiquement son salaire'],bon:1,expl:'Un salarié ne respectant pas les consignes de sécurité de son employeur (notifiées dans le règlement intérieur) commet une faute passible d\'une sanction disciplinaire (avertissement, mise à pied, licenciement).'}
+     ]},
+    {id:'pse9',num:109,color:'#6B5CE7',mat:'🩺 PSE',title:'Prévention des risques professionnels',emoji:'🦺',score:0,
+     essentiel:`<b>Danger</b> = source de dommage. <b>Risque</b> = probabilité que le dommage survienne. Processus : <b>Danger → Situation dangereuse → Déclencheur → Dommage</b>. Hiérarchie : <b>1) Supprimer</b> · <b>2) Réduire</b> · <b>3) Protection collective</b> · <b>4) EPI</b>.`,
+     chrono:[['Danger','Source de dommage potentiel'],['Situation dangereuse','Personne exposée au danger'],['Déclencheur','Soudain (AT) ou temps exposition (MP)'],['Dommage','Accident du travail ou maladie professionnelle'],['Prévention','Agir sur chaque étape']],
+     dates:[['1','Supprimer le danger — priorité absolue'],['2','Réduire le danger'],['3','Protection collective'],['4','EPI — Équipements de Protection Individuelle'],['DUERP','Identification de tous les risques']],
+     vocab:[['Danger','Propriété intrinsèque pouvant causer un dommage'],['Risque','Probabilité qu\'un dommage survienne'],['Situation dangereuse','Personne exposée à un danger'],['EPI','Équipements de Protection Individuelle : casque, gants, lunettes...'],['AT/MP','Accident du Travail / Maladie Professionnelle']],
+     photos:[],
+     visuel:`<div class="visual-block"><div class="visual-label" style="background:#6B5CE7">🦺 Processus d\'apparition d\'un dommage</div><svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0"><rect x="10" y="38" width="130" height="78" rx="12" fill="#FFF3E0" stroke="#F5A623" stroke-width="2"/><text x="75" y="78" text-anchor="middle" font-size="13" font-weight="800" fill="#F5A623">DANGER</text><text x="75" y="96" text-anchor="middle" font-size="10" fill="#9896B0">Source</text><path d="M140 77 L178 77" stroke="#6B5CE7" stroke-width="2" marker-end="url(#pm4)"/><rect x="178" y="27" width="150" height="100" rx="12" fill="#F0EFFA" stroke="#6B5CE7" stroke-width="2"/><text x="253" y="71" text-anchor="middle" font-size="11" font-weight="700" fill="#6B5CE7">Situation</text><text x="253" y="85" text-anchor="middle" font-size="11" font-weight="700" fill="#6B5CE7">dangereuse</text><text x="253" y="103" text-anchor="middle" font-size="9" fill="#9896B0">Exposition</text><path d="M328 77 L370 77" stroke="#6B5CE7" stroke-width="2" marker-end="url(#pm4)"/><rect x="370" y="18" width="155" height="120" rx="12" fill="#FFF0F0" stroke="#E84855" stroke-width="2"/><text x="447" y="60" text-anchor="middle" font-size="10" font-weight="700" fill="#E84855">Événement</text><text x="447" y="74" text-anchor="middle" font-size="10" font-weight="700" fill="#E84855">déclencheur</text><text x="447" y="93" text-anchor="middle" font-size="9" fill="#9896B0">Soudain ou</text><text x="447" y="106" text-anchor="middle" font-size="9" fill="#9896B0">temps exposition</text><path d="M525 77 L565 77" stroke="#6B5CE7" stroke-width="2" marker-end="url(#pm4)"/><rect x="565" y="38" width="120" height="78" rx="12" fill="#E84855"/><text x="625" y="82" text-anchor="middle" font-size="13" font-weight="800" fill="white">DOMMAGE</text><text x="350" y="162" text-anchor="middle" font-size="12" font-weight="800" fill="#6B5CE7">Hiérarchie des mesures</text><rect x="10" y="178" width="155" height="35" rx="8" fill="#E84855" fill-opacity=".12" stroke="#E84855" stroke-width="1.5"/><text x="87" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#E84855">1. Supprimer</text><rect x="180" y="178" width="155" height="35" rx="8" fill="#F5A623" fill-opacity=".12" stroke="#F5A623" stroke-width="1.5"/><text x="257" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#F5A623">2. Réduire</text><rect x="350" y="178" width="165" height="35" rx="8" fill="#2B8EF0" fill-opacity=".12" stroke="#2B8EF0" stroke-width="1.5"/><text x="432" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#2B8EF0">3. Prot. collective</text><rect x="530" y="178" width="155" height="35" rx="8" fill="#1DB87A" fill-opacity=".12" stroke="#1DB87A" stroke-width="1.5"/><text x="607" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#1DB87A">4. EPI</text><defs><marker id="pm4" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6B5CE7"/></marker></defs></svg></div>`,
+     questions:[
+       {q:'Différence entre danger et risque ?',opts:["Synonymes","Danger = source de dommage, risque = probabilité que ça survienne","Danger = probabilité, risque = source","Risque plus grave"],bon:1,expl:"Danger = propriété intrinsèque pouvant causer un dommage. Risque = probabilité que ce dommage survienne."},
+       {q:"Processus d'apparition d'un dommage ?",opts:['Dommage → Danger → Situation → Déclencheur','Danger → Situation dangereuse → Déclencheur → Dommage','Déclencheur → Danger → Situation → Dommage','Situation → Dommage → Danger → Déclencheur'],bon:1,expl:"Processus : Danger → Situation dangereuse → Événement déclencheur → Dommage."},
+       {q:'Mesure de prévention prioritaire ?',opts:['Porter des EPI','Protection collective','Supprimer le danger','Former les salariés'],bon:2,expl:'Priorité absolue : supprimer le danger. Puis réduire, puis protection collective, puis EPI.'},
+       {q:"Qu'est-ce qu'un risque de chute de plain-pied ?",opts:['Tomber d\'une échelle','Glissade, trébuchement ou perte équilibre au même niveau','Chute depuis un toit','Objet tombant sur un opérateur'],bon:1,expl:'Chute de plain-pied = glissade, trébuchement contre obstacle, ou perte équilibre au même niveau.'},
+       {q:'Que peut-on faire avec les points du C2P ?',opts:['Uniquement retraite','Uniquement se former','Retraite anticipée, formation ou temps partiel sans perte de salaire','Les convertir en argent'],bon:2,expl:'Points C2P = retraite anticipée, formation professionnelle, ou temps partiel sans perte de salaire.'},
+     ,
+       {q:'Qu\'est-ce qu\'une situation dangereuse ?',opts:['Un accident déjà survenu','Une situation dans laquelle une personne est exposée à un ou plusieurs dangers','Un danger potentiel non identifié','Un risque sans conséquences'],bon:1,expl:'Une situation dangereuse est une situation dans laquelle une personne (opérateur) est exposée à un ou plusieurs dangers. C\'est le deuxième élément du processus d\'apparition du dommage (Danger → Situation dangereuse → Déclencheur → Dommage).'},
+       {q:'Dans la situation de Léa (aide-soignante), le sol mouillé est un danger. Quel est l\'événement déclencheur ?',opts:['Le sol mouillé lui-même','Léa se déplace sur le sol','Léa glisse sur le sol mouillé','Le dommage (blessure)'],bon:2,expl:'L\'événement déclencheur est Léa qui GLISSE sur le sol mouillé. Le sol mouillé = danger ; Léa se déplace sur le sol = situation dangereuse ; Léa glisse = événement déclencheur ; hématome/fracture = dommage potentiel.'},
+       {q:'Le linge souillé dans une EHPAD appartient à quelle famille de risques ?',opts:['Risques chimiques','Risques liés aux agents biologiques','Risques de chute','Risques liés aux équipements'],bon:1,expl:'Le linge souillé (contenant des agents pathogènes potentiels) appartient à la famille des risques liés aux agents biologiques. La manipulation de déchets biologiques sans protection peut causer des infections.'},
+       {q:'Pourquoi le port de chaussures de sécurité est-il une consigne de sécurité pertinente pour le risque de chute de plain-pied ?',opts:['Pour être mieux présenté','Il prévient les glissades et protège les pieds en cas de chute ou de choc','Il ne sert à rien pour ce risque','Uniquement pour protéger contre les produits chimiques'],bon:1,expl:'Les chaussures de sécurité antidérapantes préviennent les glissades sur sol mouillé (risque de chute de plain-pied) et protègent les pieds en cas de chute d\'objets ou de choc. C\'est une mesure de protection individuelle (EPI).'}
+     ]},
+  ];
+  pseModules.forEach(m => THEMES.push(m));
+})();
+
 let curTheme=null,curTab='rev',curFilter='all';
 
 // ═══ MODE SWITCH ═══
@@ -2515,7 +2742,7 @@ function switchMode(m){
   if(m==='inscription'){
     try{
       const saved=localStorage.getItem('flowin_profile');
-      if(saved){const p=JSON.parse(saved);userProfile=p;userInscribed=true;QS.playerName=p.pseudo||p.prenom;const me=PLAYERS.find(pl=>pl.me);if(me)me.name=QS.playerName;const hg=document.querySelector('.app-hero-greet');if(hg)hg.textContent='👋 Salut '+(p.pseudo||p.prenom)+' !';m='app';}
+      if(saved){const p=JSON.parse(saved);userProfile=p;userInscribed=true;QS.playerName=p.pseudo||p.prenom;const me=PLAYERS.find(pl=>pl.me);if(me)me.name=QS.playerName;const hg=document.querySelector('.app-hero-greet');if(hg)hg.textContent='👋 Salut '+(p.pseudo||p.prenom)+' !';m='app';logConnexion(p.pseudo||p.prenom);}
     }catch(e){}
   }
   if(m==='pwa'){try{if(localStorage.getItem('pwa_installed'))m='app';}catch(e){}}
@@ -2556,6 +2783,9 @@ function submitFlowinSignup(){
   // Persistance locale
   try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
 
+  // Log connexion (inscription = première connexion)
+  logConnexion(pseudo || prenom);
+
   // → Google Sheets (inscription)
   saveProfileToSheets(userProfile);
 
@@ -2569,15 +2799,18 @@ function triggerAndroid(){document.getElementById('andSuccess').style.display='b
 // ═══ APP / FICHES ═══
 function filterThemes(f){
   curFilter=f;
-  ['all','hist','geo','emc'].forEach(x=>document.getElementById('fp-'+x).classList.toggle('active',x===f));
+  ['all','hist','geo','emc','pse'].forEach(x=>{
+    const el=document.getElementById('fp-'+x);
+    if(el) el.classList.toggle('active',x===f);
+  });
   renderThemeList();
 }
 function renderThemeList(){
-  // Map filter to matiere field
   const matFilter=curFilter==='all'?null:
     curFilter==='hist'?'📘 Histoire':
     curFilter==='geo'?'🌍 Géographie':
-    curFilter==='emc'?'⚖️ EMC':null;
+    curFilter==='emc'?'⚖️ EMC':
+    curFilter==='pse'?'🩺 PSE':null;
   const shown=matFilter?THEMES.filter(t=>t.mat===matFilter):THEMES;
   document.getElementById('themeListEl').innerHTML=shown.map(t=>{
     const sc=t.score;
@@ -2694,16 +2927,59 @@ function renderFicheContent(t){
 // ═══════════════════════════════════════════════
 
 // Mapping THEMES Flowin → BANQUES Quiz (icônes + diff + couleur pour la roulette)
-const BANQUES = THEMES.map((t,i)=>({
-  themeId:t.id,
-  name:t.title.length>26?t.title.slice(0,24)+'…':t.title,
-  shortName:t.title,
-  icon:t.emoji,
-  color:t.color,
-  color2:t.color,
-  rare:t.id==='t14',
-  diff: t.id==='t14' ? 'Mixte · ×1.5 pts' : ['Difficile','Moyenne','Moyenne','Difficile','Moyenne','Facile','Facile','Moyenne','Difficile','Moyenne','Difficile','Moyenne','Facile','Mixte'][i] || 'Moyenne',
-}));
+const DIFF_MAP = ['Difficile','Moyenne','Moyenne','Difficile','Moyenne','Facile','Facile','Moyenne','Difficile','Moyenne','Difficile','Moyenne','Facile','Mixte','Facile','Moyenne','Moyenne','Facile','Moyenne','Moyenne','Facile','Facile','Moyenne','Difficile'];
+
+function makeBanque(t,i){
+  return {
+    themeId: t.id,
+    name: t.title.length>26?t.title.slice(0,24)+'…':t.title,
+    shortName: t.title,
+    icon: t.emoji,
+    color: t.color,
+    color2: t.color,
+    rare: t.id==='t14',
+    diff: t.id==='t14' ? 'Mixte · ×1.5 pts' : (DIFF_MAP[i] || 'Moyenne'),
+    mat: t.mat,
+  };
+}
+
+const BANQUES_ALL = THEMES.map((t,i)=>makeBanque(t,i));
+let BANQUES_FILTERED = [...BANQUES_ALL];
+let BANQUES = BANQUES_FILTERED; // alias pour compatibilité
+let spinMode = 'all';
+
+function buildFilteredBanques(){
+  const matMap={
+    'all': null,
+    'hist': '📘 Histoire',
+    'geo': '🌍 Géographie',
+    'emc': '⚖️ EMC',
+    'pse': '🩺 PSE',
+  };
+  const mat = matMap[spinMode];
+  BANQUES_FILTERED = mat ? BANQUES_ALL.filter(b=>b.mat===mat) : [...BANQUES_ALL];
+  BANQUES = BANQUES_FILTERED;
+}
+
+function setSpinMode(mode){
+  spinMode = mode;
+  ['all','hist','geo','emc','pse'].forEach(x=>{
+    const el=document.getElementById('smode-'+x);
+    if(el) el.classList.toggle('active', x===mode);
+  });
+  buildFilteredBanques();
+  // Reset roue et réinitialiser
+  QS.spinAngle = 0;
+  document.getElementById('spinBtn').style.display='block';
+  document.getElementById('spinBtn').disabled=false;
+  document.getElementById('startQuizBtn').style.display='none';
+  document.getElementById('banqueReveal').style.display='none';
+  document.getElementById('spinStatus').textContent='Tourne la roue pour choisir ton thème !';
+  drawSpin(QS.spinAngle);
+}
+
+// Initialisation au chargement
+buildFilteredBanques();
 
 // État global du quiz
 const QS = {
@@ -2735,6 +3011,35 @@ let userInscribed = false;
 let userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
 const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
+
+// ── LOG CONNEXION ──
+let _lastLogTs = 0;
+async function logConnexion(pseudo) {
+  if(!pseudo) return;
+  // Limiter à 1 log toutes les 30 minutes pour ne pas spammer
+  const now = Date.now();
+  if(now - _lastLogTs < 30 * 60 * 1000) return;
+  _lastLogTs = now;
+  try {
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const device = isPWA ? 'PWA' : (isMobile ? 'Mobile Web' : 'Desktop Web');
+    await fetch(SUPABASE_URL + '/rest/v1/connexions', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        pseudo: pseudo,
+        device: device,
+        user_agent: (navigator.userAgent || '').slice(0, 200)
+      })
+    });
+  } catch(e) { console.warn('Log connexion failed:', e); }
+}
 
 // ── BARÈME (chargé depuis Supabase table config, fallback hardcodé) ──
 let BAREME_CONFIG = {
@@ -3112,7 +3417,7 @@ function startQuizFromFiche(){
   const idx = THEMES.findIndex(t=>t.id===curTheme.id);
   if(idx>=0) QS.banqueIdx = idx;
   // Mettre à jour le chip de la banque
-  const b = BANQUES[QS.banqueIdx];
+  const b = BANQUES_FILTERED[QS.banqueIdx];
   document.getElementById('qBanqueChip').textContent = b.icon+' '+b.shortName;
   // Switcher vers la vue quiz
   switchMode('quiz');
@@ -3139,7 +3444,7 @@ function qGo(id){
 }
 
 // ── ROULETTE ──
-const ARC = (2*Math.PI)/BANQUES.length;
+function getARC(){ return (2*Math.PI)/BANQUES_FILTERED.length; }
 function initSpin(){
   document.getElementById('spinBtn').style.display = 'block';
   document.getElementById('spinBtn').disabled = false;
@@ -3152,8 +3457,9 @@ function drawSpin(angle, highlightIdx){
   const c = document.getElementById('spinCanvas'); if(!c) return;
   const ctx = c.getContext('2d');
   const r = 130, cx = 140, cy = 140;
+  const ARC = getARC();
   ctx.clearRect(0,0,280,280);
-  BANQUES.forEach((b,i)=>{
+  BANQUES_FILTERED.forEach((b,i)=>{
     const start = angle + i*ARC, end = start+ARC;
     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
     ctx.fillStyle = b.color; ctx.fill();
@@ -3181,10 +3487,11 @@ function drawSpin(angle, highlightIdx){
 function doSpin(){
   if(QS.spinning) return;
   QS.spinning = true;
+  const ARC = getARC();
   document.getElementById('spinBtn').disabled = true;
   document.getElementById('spinStatus').textContent = '🎰 La roue tourne…';
   document.getElementById('banqueReveal').style.display = 'none';
-  const winIdx = Math.floor(Math.random()*BANQUES.length);
+  const winIdx = Math.floor(Math.random()*BANQUES_FILTERED.length);
   const targetAngle = -(winIdx*ARC) - ARC/2 + Math.PI*.5;
   const totalRot = Math.PI*2*7 + targetAngle - QS.spinAngle;
   const duration = 4500; let start = null; const startA = QS.spinAngle;
@@ -3198,7 +3505,7 @@ function doSpin(){
     else {
       QS.spinning=false; QS.banqueIdx=winIdx;
       drawSpin(QS.spinAngle, winIdx);
-      const b = BANQUES[winIdx];
+      const b = BANQUES_FILTERED[winIdx];
       document.getElementById('spinStatus').textContent = '✨ '+b.shortName+' !';
       document.getElementById('brIcon').textContent = b.icon;
       document.getElementById('brName').textContent = b.shortName;
@@ -3223,7 +3530,7 @@ function goToCRM(){
   qGo('crm');
 }
 function initCRM(){
-  const b = BANQUES[QS.banqueIdx];
+  const b = BANQUES_FILTERED[QS.banqueIdx];
   document.getElementById('crmBanquePill').textContent = b.icon+' '+b.shortName;
   if(QS.roundsPlayed > 0){
     document.getElementById('crmReturning').style.display = 'flex';
@@ -3261,7 +3568,7 @@ function submitCRM(){
 
 // ── DÉMARRER LE QUIZ ──
 function startQuiz(){
-  const b = BANQUES[QS.banqueIdx];
+  const b = BANQUES_FILTERED[QS.banqueIdx];
   const theme = THEMES[QS.banqueIdx];
   const pool = (theme.questions || []).slice();
   const shuffled = pool.sort(()=>Math.random()-.5);
@@ -3350,7 +3657,7 @@ function answerQ(idx){
       }
       breakdown = ' <span style="opacity:.85;font-size:11px">('+base+' base +'+(pts-base)+' série ×'+QS.streak+')</span>';
     }
-    if(BANQUES[QS.banqueIdx].rare) pts = Math.round(pts * BAREME_CONFIG.pts_rare_multiplier);
+    if(BANQUES_FILTERED[QS.banqueIdx].rare) pts = Math.round(pts * BAREME_CONFIG.pts_rare_multiplier);
     fb.className='q-feedback show ok';
     const expl = q.exp || q.expl || '';
     fb.innerHTML = '<b style="font-size:15px;">🌟 Bravo ! Bonne réponse !</b> <span style="background:var(--green);color:#fff;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:800;margin-left:6px;">+'+pts+' pts</span>'+breakdown+(expl?'<span class="q-expl-txt">💡 '+expl+'</span>':'');
