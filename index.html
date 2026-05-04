@@ -3014,12 +3014,15 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 // ── LOG CONNEXION ──
 let _lastLogTs = 0;
+let _sessionStart = Date.now(); // heure de début de session
+
 async function logConnexion(pseudo) {
   if(!pseudo) return;
-  // Limiter à 1 log toutes les 30 minutes pour ne pas spammer
+  // 1 log par session max (throttle 30min)
   const now = Date.now();
   if(now - _lastLogTs < 30 * 60 * 1000) return;
   _lastLogTs = now;
+  _sessionStart = now; // reset le chrono de session
   try {
     const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
     const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
@@ -3035,11 +3038,44 @@ async function logConnexion(pseudo) {
       body: JSON.stringify({
         pseudo: pseudo,
         device: device,
-        user_agent: (navigator.userAgent || '').slice(0, 200)
+        user_agent: (navigator.userAgent || '').slice(0, 200),
+        duree_min: 0 // sera mis à jour par logDeconnexion
       })
     });
   } catch(e) { console.warn('Log connexion failed:', e); }
 }
+
+// Enregistre la durée de session quand l'élève quitte la page
+async function logDeconnexion(pseudo) {
+  if(!pseudo || !_lastLogTs) return;
+  const duree = Math.round((Date.now() - _sessionStart) / 60000); // en minutes
+  if(duree < 1) return; // moins d'1 minute = pas significatif
+  try {
+    // Mettre à jour la dernière connexion avec la durée réelle
+    await fetch(SUPABASE_URL + '/rest/v1/connexions?pseudo=eq.' + encodeURIComponent(pseudo) + '&order=ts.desc&limit=1', {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ duree_min: duree })
+    });
+  } catch(e) {}
+}
+
+// Écouter la fermeture de page pour logger la durée
+window.addEventListener('visibilitychange', function() {
+  if(document.visibilityState === 'hidden' && userProfile && (userProfile.pseudo || userProfile.prenom)) {
+    logDeconnexion(userProfile.pseudo || userProfile.prenom);
+  }
+});
+window.addEventListener('beforeunload', function() {
+  if(userProfile && (userProfile.pseudo || userProfile.prenom)) {
+    logDeconnexion(userProfile.pseudo || userProfile.prenom);
+  }
+});
 
 // ── BARÈME (chargé depuis Supabase table config, fallback hardcodé) ──
 let BAREME_CONFIG = {
