@@ -3414,8 +3414,14 @@ async function loadLeaderboardFromSupabase() {
 // ── ENTRÉES vers le quiz depuis Flowin ──
 function startQuizFromFiche(){
   // Lance le quiz DIRECTEMENT sur le thème de la fiche — sans passer par la roue
-  const idx = THEMES.findIndex(t=>t.id===curTheme.id);
-  if(idx>=0) QS.banqueIdx = idx;
+  // Chercher l'index dans BANQUES_FILTERED par themeId (pas dans THEMES)
+  let idx = BANQUES_FILTERED.findIndex(b => b.themeId === curTheme.id);
+  if(idx < 0){
+    // Thème absent du filtre actif (ex: PSE sélectionné, fiche Histoire) → basculer sur Tout
+    setSpinMode('all');
+    idx = BANQUES_FILTERED.findIndex(b => b.themeId === curTheme.id);
+  }
+  if(idx >= 0) QS.banqueIdx = idx;
   // Mettre à jour le chip de la banque
   const b = BANQUES_FILTERED[QS.banqueIdx];
   document.getElementById('qBanqueChip').textContent = b.icon+' '+b.shortName;
@@ -3569,7 +3575,8 @@ function submitCRM(){
 // ── DÉMARRER LE QUIZ ──
 function startQuiz(){
   const b = BANQUES_FILTERED[QS.banqueIdx];
-  const theme = THEMES[QS.banqueIdx];
+  // CORRECTION : chercher le thème par son ID, pas par l'index (qui change selon le filtre actif)
+  const theme = THEMES.find(t => t.id === b.themeId) || THEMES[0];
   const pool = (theme.questions || []).slice();
   const shuffled = pool.sort(()=>Math.random()-.5);
   QS.questions = shuffled.slice(0, Math.min(5, shuffled.length));
@@ -4158,8 +4165,10 @@ function renderThemeCard(idx, saved) {
   var quizBtn = document.getElementById('stc-quiz-' + idx);
   if (quizBtn) {
     quizBtn.onclick = function() {
-      var i = THEMES.findIndex(function(tt) { return tt.id === t.id; });
-      QS.banqueIdx = i;
+      // Basculer sur "Tout" pour s'assurer que le thème est dans BANQUES_FILTERED
+      setSpinMode('all');
+      var i = BANQUES_FILTERED.findIndex(function(b) { return b.themeId === t.id; });
+      if(i >= 0) QS.banqueIdx = i;
       switchMode('quiz');
       startQuiz();
     };
