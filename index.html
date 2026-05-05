@@ -276,6 +276,8 @@ body{font-family:'Calibri','Trebuchet MS',Arial,sans-serif;background:#0F0E1A;mi
 .q-btn-play:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(176,108,228,.55)}
 .q-btn-league{padding:13px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.18);border-radius:16px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;font-size:14px;font-weight:600;cursor:pointer}
 
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 /* ── Q-SPIN ── */
 .q-spin{flex:1;padding:20px 22px 24px;display:flex;flex-direction:column;align-items:center;background:var(--cream)}
 .q-spin-hdr{text-align:center;margin-bottom:14px}
@@ -1020,7 +1022,7 @@ window.addEventListener('unhandledrejection', function(e){
           <div style="font-size:38px;flex-shrink:0;line-height:1">📖</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:18px;font-weight:800;line-height:1.2">Réviser mes cours</div>
-            <div style="font-size:13px;font-weight:600;opacity:.8;margin-top:3px" id="welcomeLastTheme">14 fiches t'attendent</div>
+            <div style="font-size:13px;font-weight:600;opacity:.8;margin-top:3px" id="welcomeLastTheme">23 fiches t'attendent</div>
           </div>
           <div style="font-size:22px;opacity:.7;flex-shrink:0">→</div>
         </button>
@@ -1067,98 +1069,169 @@ window.addEventListener('unhandledrejection', function(e){
     <div class="grid-bg"></div>
     <div class="orb" style="width:500px;height:500px;background:rgba(176,108,228,.15);top:-120px;left:-150px"></div>
     <div class="orb" style="width:400px;height:400px;background:rgba(43,134,197,.12);bottom:-80px;right:-100px"></div>
+
+    <!-- NAV -->
     <nav>
       <div class="lnav-logo">Flowin</div>
-      <button class="lnav-cta" onclick="switchMode('inscription')">Commencer maintenant 🚀</button>
+      <button class="lnav-cta" onclick="switchMode('pwa')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:13px">📲 Installer l'app</button>
     </nav>
+
+    <!-- HERO -->
     <div class="hero-section">
-      <div class="hero-badge"><span></span>Bac Pro 2026 · Histoire · Géo · EMC</div>
+      <div class="hero-badge"><span></span>Bac Pro 2026 · Histoire · Géo · EMC · PSE</div>
       <h1 class="hero-title">
         <span class="l1">Révise</span>
         <span class="l2">comme t'as</span>
         <span class="l3">jamais révisé</span>
       </h1>
-      <p class="hero-sub">14 fiches de révision · 112 questions QCM · Résultats sauvegardés · Accessible partout</p>
-      <div class="hero-btns">
-        <button class="btn-main" onclick="switchMode('inscription')">⚡ Commencer maintenant</button>
-      </div>
-      <div class="stats-row">
-        <div class="stat-item"><div class="stat-num">14</div><div class="stat-lbl">Thèmes</div></div>
+      <p class="hero-sub" id="heroSub">23 fiches · 230 questions · Résultats sauvegardés · Accessible partout</p>
+
+      <div class="stats-row" id="landingStatsRow">
+        <div class="stat-item"><div class="stat-num" id="statThemes">23</div><div class="stat-lbl">Thèmes</div></div>
         <div class="stat-sep"></div>
-        <div class="stat-item"><div class="stat-num">112</div><div class="stat-lbl">Questions</div></div>
+        <div class="stat-item"><div class="stat-num" id="statQuestions">230</div><div class="stat-lbl">Questions</div></div>
         <div class="stat-sep"></div>
-        <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Matières</div></div>
+        <div class="stat-item"><div class="stat-num" id="statMatieres">4</div><div class="stat-lbl">Matières</div></div>
       </div>
     </div>
-    <div class="features">
-      <div class="feat-card" onclick="switchMode('inscription')">
-        <div class="feat-icon">📖</div>
-        <div class="feat-title">14 fiches de révision</div>
-        <div class="feat-desc">Dates clés, l'essentiel, vocabulaire. Police Calibri, grande taille, aérée.</div>
+
+    <!-- COMMENT ÇA MARCHE — 2 BLOCS GAMING -->
+    <div style="padding:32px 20px;background:#0d0120">
+      <div style="text-align:center;margin-bottom:22px">
+        <div style="font-size:11px;font-weight:800;color:#7B4FBF;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:8px">● Le principe</div>
+        <div style="font-size:clamp(20px,4vw,26px);font-weight:800;color:#fff">Simple. Ludique. Efficace.</div>
       </div>
-      <div class="feat-card" onclick="switchMode('inscription')">
-        <div class="feat-icon">🎯</div>
-        <div class="feat-title">112 questions QCM</div>
-        <div class="feat-desc">8 questions par thème. Feedback immédiat avec explication pédagogique.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📷</div>
-        <div class="feat-title">Photos de tes vrais cours</div>
-        <div class="feat-desc">Tes photos de tableau sont intégrées directement dans les fiches.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📊</div>
-        <div class="feat-title">Visuels & frises SVG</div>
-        <div class="feat-desc">Chaque thème a sa frise chronologique et son schéma conceptuel.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📈</div>
-        <div class="feat-title">Progression suivie</div>
-        <div class="feat-desc">Scores sauvegardés, streak de révision, statistiques par thème.</div>
-      </div>
-      <div class="feat-card" onclick="switchMode('pwa')">
-        <div class="feat-icon">📲</div>
-        <div class="feat-title">App sur ton téléphone</div>
-        <div class="feat-desc">Installe le raccourci en 1 clic Android ou 3 taps iOS. Accès direct.</div>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:700px;margin:0 auto">
+
+        <!-- MODE RÉVISION -->
+        <div style="background:linear-gradient(135deg,#1a0535,#120025);border:1.5px solid rgba(176,108,228,.45);border-radius:20px;padding:18px 18px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,#B06CE4,#9B4FD4)"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <div style="width:3px;height:16px;background:#B06CE4;border-radius:2px"></div>
+            <span style="font-size:11px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:1.2px">Mode révision</span>
+            <div style="margin-left:auto;display:flex;gap:4px">
+              <span style="width:7px;height:7px;border-radius:50%;background:#B06CE4;box-shadow:0 0 5px #B06CE4;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:#B06CE4;box-shadow:0 0 5px #B06CE4;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:rgba(176,108,228,.3);display:inline-block"></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:rgba(176,108,228,.12);border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(176,108,228,.7))">📖</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Révise</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">23 fiches · Essentiel · Dates · Vocabulaire</div>
+            </div>
+            <div style="flex:1;background:rgba(176,108,228,.12);border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(176,108,228,.7))">🧠</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Mémorise</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">Quiz · Feedback immédiat · Explication</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:6px;padding-left:4px">
+            <span style="width:5px;height:5px;border-radius:50%;background:#B06CE4;box-shadow:0 0 4px #B06CE4;display:inline-block"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,.45);font-style:italic">Lis · Comprends · Teste-toi au quiz</span>
+          </div>
+        </div>
+
+        <!-- MODE JEU -->
+        <div style="background:linear-gradient(135deg,#1a0800,#100400);border:1.5px solid rgba(244,168,58,.45);border-radius:20px;padding:18px 18px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,#F4A83A,#e8850a)"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <div style="width:3px;height:16px;background:#F4A83A;border-radius:2px"></div>
+            <span style="font-size:11px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:1.2px">Mode jeu</span>
+            <div style="margin-left:auto;display:flex;gap:4px">
+              <span style="width:7px;height:7px;border-radius:50%;background:#F4A83A;box-shadow:0 0 5px #F4A83A;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:#F4A83A;box-shadow:0 0 5px #F4A83A;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:rgba(244,168,58,.3);display:inline-block"></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(244,168,58,.7))">🎡</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Quiz</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">Roue · 5 questions · 30 sec · Points</div>
+            </div>
+            <div style="flex:1;background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(244,168,58,.7))">⚔️</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Défie</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">Invite · Mise des pts · Rafle la cagnotte</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:6px;padding-left:4px">
+            <span style="width:5px;height:5px;border-radius:50%;background:#F4A83A;box-shadow:0 0 4px #F4A83A;display:inline-block"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,.45);font-style:italic">Joue · Défie tes amis · Rafle la cagnotte</span>
+          </div>
+        </div>
+
       </div>
     </div>
-    <div class="howto">
-      <h2 class="howto-title">Comment ça marche ?</h2>
-      <div class="steps-row">
-        <div class="step-item">
-          <div class="step-num">1</div>
-          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">Tu ouvres le lien</div>
-          <div class="step-txt">SMS ou QR code. Ça s'ouvre dans ton navigateur.</div>
-          <div class="step-line"></div>
+
+    <!-- MODE DÉFI GAMING (bloc validé) -->
+    <div style="padding:28px 20px;background:#0a0015">
+      <div style="background:linear-gradient(135deg,#0d001a,#1a0035,#0d001a);border-radius:16px;padding:20px 16px;font-family:inherit;overflow:hidden;position:relative;max-width:900px;margin:0 auto">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <div style="width:3px;height:18px;background:linear-gradient(180deg,#F4A83A,#B06CE4);border-radius:2px"></div>
+          <span style="font-size:13px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:1.2px">⚔️ Mode défi</span>
+          <div style="margin-left:auto;display:flex;gap:5px;align-items:center">
+            <span style="width:8px;height:8px;border-radius:50%;background:#E84855;display:inline-block;box-shadow:0 0 6px #E84855"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#F4A83A;display:inline-block;box-shadow:0 0 6px #F4A83A"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 6px #1DB87A"></span>
+          </div>
         </div>
-        <div class="step-item">
-          <div class="step-num">2</div>
-          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">Tu t'inscris</div>
-          <div class="step-txt">30 secondes. Ton profil est créé, tes scores sauvegardés.</div>
-          <div class="step-line"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div style="background:rgba(176,108,228,.12);border:1.5px solid rgba(176,108,228,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#B06CE4;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(176,108,228,.8))">💌</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Invite</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Envoie le lien à un camarade par WhatsApp ou SMS</div>
+          </div>
+          <div style="background:rgba(244,168,58,.12);border:1.5px solid rgba(244,168,58,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#F4A83A;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(244,168,58,.8))">💰</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Mise tes pts</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Mise des points gagnés en révisant tes fiches</div>
+          </div>
+          <div style="background:rgba(29,184,122,.12);border:1.5px solid rgba(29,184,122,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#1DB87A;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(29,184,122,.8))">🏆</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Rafle tout</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Meilleur score au quiz = toute la cagnotte pour toi</div>
+          </div>
         </div>
-        <div class="step-item">
-          <div class="step-num">3</div>
-          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">Tu choisis un thème</div>
-          <div class="step-txt">Histoire, Géo ou EMC. 14 fiches t'attendent.</div>
-          <div class="step-line"></div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">4</div>
-          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">Tu te testes</div>
-          <div class="step-txt">Quiz immédiat, résultats, feedback, et tu recommences.</div>
+        <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:8px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
+          <span style="font-size:12px;color:rgba(255,255,255,.55);font-style:italic">Les points se gagnent en révisant · Les défis font tout perdre ou tout gagner</span>
+          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
         </div>
       </div>
     </div>
+
+    <!-- INSTALL PWA -->
+    <div style="padding:28px 20px;background:#0d0120;text-align:center">
+      <div style="font-size:36px;margin-bottom:10px">📲</div>
+      <div style="font-weight:800;font-size:18px;color:#fff;margin-bottom:6px">Installe l'app sur ton téléphone</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:18px;line-height:1.5">Accès direct depuis ton écran · Sans téléchargement</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button onclick="switchMode('pwa')" style="background:rgba(0,122,255,.15);color:#4da6ff;border:1.5px solid rgba(0,122,255,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🍎 iOS — 3 taps</button>
+        <button onclick="switchMode('pwa')" style="background:rgba(52,168,83,.15);color:#5cd98a;border:1.5px solid rgba(52,168,83,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🤖 Android — 1 clic</button>
+      </div>
+    </div>
+
+    <!-- CTA FINAL + RGPD -->
     <div class="cta-bottom">
       <h2>Prêt·e à cartonner le bac ?</h2>
-      <p>Sans téléchargement</p>
-      <button class="btn-main" onclick="switchMode('inscription')">🚀 Commencer maintenant</button>
+      <p>Gratuit · Sans téléchargement · Accessible partout</p>
+      <div style="margin-top:8px;padding:16px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.08);text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
+        <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.7">
+          🔒 <strong style="color:rgba(255,255,255,.75)">Confidentialité</strong> — En t'inscrivant, tu acceptes que tes données (prénom, établissement, scores) soient utilisées pour le fonctionnement de Flowin. Tes données ne sont pas revendues. Tu peux demander leur suppression à tout moment.<br>
+          <span style="color:rgba(255,255,255,.4);font-size:12px;margin-top:4px;display:block">Tu acceptes également d'être contacté·e par OPCONSULT dans le cadre de Flowin et de futures offres pédagogiques.</span>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
 </div>
-
 <!-- ═══ INSCRIPTION ═══ -->
 <div class="view" id="v-inscription">
   <div class="insc-view">
@@ -1575,7 +1648,7 @@ window.addEventListener('unhandledrejection', function(e){
           <button class="q-btn-replay" onclick="qGo('spin')">🎲 Rejouer — autre thème !</button>
           <button class="q-btn-see-league" onclick="qGo('league')">🏆 Voir le classement complet</button>
           <!-- Bouton Défis -->
-          <button onclick="switchMode('defis')" style="width:100%;padding:14px;background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;border:none;border-radius:16px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(244,168,58,.4)">
+          <button onclick="switchMode('defis')" style="position:relative;width:100%;padding:14px;background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;border:none;border-radius:16px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(244,168,58,.4)">
             <span style="font-size:20px">⚔️</span>
             <div style="text-align:left">
               <div>Continue à réviser — remporte des défis !</div>
@@ -2829,6 +2902,27 @@ function renderThemeList(){
     </button>`;
   }).join('');
 }
+
+// ── NUDGE QUIZ après lecture d'une fiche ──
+function showQuizNudge(themeId){
+  if(document.getElementById('quizNudge')) return; // déjà affiché
+  var t = THEMES.find(function(th){ return th.id===themeId; });
+  if(!t) return;
+  var nudge = document.createElement('div');
+  nudge.id = 'quizNudge';
+  nudge.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;border-radius:20px;padding:14px 20px;display:flex;align-items:center;gap:12px;z-index:9999;box-shadow:0 8px 32px rgba(244,168,58,.5);max-width:320px;width:90%;animation:slideUp .3s ease;cursor:pointer';
+  nudge.innerHTML = '<div style="font-size:24px">🎯</div>'
+    +'<div style="flex:1">'
+    +'<div style="font-weight:800;font-size:14px">Prêt·e pour le quiz ?</div>'
+    +'<div style="font-size:12px;opacity:.85">Teste-toi sur <b>'+t.title+'</b></div>'
+    +'</div>'
+    +'<button onclick="var n=document.getElementById(&quot;quizNudge&quot;);if(n)n.remove();startQuizFromFiche();" style="background:rgba(255,255,255,.25);border:none;border-radius:12px;color:#fff;font-family:inherit;font-weight:800;font-size:12px;padding:8px 12px;cursor:pointer;white-space:nowrap">C\'est parti !</button>'
+    +'<button onclick="var n=document.getElementById(&quot;quizNudge&quot;);if(n)n.remove();" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;padding:0 4px">✕</button>';
+  document.body.appendChild(nudge);
+  // Auto-retrait après 8 secondes
+  setTimeout(function(){ var n=document.getElementById('quizNudge'); if(n) n.remove(); }, 8000);
+}
+
 function openFiche(id){
   curTheme=THEMES.find(t=>t.id===id);curTab='rev';
   const c=curTheme.color;
@@ -2850,6 +2944,16 @@ function openFiche(id){
   renderFicheContent('rev');
   document.getElementById('listScreen').style.display='none';
   document.getElementById('ficheScreen').classList.add('open');
+
+  // Stimulation : proposer le quiz après 45s de lecture
+  if(window._ficheQuizTimer) clearTimeout(window._ficheQuizTimer);
+  window._ficheQuizTimer = setTimeout(function(){
+    // Vérifier que l'élève est toujours sur la fiche
+    if(document.getElementById('v-app') && document.getElementById('v-app').classList.contains('act')){
+      showQuizNudge(id);
+    }
+  }, 45000);
+
 }
 function closeFiche(){
   document.getElementById('ficheScreen').classList.remove('open');
@@ -2968,6 +3072,26 @@ function setSpinMode(mode){
     if(el) el.classList.toggle('active', x===mode);
   });
   buildFilteredBanques();
+
+// Détecter un lien d'invitation dans l'URL
+(function() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const roomId = params.get('room');
+    if(roomId) {
+      // Stocker pour rejoindre après inscription
+      localStorage.setItem('flowin_pending_room', roomId);
+      // Si déjà inscrit → rejoindre directement
+      const saved = localStorage.getItem('flowin_profile');
+      if(saved) {
+        setTimeout(function() {
+          switchMode('defis');
+          dfJoinRoom(roomId);
+        }, 800);
+      }
+    }
+  } catch(e) {}
+})();
   // Reset roue et réinitialiser
   QS.spinAngle = 0;
   document.getElementById('spinBtn').style.display='block';
@@ -2980,6 +3104,31 @@ function setSpinMode(mode){
 
 // Initialisation au chargement
 buildFilteredBanques();
+
+// Mettre à jour les compteurs de la landing dynamiquement
+function updateLandingStats(){
+  try {
+    const nbThemes = THEMES.length;
+    const nbQuestions = THEMES.reduce(function(acc, t){ return acc + (t.questions ? t.questions.length : 0); }, 0);
+    const matieres = [...new Set(THEMES.map(t=>t.mat))].length;
+    const el = function(id){ return document.getElementById(id); };
+    if(el('statThemes')) el('statThemes').textContent = nbThemes;
+    if(el('statQuestions')) el('statQuestions').textContent = nbQuestions;
+    if(el('statMatieres')) el('statMatieres').textContent = matieres;
+    if(el('heroSub')) el('heroSub').textContent = nbThemes+' fiches de révision · '+nbQuestions+' questions QCM · Résultats sauvegardés · Accessible partout';
+    if(el('featFichesTitle')) el('featFichesTitle').textContent = nbThemes+' fiches de révision';
+    if(el('featQuizTitle')) el('featQuizTitle').textContent = nbQuestions+' questions · Roue';
+  } catch(e){}
+}
+// Appeler au chargement (après que le DOM soit prêt)
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', updateLandingStats);
+} else {
+  updateLandingStats();
+}
+
+// Sessions Supabase de l'élève (chargées au démarrage)
+var USER_SESSIONS = [];
 
 // État global du quiz
 const QS = {
@@ -3135,7 +3284,8 @@ async function loadPlayerStatsFromSupabase(pseudo) {
     const sessions = await res.json();
     if(!Array.isArray(sessions) || sessions.length === 0) return;
 
-    // Vraies stats
+    // Stocker globalement pour la courbe 7 jours par thème
+    USER_SESSIONS = sessions;
     const totalPts   = Math.max(...sessions.map(s => s.pts_total||0), 0);
     const nbSessions = sessions.length;
     const maxStreak  = Math.max(...sessions.map(s => s.streak||0), 0);
@@ -3757,6 +3907,61 @@ function endRound(){
   QS.roundsPlayed++;
   if(QS.score > 800) QS.rank = Math.max(1, QS.rank-1);
   qGo('round');
+  setTimeout(function(){
+    var pct = QS.correctCount / (QS.questions ? QS.questions.length : 5) * 100;
+    if(pct >= 80) showDefiNudge();
+    else showReplayNudge();
+  }, 3500);
+}
+
+
+// -- NUDGE DEFI apres bon score --
+function showDefiNudge(){
+  if(document.getElementById('defiNudge')) return;
+  var n = document.createElement('div');
+  n.id = 'defiNudge';
+  n.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border-radius:20px;padding:14px 18px;display:flex;align-items:center;gap:10px;z-index:9999;box-shadow:0 8px 32px rgba(123,79,191,.5);max-width:320px;width:90%;animation:slideUp .3s ease';
+  n.innerHTML = '<div style="font-size:26px">&#9876;</div><div style="flex:1"><div style="font-weight:800;font-size:14px">Belle perf !</div><div style="font-size:12px;opacity:.85">Lance un defi !</div></div>';
+  var b1 = document.createElement('button');
+  b1.textContent = 'Defier';
+  b1.style.cssText = 'background:rgba(255,255,255,.2);border:none;border-radius:12px;color:#fff;font-family:inherit;font-weight:800;font-size:12px;padding:8px 12px;cursor:pointer;white-space:nowrap';
+  b1.onclick = function(){ var x=document.getElementById('defiNudge');if(x)x.remove();switchMode('defis'); };
+  var b2 = document.createElement('button');
+  b2.textContent = 'x';
+  b2.style.cssText = 'background:none;border:none;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer;padding:0 4px';
+  b2.onclick = function(){ var x=document.getElementById('defiNudge');if(x)x.remove(); };
+  n.appendChild(b1); n.appendChild(b2);
+  document.body.appendChild(n);
+  setTimeout(function(){ var x=document.getElementById('defiNudge');if(x)x.remove(); }, 7000);
+}
+
+// -- NUDGE REJOUER autre theme --
+function showReplayNudge(){
+  if(document.getElementById('replayNudge')) return;
+  var curId = BANQUES_FILTERED[QS.banqueIdx] ? BANQUES_FILTERED[QS.banqueIdx].themeId : null;
+  var others = BANQUES_FILTERED.filter(function(b){ return b.themeId !== curId; });
+  if(!others.length) return;
+  var next = others[Math.floor(Math.random()*others.length)];
+  var n = document.createElement('div');
+  n.id = 'replayNudge';
+  n.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2B8EF0,#1a6fc4);color:#fff;border-radius:20px;padding:14px 18px;display:flex;align-items:center;gap:10px;z-index:9999;box-shadow:0 8px 32px rgba(43,142,240,.5);max-width:320px;width:90%;animation:slideUp .3s ease';
+  n.innerHTML = '<div style="font-size:26px">'+next.icon+'</div><div style="flex:1"><div style="font-weight:800;font-size:14px">Continue !</div><div style="font-size:12px;opacity:.85">Essaie '+next.name+'</div></div>';
+  var nextId = next.themeId;
+  var b1 = document.createElement('button');
+  b1.textContent = 'Jouer !';
+  b1.style.cssText = 'background:rgba(255,255,255,.2);border:none;border-radius:12px;color:#fff;font-family:inherit;font-weight:800;font-size:12px;padding:8px 12px;cursor:pointer;white-space:nowrap';
+  b1.onclick = function(){
+    var x=document.getElementById('replayNudge');if(x)x.remove();
+    var idx=BANQUES_FILTERED.findIndex(function(b){ return b.themeId===nextId; });
+    if(idx>=0){ QS.banqueIdx=idx; startQuiz(); }
+  };
+  var b2 = document.createElement('button');
+  b2.textContent = 'x';
+  b2.style.cssText = 'background:none;border:none;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer;padding:0 4px';
+  b2.onclick = function(){ var x=document.getElementById('replayNudge');if(x)x.remove(); };
+  n.appendChild(b1); n.appendChild(b2);
+  document.body.appendChild(n);
+  setTimeout(function(){ var x=document.getElementById('replayNudge');if(x)x.remove(); }, 7000);
 }
 
 // ═══ SYSTÈME D'ASSIDUITÉ ═══
@@ -4135,30 +4340,61 @@ function renderThemeCard(idx, saved) {
     + ' font-family="Calibri,Arial,sans-serif" font-size="16" font-weight="800" fill="' + color + '">' + score + '%</text>'
     + '</svg>';
 
-  // Sparkline SVG
-  var days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-  var base = score > 0
-    ? [0, Math.round(score * 0.4), Math.round(score * 0.6), Math.round(score * 0.5),
-       Math.round(score * 0.8), score, Math.round(score * 0.9)]
-    : [0, 0, 0, 0, 0, 0, 0];
+  // Sparkline SVG — vraies données Supabase (7 derniers jours)
+  var dayLabels = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  // Construire un tableau des 7 derniers jours (du plus ancien au plus récent)
+  var sevenDays = [];
+  for(var d = 6; d >= 0; d--) {
+    var dd = new Date(Date.now() - d * 86400000);
+    var yy = dd.getFullYear();
+    var mm = String(dd.getMonth()+1).padStart(2,'0');
+    var jj = String(dd.getDate()).padStart(2,'0');
+    sevenDays.push(yy + '-' + mm + '-' + jj);
+  }
+  dayLabels = sevenDays.map(function(ds) {
+    return ['D','L','M','M','J','V','S'][new Date(ds).getDay()];
+  });
+  // Pour chaque jour : score_pct moyen des sessions du thème t ce jour-là (0 si aucune)
+  var base = sevenDays.map(function(ds) {
+    var daySessions = USER_SESSIONS.filter(function(s) {
+      if(!s.ts) return false;
+      var sDate = s.ts.slice(0,10);
+      var sTheme = (s.theme || '').toLowerCase();
+      var tTitle = (t.title || '').toLowerCase();
+      var tId    = (t.id   || '').toLowerCase();
+      return sDate === ds && (sTheme === tTitle || sTheme === tId || sTheme.indexOf(tId) >= 0);
+    });
+    if(daySessions.length === 0) return 0;
+    var sum = daySessions.reduce(function(acc, s) { return acc + (s.score_pct || 0); }, 0);
+    return Math.round(sum / daySessions.length);
+  });
   var maxV = Math.max.apply(null, base) || 1;
   var sw = 200, sh = 48;
-  var pts = base.map(function(v, i) {
+  var allZero = base.every(function(v){ return v === 0; });
+  var sparkPts = base.map(function(v, i) {
     return [i * (sw / (base.length - 1)), sh - (v / maxV * (sh - 8)) + 4];
   });
-  var path = 'M ' + pts.map(function(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L ');
-  var area = 'M ' + pts[0][0] + ' ' + sh + ' L ' + path.slice(2) + ' L ' + pts[pts.length - 1][0] + ' ' + sh + ' Z';
-  var sparkSVG = '<svg width="100%" viewBox="0 0 200 48" style="display:block;overflow:visible">'
-    + '<defs><linearGradient id="sg' + idx + '" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0%" stop-color="' + color + '" stop-opacity=".3"/>'
-    + '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>'
-    + '</linearGradient></defs>'
-    + '<path d="' + area + '" fill="url(#sg' + idx + ')"/>'
-    + '<path d="' + path + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
-    + pts.map(function(p) {
-        return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3" fill="' + color + '"/>';
-      }).join('')
-    + '</svg>';
+  var path = 'M ' + sparkPts.map(function(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L ');
+  var area = 'M ' + sparkPts[0][0] + ' ' + sh + ' L ' + path.slice(2) + ' L ' + sparkPts[sparkPts.length-1][0] + ' ' + sh + ' Z';
+  var sparkSVG = '<svg width="100%" viewBox="0 0 200 60" style="display:block;overflow:visible">';
+  if(allZero) {
+    // Pas encore de données pour ce thème
+    sparkSVG += '<text x="100" y="30" text-anchor="middle" font-size="11" fill="#bbb">Aucune session sur ce thème</text>';
+  } else {
+    sparkSVG += '<defs><linearGradient id="sg' + idx + '" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0%" stop-color="' + color + '" stop-opacity=".3"/>'
+      + '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>'
+      + '</linearGradient></defs>'
+      + '<path d="' + area + '" fill="url(#sg' + idx + ')"/>'
+      + '<path d="' + path + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
+      + sparkPts.map(function(p, i) {
+          var val = base[i];
+          var dot = '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3" fill="' + (val > 0 ? color : '#ddd') + '"/>';
+          var lbl = val > 0 ? '<text x="' + p[0].toFixed(1) + '" y="' + (p[1]-6).toFixed(1) + '" text-anchor="middle" font-size="9" fill="' + color + '" font-weight="700">' + val + '%</text>' : '';
+          return dot + lbl;
+        }).join('');
+  }
+  sparkSVG += '</svg>';
 
   var star = score >= 80 ? '⭐ Expert' : score >= 60 ? '✅ Bien' : score > 0 ? '📝 En cours' : '○ Non commencé';
   var panel = document.getElementById('statsThemePanel');
@@ -4183,7 +4419,7 @@ function renderThemeCard(idx, saved) {
       + '<div class="stats-curve-lbl">📈 Progression 7 jours</div>'
       + sparkSVG
       + '<div style="display:flex;justify-content:space-between;margin-top:4px">'
-        + days.map(function(d) { return '<span style="font-size:10px;color:#aaa;font-weight:600">' + d + '</span>'; }).join('')
+        + dayLabels.map(function(d) { return '<span style="font-size:10px;color:#aaa;font-weight:600">' + d + '</span>'; }).join('')
       + '</div>'
     + '</div>'
     + '<button class="stats-th-cta" id="stc-rev-' + idx + '" style="background:' + color + ';color:#fff">📖 Réviser ce thème</button>'
@@ -4626,7 +4862,8 @@ const DF_THEME_LABELS = {
   roulette: '🎡 Roulette',
   hist:     '📘 Histoire',
   geo:      '🌍 Géo',
-  emc:      '⚖️ EMC'
+  emc:      '⚖️ EMC',
+  pse:      '🩺 PSE',
 };
 
 // ── ENTRÉE / SORTIE de la vue défis ──
@@ -4665,12 +4902,145 @@ function dfTab(name){
   if(name==='waiting') dfRenderWaiting();
 }
 
+// ── JOUEURS EN LIGNE ──
+var DF_SELECTED_PLAYERS = [];
+
+function dfTogglePlayer(name, btn, row){
+  var idx = DF_SELECTED_PLAYERS.indexOf(name);
+  if(idx >= 0){
+    DF_SELECTED_PLAYERS.splice(idx,1);
+    btn.textContent = 'Defier';
+    btn.style.background = 'linear-gradient(135deg,#B06CE4,#7B4FBF)';
+    row.style.borderColor = '#EDE9FE';
+    row.style.background = '#fff';
+  } else {
+    DF_SELECTED_PLAYERS.push(name);
+    btn.textContent = 'Selectionne';
+    btn.style.background = 'linear-gradient(135deg,#1DB87A,#158a5c)';
+    row.style.borderColor = '#1DB87A';
+    row.style.background = '#f0fdf8';
+  }
+  var invBlock = document.getElementById('dfInviteSelected');
+  var invBtn = document.getElementById('dfInviteSelBtn');
+  if(invBlock) invBlock.style.display = DF_SELECTED_PLAYERS.length > 0 ? 'block' : 'none';
+  if(invBtn) invBtn.textContent = 'Inviter '+DF_SELECTED_PLAYERS.length+' joueur'+(DF_SELECTED_PLAYERS.length>1?'s':'');
+}
+
+function dfInviteSelected(){
+  var link = dfGetInviteLink(DF_CURRENT ? DF_CURRENT.id : window.location.href);
+  var myName = (userProfile && (userProfile.pseudo||userProfile.prenom)) || 'Un ami';
+  var msg = encodeURIComponent(myName+' te defie sur Flowin ! Revise et remporte la cagnotte. '+link);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+function dfRenderPlayers() {
+  var list = document.getElementById('dfPlayersList');
+  if(!list) return;
+  DF_SELECTED_PLAYERS = [];
+  var invBlock = document.getElementById('dfInviteSelected');
+  if(invBlock) invBlock.style.display = 'none';
+  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
+  var players = (PLAYERS || []).filter(function(p){ return p.name && p.name !== myName && !p.me; }).slice(0,8);
+  if(players.length === 0){
+    list.innerHTML = '<div style="text-align:center;padding:12px 4px;color:#7A7AAA;font-size:13px;font-style:italic">Personne de disponible.<br>Invite un ami par WhatsApp !</div>';
+    return;
+  }
+  var colors = ['#7B4FBF','#E84855','#2B8EF0','#1DB87A','#F5A623','#E040A0'];
+  var rows = players.map(function(p){
+    var initials = p.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+    var col = colors[Math.abs((p.name.charCodeAt(0)||0)) % colors.length];
+    var sn = p.name.replace(/['"<>]/g,'');
+    var pts = p.pts ? p.pts.toLocaleString('fr')+' pts' : '--';
+    return '<div class="df-pir" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:14px;margin-bottom:8px;border:1.5px solid #EDE9FE;transition:all .2s">'
+      + '<div style="width:36px;height:36px;border-radius:50%;background:'+col+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0">'+initials+'</div>'
+      + '<div style="flex:1;min-width:0">'
+      +   '<div style="font-weight:700;font-size:13px;color:#1E1048">'+p.name+'</div>'
+      +   '<div style="font-size:11px;color:#7A7AAA">'+pts+'</div>'
+      + '</div>'
+      + '<button class="df-defy-btn" data-sn="'+sn+'" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:8px 12px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s">'
+      +   'Defier'
+      + '</button>'
+      + '</div>';
+  });
+  list.innerHTML = rows.join('');
+  list.querySelectorAll('.df-defy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var sn = this.dataset.sn;
+      var row = this.closest('.df-pir');
+      dfTogglePlayer(sn, this, row);
+    });
+  });
+}
+
+
+// ── DÉFIER UN JOUEUR DIRECTEMENT ──
+function dfChallengePlayer(btn) {
+  var playerName = btn ? btn.dataset.name : '';
+  DF_FORM.mise = 100;
+  DF_FORM.theme = 'roulette';
+  DF_FORM.cap = 2;
+  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Joueur';
+  var roomName = 'Défi ' + myName + ' vs ' + playerName;
+  document.getElementById('dfRoomName').value = roomName;
+  dfCreateRoom(playerName);
+}
+
+// ── PARTAGE D'INVITATION ──
+let DF_CURRENT_ROOM_ID = null;
+
+function dfGetInviteLink(roomId) {
+  const base = window.location.href.split('?')[0];
+  return base + '?room=' + encodeURIComponent(roomId || DF_CURRENT_ROOM_ID || '');
+}
+
+function dfShareWhatsApp() {
+  const myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
+  const link = dfGetInviteLink();
+  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! Rejoins ma room : ' + link);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+function dfShareSMS() {
+  const myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
+  const link = dfGetInviteLink();
+  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! ' + link);
+  window.open('sms:?body=' + msg, '_blank');
+}
+
+function dfCopyLink() {
+  const link = dfGetInviteLink();
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(() => {
+      const btn = document.getElementById('dfCopyBtn');
+      if(btn) { btn.textContent = '✅ Copié !'; setTimeout(() => { btn.textContent = '🔗 Copier le lien'; }, 2000); }
+    });
+  } else {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = link;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn = document.getElementById('dfCopyBtn');
+    if(btn) { btn.textContent = '✅ Copié !'; setTimeout(() => { btn.textContent = '🔗 Copier le lien'; }, 2000); }
+  }
+}
+
+function dfShowInviteBlock(roomId) {
+  DF_CURRENT_ROOM_ID = roomId;
+  const block = document.getElementById('dfInviteBlock');
+  if(block) block.style.display = 'block';
+}
+
 // ── LOBBY ──
 function dfRenderLobby(myOnly){
   const list = document.getElementById('dfRoomsList');
   if(!list) return;
   let rooms = DF_ROOMS.slice();
   if(myOnly) rooms = rooms.filter(r => r.isMine);
+  // Afficher les joueurs en ligne seulement sur l'onglet lobby complet
+  if(!myOnly) dfRenderPlayers();
   if(rooms.length === 0){
     list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#7A7AAA;font-size:14px;font-style:italic">'
       + (myOnly ? 'Tu n\'as pas encore créé ou rejoint de défi.<br><br>Crée-en un pour commencer !' : 'Aucune room ouverte pour l\'instant')
@@ -4742,7 +5112,8 @@ function dfSelTheme(t){
     roulette: '🎡 Roulette : le thème sera tiré au sort au moment du lancement (suspense !) · Chaque joueur reçoit ses propres questions sur le thème tiré (anti-triche)',
     hist:     '📘 Histoire : tu imposes le thème · Chaque joueur reçoit ses propres questions sur ce thème (anti-triche)',
     geo:      '🌍 Géographie : tu imposes le thème · Chaque joueur reçoit ses propres questions sur ce thème (anti-triche)',
-    emc:      '⚖️ EMC : tu imposes le thème · Chaque joueur reçoit ses propres questions sur ce thème (anti-triche)'
+    emc:      '⚖️ EMC : tu imposes le thème · Chaque joueur reçoit ses propres questions sur ce thème (anti-triche)',
+    pse:      '🩺 PSE : tu imposes le thème · Chaque joueur reçoit ses propres questions PSE (anti-triche)'
   };
   document.getElementById('dfThemeNote').textContent = notes[t] || '';
 }
@@ -4757,7 +5128,7 @@ function dfUpdateCagnottePreview(){
   if(el) el.textContent = total.toLocaleString('fr');
 }
 
-function dfCreateRoom(){
+function dfCreateRoom(playerName){
   const bal = dfGetBalance();
   if(DF_FORM.mise > bal){
     alert('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + DF_FORM.mise + '.');
@@ -4797,6 +5168,8 @@ function dfCreateRoom(){
   // Ajouter a mes defis
   dfAddToMyDefis({id:roomId, name:roomName, role:'createur', mise:room.mise, theme:room.theme, status:'waiting', ts:room.ts, resultat:null});
 
+  // Afficher bloc invitation avec l'ID de la room créée
+  dfShowInviteBlock(room.id);
   dfTab('waiting');
   dfSimulateBotJoins();
 }
@@ -4822,11 +5195,23 @@ function dfSimulateBotJoins(){
 }
 
 // ── SALLE D'ATTENTE ──
+function dfCopyLinkWait(){
+  var link = dfGetInviteLink(DF_CURRENT ? DF_CURRENT.id : '');
+  if(navigator.clipboard){ navigator.clipboard.writeText(link); }
+  var b=document.getElementById('dfCopyBtn2');
+  if(b){ b.textContent='✅ Copie!'; setTimeout(function(){b.textContent='🔗 Copier';},2000); }
+}
 function dfRenderWaiting(){
   if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
-  document.getElementById('dfWaitTtl').textContent = room.players.length >= room.cap ? '✅ Room complète !' : '⏳ En attente de joueurs…';
-  document.getElementById('dfWaitSub').textContent = room.players.length + '/' + room.cap + ' joueurs · ' + DF_THEME_LABELS[room.theme];
+  var room = DF_CURRENT;
+  var isFull = room.players.length >= room.cap;
+  var emojiEl = document.getElementById('dfWaitEmoji');
+  if(emojiEl) emojiEl.textContent = isFull ? '✅' : '⏳';
+  document.getElementById('dfWaitTtl').textContent = isFull ? 'Room complete ! Prets ?' : 'En attente de joueurs…';
+  document.getElementById('dfWaitSub').textContent = room.players.length + '/' + room.cap + ' joueurs · ' + (DF_THEME_LABELS[room.theme]||room.theme);
+  var link = dfGetInviteLink(room.id);
+  var qrImg = document.getElementById('dfQRimg');
+  if(qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(link);
   document.getElementById('dfWaitMise').textContent = room.mise;
   document.getElementById('dfWaitCagnotte').textContent = (room.mise * room.players.length).toLocaleString('fr');
 
@@ -4928,6 +5313,18 @@ function dfJoinRoom(roomId){
 }
 
 // ── LANCEMENT DU DÉFI ──
+function dfConfirmStart(){
+  if(!DF_CURRENT) return;
+  var mise = DF_CURRENT.mise;
+  var nb = DF_CURRENT.players.length;
+  var cagnotte = mise * nb;
+  var m = document.createElement('div');
+  m.id = 'dfConfirmModal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  m.innerHTML = '<div style="background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center">'    + '<div style="font-size:36px;margin-bottom:12px">⚔️</div>'    + '<div style="font-weight:800;font-size:18px;color:#1E1048;margin-bottom:8px">Confirmer le defi</div>'    + '<div style="font-size:14px;color:#7A7AAA;margin-bottom:16px;line-height:1.5">Tu vas miser <b style=\"color:#F4A83A\">'+mise+' pts</b>.<br>Cagnotte totale : <b style=\"color:#7B4FBF\">'+cagnotte+' pts</b>.<br>Le meilleur score remporte tout.<br><span style=\"color:#EF4444;font-weight:700\">Si tu perds, tu perds ta mise.</span></div>'    + '<div style="display:flex;gap:10px">'    +   '<button onclick="document.getElementById(\'dfConfirmModal\').remove();" style="flex:1;background:#F3F4F6;color:#6B7280;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">Annuler</button>'    +   '<button onclick="document.getElementById(\'dfConfirmModal\').remove();dfStartGame();" style="flex:1;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">Oui, je joue !</button>'    + '</div>'    + '</div>';
+  document.body.appendChild(m);
+}
+
 function dfStartGame(){
   if(!DF_CURRENT) return;
   const room = DF_CURRENT;
@@ -5467,17 +5864,68 @@ function saveSessionToSheets(qs, profile) {
       <button class="df-tab" id="dfTabMy" onclick="dfTab('my')">🎯 Mes défis</button>
     </div>
 
-    <!-- ÉCRAN LOBBY (liste des rooms) -->
+    <!-- ÉCRAN LOBBY -->
     <div class="df-screen" id="dfScreenLobby">
+
+      <!-- ACCROCHE DÉFIS GAMING -->
+      <div style="background:linear-gradient(135deg,#0d001a,#1a0035,#0d001a);border-radius:16px;padding:20px 16px;margin-bottom:16px;font-family:inherit;overflow:hidden;position:relative">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <div style="width:3px;height:18px;background:linear-gradient(180deg,#F4A83A,#B06CE4);border-radius:2px"></div>
+          <span style="font-size:13px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:1.2px">⚔️ Mode défi</span>
+          <div style="margin-left:auto;display:flex;gap:5px;align-items:center">
+            <span style="width:8px;height:8px;border-radius:50%;background:#E84855;display:inline-block;box-shadow:0 0 6px #E84855"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#F4A83A;display:inline-block;box-shadow:0 0 6px #F4A83A"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 6px #1DB87A"></span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div style="background:rgba(176,108,228,.12);border:1.5px solid rgba(176,108,228,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#B06CE4;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(176,108,228,.8))">💌</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Invite</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Envoie le lien à un camarade par WhatsApp ou SMS</div>
+          </div>
+          <div style="background:rgba(244,168,58,.12);border:1.5px solid rgba(244,168,58,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#F4A83A;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(244,168,58,.8))">💰</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Mise tes pts</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Mise des points gagnés en révisant tes fiches</div>
+          </div>
+          <div style="background:rgba(29,184,122,.12);border:1.5px solid rgba(29,184,122,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#1DB87A;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(29,184,122,.8))">🏆</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Rafle tout</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Meilleur score au quiz = toute la cagnotte pour toi</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:8px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
+          <span style="font-size:12px;color:rgba(255,255,255,.55);font-style:italic">Les points se gagnent en révisant · Les défis font tout perdre ou tout gagner</span>
+          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
+        </div>
+      </div>
+
+      <!-- CRÉER -->
       <button class="df-cta-create" onclick="dfShowCreate()">
         <div style="font-size:24px">➕</div>
         <div style="flex:1;text-align:left">
           <div>Créer un défi</div>
-          <div style="font-size:12px;font-weight:600;opacity:.85;margin-top:2px">Choisis ta mise et lance ta room</div>
+          <div style="font-size:12px;font-weight:600;opacity:.85;margin-top:2px">Choisis ta mise · Invite · Rafle la cagnotte</div>
         </div>
         <div style="font-size:18px">→</div>
       </button>
-      <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin:8px 4px 10px">🔥 Rooms ouvertes</div>
+
+      <!-- JOUEURS ACTIFS -->
+      <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin:14px 4px 8px">⚡ Joueurs actifs — défie-les !</div>
+      <div id="dfPlayersList" style="margin-bottom:4px"></div>
+      <div id="dfInviteSelected" style="display:none;padding:10px 0">
+        <button id="dfInviteSelBtn" onclick="dfInviteSelected()" style="width:100%;background:linear-gradient(135deg,#25D366,#1da851);color:#fff;border:none;border-radius:14px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">
+          💬 Inviter les joueurs sélectionnés par WhatsApp
+        </button>
+      </div>
+
+      <!-- ROOMS -->
+      <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin:14px 4px 10px">🔥 Rooms ouvertes — rejoins !</div>
       <div id="dfRoomsList"></div>
     </div>
 
@@ -5510,6 +5958,7 @@ function saveSessionToSheets(qs, profile) {
           <button class="df-pill" data-theme="hist" onclick="dfSelTheme('hist')">📘 Histoire</button>
           <button class="df-pill" data-theme="geo" onclick="dfSelTheme('geo')">🌍 Géo</button>
           <button class="df-pill" data-theme="emc" onclick="dfSelTheme('emc')">⚖️ EMC</button>
+          <button class="df-pill" data-theme="pse" onclick="dfSelTheme('pse')">🩺 PSE</button>
         </div>
         <div style="font-size:12px;color:#7A7AAA;font-weight:600;margin-top:8px" id="dfThemeNote">🎡 Roulette : le thème sera tiré au sort au moment du lancement (suspense !) · Chaque joueur reçoit ses propres questions sur le thème tiré (anti-triche)</div>
       </div>
@@ -5545,23 +5994,36 @@ function saveSessionToSheets(qs, profile) {
     <div class="df-screen hidden" id="dfScreenWaiting">
       <div class="df-waiting">
         <div class="df-wait-hdr">
-          <div class="df-wait-emoji">⏳</div>
+          <div class="df-wait-emoji" id="dfWaitEmoji">⏳</div>
           <div class="df-wait-ttl" id="dfWaitTtl">En attente de joueurs…</div>
-          <div class="df-wait-sub" id="dfWaitSub">2/4 joueurs · Le défi démarrera quand tu lances</div>
+          <div class="df-wait-sub" id="dfWaitSub">0/2 joueurs</div>
         </div>
-
         <div class="df-cagnotte-big">
           <div class="df-cagnotte-big-val">🏆 <span id="dfWaitCagnotte">200</span> pts</div>
-          <div class="df-cagnotte-big-lbl">Cagnotte actuelle · Mise : <span id="dfWaitMise">100</span> pts/joueur</div>
+          <div class="df-cagnotte-big-lbl">Cagnotte · Mise : <span id="dfWaitMise">100</span> pts/joueur</div>
         </div>
-
         <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">👥 Joueurs dans la room</div>
         <div class="df-players-list" id="dfWaitPlayers"></div>
-
-        <button class="df-form-submit" id="dfStartBtn" onclick="dfStartGame()" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);box-shadow:0 4px 18px rgba(176,108,228,.4)">
+        <!-- INVITATION -->
+        <div style="background:linear-gradient(135deg,#1a0533,#2d1060);border-radius:18px;padding:16px;margin:14px 0">
+          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:4px">📲 Inviter des joueurs</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:12px">Partage le lien ou fais scanner le QR code</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <button onclick="dfShareWhatsApp()" style="flex:1;background:#25D366;color:#fff;border:none;border-radius:12px;padding:10px 4px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">💬 WhatsApp</button>
+            <button onclick="dfShareSMS()" style="flex:1;background:#5856D6;color:#fff;border:none;border-radius:12px;padding:10px 4px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">📱 SMS</button>
+            <button onclick="dfCopyLinkWait()" id="dfCopyBtn2" style="flex:1;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:12px;padding:10px 4px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">🔗 Copier</button>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">QR Code</div>
+            <div style="background:#fff;border-radius:12px;padding:8px;display:inline-block">
+              <img id="dfQRimg" src="" alt="QR" style="width:90px;height:90px;display:block">
+            </div>
+          </div>
+        </div>
+        <button class="df-form-submit" id="dfStartBtn" onclick="dfConfirmStart()" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);box-shadow:0 4px 18px rgba(176,108,228,.4)">
           🎮 Lancer le défi maintenant
         </button>
-        <div style="text-align:center;font-size:12px;color:#7A7AAA;margin-top:8px;font-weight:600" id="dfWaitHint">Tu peux lancer dès qu'il y a au moins 2 joueurs</div>
+        <div style="text-align:center;font-size:12px;color:#7A7AAA;margin-top:8px;font-weight:600" id="dfWaitHint">Il faut au moins 2 joueurs</div>
         <button onclick="dfCancelRoom()" style="width:100%;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:700;padding:10px;margin-top:6px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
       </div>
     </div>
