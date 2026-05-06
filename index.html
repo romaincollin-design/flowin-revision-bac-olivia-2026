@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="Flowin">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232D1B6B'/><text y='.9em' font-size='75' x='12'>🌊</text></svg>">
 <meta charset="UTF-8">
+<!-- FLOWIN V9.1 - 2026-05-06 - Mon Espace + Gains -->
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Flowin — Preview complète</title>
 <!-- Calibri -->
@@ -924,6 +925,97 @@ img { max-width:100%; height:auto; }
 }
 /* Ensure insc form select readable */  
 .finput select, select.finput { font-size:17px !important; }
+
+/* ── GAINS SECTION profil ── */
+#gainsSection{display:none;margin:0 12px 12px}
+.gains-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.gains-header-icon{font-size:22px}
+.gains-header-text{font-size:14px;font-weight:800;color:#22C9A0;flex:1}
+.gains-header-sub{font-size:11px;color:rgba(34,201,160,.7);font-weight:600}
+.gain-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(120,100,220,.1)}
+.gain-row:last-child{border-bottom:none;padding-bottom:0}
+.gain-emoji{font-size:24px;flex-shrink:0}
+.gain-info{flex:1;min-width:0}
+.gain-nom{font-size:13px;font-weight:800;color:#F7F5FF}
+.gain-code{display:inline-block;font-size:12px;font-weight:800;color:#F4A83A;background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.3);border-radius:8px;padding:2px 10px;margin-top:3px;letter-spacing:.5px}
+.gain-cond{font-size:11px;color:#7A7AAA;font-weight:600;margin-top:2px}
+
+/* ── POPUPS GAINS ── */
+.gain-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9800;align-items:flex-end;justify-content:center;padding-bottom:32px}
+.gain-popup.gp-show{display:flex;animation:gpFadeIn .25s ease}
+.gp-card{background:#1A1730;border-radius:28px 28px 22px 22px;max-width:360px;width:92%;overflow:hidden;animation:gpSlideUp .35s cubic-bezier(.34,1.56,.64,1)}
+.gp-top{padding:22px 20px 16px;text-align:center;position:relative}
+.gp-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.08);border:none;border-radius:50%;width:28px;height:28px;font-size:14px;color:#7A7AAA;cursor:pointer;font-family:inherit}
+.gp-big-icon{font-size:52px;display:block;margin-bottom:8px}
+.gp-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#22C9A0;background:rgba(34,201,160,.15);border-radius:20px;padding:4px 12px;display:inline-block;margin-bottom:8px}
+.gp-title{font-size:19px;font-weight:800;color:#F7F5FF;line-height:1.25;margin-bottom:4px}
+.gp-sub{font-size:13px;color:#7A7AAA;font-weight:600;line-height:1.4}
+.gp-body{padding:0 20px}
+.gp-info-box{background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.2);border-radius:14px;padding:11px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.gp-info-box .gib-icon{font-size:20px;flex-shrink:0}
+.gp-info-box .gib-text{font-size:12px;font-weight:700;color:#EDEAFF;line-height:1.4}
+.gp-actions{padding:0 20px 20px;display:flex;flex-direction:column;gap:8px}
+.gp-btn-primary{background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:none;border-radius:14px;padding:13px 20px;font-size:14px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;transition:transform .15s}
+.gp-btn-primary:active{transform:scale(.97)}
+.gp-btn-ghost{background:none;border:none;color:#7A7AAA;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;padding:6px}
+.gp-ligue-gradient{height:100px;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gp-ligue-crown{font-size:52px;display:block}
+.gp-ligue-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.65);margin-top:4px}
+.gp-ligue-name{font-size:22px;font-weight:800;color:#F7F5FF;margin:8px 0 2px}
+.gp-avantage-list{background:rgba(0,0,0,.2);border-radius:12px;padding:10px 14px;margin-bottom:12px}
+.gp-av-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#F7F5FF;font-weight:600;padding:4px 0}
+
+/* ── MON ESPACE DRAWER ── */
+.me-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9700;display:none;align-items:flex-end;justify-content:center}
+.me-overlay.open{display:flex;animation:gpFadeIn .2s ease}
+.me-drawer{background:#1A1730;border-radius:28px 28px 0 0;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;padding-bottom:24px;animation:gpSlideUp .35s cubic-bezier(.34,1.56,.64,1)}
+.me-handle{width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:12px auto 0}
+.me-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
+.me-topbar-title{font-size:16px;font-weight:800;color:#F7F5FF}
+.me-topbar-pts{background:linear-gradient(135deg,#B06CE4,#7B4FBF);border-radius:20px;padding:5px 13px;font-size:13px;font-weight:800;color:#fff}
+.me-close{background:rgba(255,255,255,.08);border:none;border-radius:50%;width:30px;height:30px;font-size:15px;color:#7A7AAA;cursor:pointer;font-family:inherit}
+.me-section{padding:0 16px;margin-bottom:14px}
+.me-card{background:#12102A;border-radius:20px;padding:16px;position:relative;overflow:hidden}
+.me-card-ligue{background:linear-gradient(135deg,#2D1B6B,#4a2d9a)}
+.me-card-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.5);margin-bottom:10px}
+.me-ligue-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.me-ligue-icon{font-size:38px;line-height:1}
+.me-ligue-info{flex:1}
+.me-ligue-name{font-size:18px;font-weight:800;color:#fff}
+.me-ligue-sub{font-size:12px;color:rgba(255,255,255,.55);font-weight:600;margin-top:2px}
+.me-rank-badge{background:rgba(244,168,58,.2);border:1.5px solid rgba(244,168,58,.4);border-radius:14px;padding:6px 14px;text-align:center;flex-shrink:0}
+.me-rank-num{font-size:22px;font-weight:800;color:#F4A83A}
+.me-rank-lbl{font-size:10px;color:rgba(244,168,58,.7);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.me-progress-wrap{background:rgba(255,255,255,.1);border-radius:10px;height:8px;overflow:hidden;margin-bottom:4px}
+.me-progress-bar{background:linear-gradient(90deg,#B06CE4,#F4A83A);height:100%;border-radius:10px;transition:width .6s ease}
+.me-progress-labels{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.45);font-weight:600}
+.me-lb-rows{margin-top:12px}
+.me-lb-row{display:flex;align-items:center;gap:8px;border-radius:10px;padding:7px 8px;margin-bottom:4px;border:1px solid rgba(255,255,255,.06)}
+.me-lb-row.me{background:rgba(176,108,228,.3);border-color:rgba(176,108,228,.5)}
+.me-lb-rank{font-size:14px;font-weight:800;width:22px;text-align:center;color:#fff}
+.me-lb-name{flex:1;font-size:13px;font-weight:700;color:#fff}
+.me-lb-you{background:rgba(176,108,228,.6);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px}
+.me-lb-pts{font-size:14px;font-weight:800;color:#F4A83A}
+.me-gap-msg{margin-top:8px;background:rgba(176,108,228,.15);border-radius:10px;padding:7px 12px;font-size:12px;color:rgba(255,255,255,.75);text-align:center;font-weight:600;display:none}
+.me-card-gain{background:linear-gradient(135deg,rgba(34,201,160,.12),rgba(34,201,160,.05));border:1.5px solid rgba(34,201,160,.3)}
+.me-gain-hero{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.me-gain-emoji{font-size:42px;line-height:1}
+.me-gain-info{flex:1}
+.me-gain-nom{font-size:15px;font-weight:800;color:#F7F5FF}
+.me-gain-rule{font-size:12px;color:rgba(34,201,160,.8);font-weight:700;margin-top:3px}
+.me-gain-rule span{color:#22C9A0}
+.me-gain-tip{background:rgba(0,0,0,.25);border-radius:12px;padding:10px 12px;font-size:12px;color:rgba(255,255,255,.65);font-weight:600;line-height:1.5;display:flex;align-items:flex-start;gap:8px}
+.me-gained-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(120,100,220,.1)}
+.me-gained-row:last-child{border-bottom:none;padding-bottom:0}
+.me-gained-code{font-size:11px;font-weight:800;color:#F4A83A;background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.25);border-radius:8px;padding:2px 10px;margin-top:3px;display:inline-block;letter-spacing:.5px}
+.me-action-btns{display:flex;flex-direction:column;gap:8px;padding:0 16px}
+.me-btn-defi{background:linear-gradient(135deg,#F4A83A,#e8850a);border:none;border-radius:16px;padding:14px 20px;font-size:14px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;justify-content:center;transition:transform .15s;width:100%}
+.me-btn-defi:active{transform:scale(.97)}
+.me-btn-stats{background:rgba(176,108,228,.12);border:1.5px solid rgba(176,108,228,.3);border-radius:16px;padding:12px 20px;font-size:13px;font-weight:800;color:#B06CE4;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;justify-content:center;transition:transform .15s;width:100%}
+.me-btn-stats:active{transform:scale(.97)}
+
+@keyframes gpFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes gpSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>
 <script>
 // ── Garde-fou preview : on attrape les TypeError sur des objets inexistants
@@ -977,7 +1069,7 @@ window.addEventListener('unhandledrejection', function(e){
             <div style="font-size:11px;color:rgba(255,255,255,.5)" id="welcomeEmailMenu">olivia.l@mail.com</div>
           </div>
           <button onclick="switchMode('app');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>
-          <button onclick="switchMode('stats');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>
+          <button onclick="openMonEspace();document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Mon espace</button>
           <button onclick="openShare();document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>
           <div style="height:1px;background:rgba(255,255,255,.08);margin:4px 0"></div>
           <button onclick="logoutUser()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🚪 Déconnexion</button>
@@ -996,7 +1088,7 @@ window.addEventListener('unhandledrejection', function(e){
       </div>
 
       <!-- Mini-dashboard de stats -->
-      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(176,108,228,.18);border-radius:22px;padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px">
+      <div onclick="openMonEspace()" style="cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(176,108,228,.18);border-radius:22px;padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px">
         <div style="text-align:center">
           <div style="font-size:30px;margin-bottom:6px">⚡</div>
           <div style="font-size:24px;font-weight:800;color:#fff;font-family:'Calibri','Trebuchet MS',Arial,sans-serif" id="welcomePts">1 240</div>
@@ -1038,7 +1130,7 @@ window.addEventListener('unhandledrejection', function(e){
         </button>
 
         <!-- PROGRESSION -->
-        <button onclick="switchMode('stats')" style="width:100%;background:rgba(255,255,255,.07);color:#fff;border:1.5px solid rgba(255,255,255,.14);padding:18px 20px;border-radius:18px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;cursor:pointer;display:flex;align-items:center;gap:16px;text-align:left;transition:background .15s" onmouseenter="this.style.background='rgba(255,255,255,.12)'" onmouseleave="this.style.background='rgba(255,255,255,.07)'" ontouchstart="this.style.background='rgba(255,255,255,.12)'" ontouchend="this.style.background='rgba(255,255,255,.07)'">
+        <button onclick="openMonEspace()" style="width:100%;background:rgba(255,255,255,.07);color:#fff;border:1.5px solid rgba(255,255,255,.14);padding:18px 20px;border-radius:18px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;cursor:pointer;display:flex;align-items:center;gap:16px;text-align:left;transition:background .15s" onmouseenter="this.style.background='rgba(255,255,255,.12)'" onmouseleave="this.style.background='rgba(255,255,255,.07)'" ontouchstart="this.style.background='rgba(255,255,255,.12)'" ontouchend="this.style.background='rgba(255,255,255,.07)'">
           <div style="font-size:38px;flex-shrink:0;line-height:1">🏆</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:18px;font-weight:800;line-height:1.2">Ma progression</div>
@@ -1221,6 +1313,7 @@ window.addEventListener('unhandledrejection', function(e){
     <div class="cta-bottom">
       <h2>Prêt·e à cartonner le bac ?</h2>
       <p>Gratuit · Sans téléchargement · Accessible partout</p>
+      <button onclick="switchMode('inscription')" style="display:block;width:100%;max-width:340px;margin:20px auto 8px;padding:18px 24px;background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:none;border-radius:18px;font-family:inherit;font-size:17px;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 8px 28px rgba(123,79,191,.45)">&#x1F680; Démarrer maintenant</button>
       <div style="margin-top:8px;padding:16px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.08);text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
         <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.7">
           🔒 <strong style="color:rgba(255,255,255,.75)">Confidentialité</strong> — En t'inscrivant, tu acceptes que tes données (prénom, établissement, scores) soient utilisées pour le fonctionnement de Flowin. Tes données ne sont pas revendues. Tu peux demander leur suppression à tout moment.<br>
@@ -1349,7 +1442,7 @@ window.addEventListener('unhandledrejection', function(e){
         <button class="quiz-nav-btn" onclick="launchQuizFromNav()">🎯 Quiz</button>
         <button class="quiz-nav-btn" onclick="openDefis()" style="background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff" title="Défis multi-joueurs">⚔️ Défis</button>
         <button class="prog-nav-btn" onclick="openShare()" title="Partager Flowin" id="shareNavBtn" style="font-size:17px">🔗</button>
-        <button class="prog-nav-btn" onclick="switchMode('stats')" title="Ma progression" id="statsNavBtn">📊</button>
+        <button class="prog-nav-btn" onclick="openMonEspace()" title="Mon espace" id="statsNavBtn">📊</button>
       </div>
     </div>
     <!-- LISTE -->
@@ -3260,9 +3353,37 @@ async function loadConfigFromSupabase() {
   }
 }
 
+var LOTS_ON = false;
+var MY_GAINS = [];
+var LOTS_DB_CACHE = [];
+
+async function loadLotsConfig() {
+  try {
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    var r = await fetch(SUPABASE_URL + '/rest/v1/config?key=in.(lots_active,lots)&select=key,value', {headers: hdrs});
+    if (!r.ok) return;
+    var rows = await r.json();
+    rows.forEach(function(row) {
+      if (row.key === 'lots_active') LOTS_ON = (row.value === true || row.value === 'true');
+      if (row.key === 'lots' && Array.isArray(row.value)) LOTS_DB_CACHE = row.value;
+    });
+  } catch(e) {}
+}
+
+async function loadMyGains(pseudo) {
+  if (!pseudo) return;
+  try {
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    var r = await fetch(SUPABASE_URL + '/rest/v1/gains?pseudo=eq.' + encodeURIComponent(pseudo) + '&order=created_at.desc', {headers: hdrs});
+    if (!r.ok) return;
+    MY_GAINS = await r.json();
+    renderGainsSection();
+  } catch(e) {}
+}
+
 (function restoreProfile(){
-  // Charger le barème depuis Supabase en arrière-plan
   loadConfigFromSupabase();
+  loadLotsConfig();
   try {
     const saved = localStorage.getItem('flowin_profile');
     if(saved) {
@@ -3287,6 +3408,7 @@ async function loadPlayerStatsFromSupabase(pseudo) {
     // Stocker globalement pour la courbe 7 jours par thème
     USER_SESSIONS = sessions;
     const totalPts   = Math.max(...sessions.map(s => s.pts_total||0), 0);
+  if (typeof _lastLigueKey !== 'undefined' && _lastLigueKey === '') { _lastLigueKey = getLigueForPts(totalPts).key; }
     const nbSessions = sessions.length;
     const maxStreak  = Math.max(...sessions.map(s => s.streak||0), 0);
 
@@ -3907,6 +4029,7 @@ function endRound(){
   QS.roundsPlayed++;
   if(QS.score > 800) QS.rank = Math.max(1, QS.rank-1);
   qGo('round');
+  if (LOTS_ON) { setTimeout(function() { checkAndShowGainPopup(QS.totalScore); }, 1800); }
   setTimeout(function(){
     var pct = QS.correctCount / (QS.questions ? QS.questions.length : 5) * 100;
     if(pct >= 80) showDefiNudge();
@@ -5843,10 +5966,159 @@ function saveSessionToSheets(qs, profile) {
     ref:          (() => { try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
   });
 
-  // Recharger les stats depuis Supabase après sauvegarde pour rester en sync
   setTimeout(() => {
-    loadPlayerStatsFromSupabase(profile.pseudo || profile.prenom);
+    var pseudo = profile.pseudo || profile.prenom;
+    loadPlayerStatsFromSupabase(pseudo);
+    if (LOTS_ON) loadMyGains(pseudo);
   }, 1500);
+}
+
+// ═══ SYSTÈME GAINS & MON ESPACE ═══
+var _lastLigueKey = '';
+
+var LIGUE_META = {
+  bronze:  {icon:'&#x1F949;', name:'Ligue Bronze',  gradient:'linear-gradient(135deg,#CD7F32,#a0612a)'},
+  silver:  {icon:'&#x1F948;', name:'Ligue Argent',  gradient:'linear-gradient(135deg,#9096B2,#6b7199)'},
+  gold:    {icon:'&#x1F947;', name:'Ligue Or',      gradient:'linear-gradient(135deg,#F4A83A,#e8850a)'},
+  diamond: {icon:'&#x1F48E;', name:'Ligue Platine', gradient:'linear-gradient(135deg,#4A9FE0,#2B6CB0)'},
+  legend:  {icon:'&#x1F451;', name:'Ligue Légende', gradient:'linear-gradient(135deg,#B06CE4,#7B4FBF)'}
+};
+
+function getLigueForPts(pts) {
+  var cfg = LIGUES_CONFIG || [{key:'bronze',min:0,max:499},{key:'silver',min:500,max:1499},{key:'gold',min:1500,max:2999},{key:'diamond',min:3000,max:4999},{key:'legend',min:5000,max:99999}];
+  for (var i = cfg.length - 1; i >= 0; i--) { if (pts >= (cfg[i].min || 0)) return cfg[i]; }
+  return cfg[0];
+}
+
+function openMonEspace() {
+  renderMonEspace();
+  var el = document.getElementById('meOverlay');
+  if (el) { el.style.display = 'flex'; requestAnimationFrame(function(){ el.style.opacity='1'; }); }
+}
+
+function closeMonEspace() {
+  var el = document.getElementById('meOverlay');
+  if (el) el.style.display = 'none';
+}
+
+function renderMonEspace() {
+  var pts = QS.totalScore || QS.totalPts || 0;
+  var ligue = getLigueForPts(pts);
+  var meta = LIGUE_META[ligue.key] || LIGUE_META.gold;
+  var cfg = LIGUES_CONFIG || [];
+  var ligCfg = cfg.find(function(l){ return l.key === ligue.key; }) || {min:0,max:4999};
+  var nextKey = {bronze:'silver',silver:'gold',gold:'diamond',diamond:'legend'}[ligue.key];
+  var nextMeta = nextKey ? LIGUE_META[nextKey] : null;
+  var ptsFmt = pts.toLocaleString('fr');
+  var pb = document.getElementById('me-pts-badge');
+  if (pb) pb.textContent = '⭐ ' + ptsFmt + ' pts';
+  var li = document.getElementById('me-ligue-icon');
+  if (li) li.innerHTML = meta.icon;
+  var ln = document.getElementById('me-ligue-name');
+  if (ln) ln.textContent = meta.name;
+  var ls = document.getElementById('me-ligue-sub');
+  if (ls) { if (nextMeta) { var pm = Math.max(0,(ligCfg.max||9999)-pts+1); ls.textContent = pm.toLocaleString('fr') + ' pts pour ' + nextMeta.name; } else { ls.textContent = 'Tu es au sommet !'; } }
+  var range = Math.max(1,(ligCfg.max||9999)-(ligCfg.min||0));
+  var prog = Math.max(0,pts-(ligCfg.min||0));
+  var pct = Math.min(100,Math.round(prog/range*100));
+  var bar = document.getElementById('me-progress-bar');
+  if (bar) bar.style.width = pct + '%';
+  var pc = document.getElementById('me-prog-cur'); if (pc) pc.textContent = ptsFmt + ' pts';
+  var pn = document.getElementById('me-prog-next'); if (pn) pn.textContent = nextMeta ? nextMeta.name + ' : ' + (ligCfg.max||9999).toLocaleString('fr') + ' pts' : 'Ligue max';
+  var sorted = [].concat(PLAYERS).sort(function(a,b){return b.pts-a.pts;});
+  var myIdx = sorted.findIndex(function(p){return p.me;});
+  var rankNum = myIdx + 1;
+  var rn = document.getElementById('me-rank-num'); if (rn) rn.textContent = '#' + rankNum;
+  var medals = ['&#x1F947;','&#x1F948;','&#x1F949;'];
+  var lbRows = document.getElementById('me-lb-rows');
+  if (lbRows) {
+    var show = [0,1,2,myIdx].filter(function(v,i,a){return v>=0&&a.indexOf(v)===i;}).sort(function(a,b){return a-b;}).slice(0,5);
+    var html = '';
+    show.forEach(function(idx) {
+      var p = sorted[idx]; var isMe = !!p.me;
+      html += '<div class="me-lb-row' + (isMe?' me':'') + '">';
+      html += '<div class="me-lb-rank">' + (medals[idx]||'#'+(idx+1)) + '</div>';
+      html += '<div class="me-lb-name">' + (p.name||p.pseudo||'—') + (isMe?' <span class="me-lb-you">TOI</span>':'') + '</div>';
+      html += '<div class="me-lb-pts">' + (p.pts||0).toLocaleString('fr') + '</div>';
+      html += '</div>';
+    });
+    lbRows.innerHTML = html;
+    var gm = document.getElementById('me-gap-msg');
+    if (gm) { if (myIdx > 2 && sorted[myIdx-1]) { var g = sorted[myIdx-1].pts - sorted[myIdx].pts; gm.style.display='block'; gm.textContent = g.toLocaleString('fr') + ' pts pour remonter une place'; } else { gm.style.display='none'; } }
+  }
+  var gs = document.getElementById('me-gain-section');
+  if (gs) {
+    if (LOTS_ON && LOTS_DB_CACHE.length > 0) {
+      var al = LOTS_DB_CACHE.find(function(l){return l.actif;});
+      if (al) { gs.style.display='block'; var ge=document.getElementById('me-gain-emoji'); if(ge) ge.innerHTML=al.emoji||'&#x1F381;'; var gn=document.getElementById('me-gain-nom'); if(gn) gn.textContent=al.titre||'Lot de la semaine'; } else { gs.style.display='none'; }
+    } else { gs.style.display='none'; }
+  }
+  var gds = document.getElementById('me-gained-section');
+  if (gds) {
+    if (LOTS_ON && MY_GAINS && MY_GAINS.length > 0) {
+      gds.style.display='block';
+      var html=''; MY_GAINS.forEach(function(g){ html+='<div class="me-gained-row"><div style="font-size:22px">'+(g.lot_emoji||'&#x1F381;')+'</div><div style="flex:1"><div style="font-size:13px;font-weight:800;color:#F7F5FF">'+(g.lot_nom||'Récompense')+'</div><div class="me-gained-code">'+(g.code||'—')+'</div></div></div>'; });
+      document.getElementById('me-gained-list').innerHTML=html;
+    } else { gds.style.display='none'; }
+  }
+}
+
+function checkAndShowGainPopup(pts) {
+  if (!LOTS_ON) return;
+  var newLigue = getLigueForPts(pts);
+  var ligueKeys = ['bronze','silver','gold','diamond','legend'];
+  var prevIdx = ligueKeys.indexOf(_lastLigueKey);
+  var newIdx = ligueKeys.indexOf(newLigue.key);
+  var montee = (_lastLigueKey !== '' && newIdx > prevIdx);
+  _lastLigueKey = newLigue.key;
+  if (montee) { showPopupLigueMontee(newLigue.key); return; }
+  var cfg = LIGUES_CONFIG || []; var ligCfg = cfg.find(function(l){return l.key===newLigue.key;}) || newLigue;
+  var range = (ligCfg.max||999)-(ligCfg.min||0); var prog = pts-(ligCfg.min||0);
+  if (range > 0 && prog/range >= 0.6) { showPopupSeuilInfo(newLigue.key, pts); }
+}
+
+function showPopupSeuilInfo(ligueKey, pts) {
+  var el = document.getElementById('gainPopupSeuil'); if (!el) return;
+  var meta = LIGUE_META[ligueKey] || LIGUE_META.gold;
+  var cfg = LIGUES_CONFIG || []; var ligCfg = cfg.find(function(l){return l.key===ligueKey;})||{max:pts+500};
+  var pm = Math.max(0,(ligCfg.max||9999)-pts+1);
+  var nextKey={bronze:'silver',silver:'gold',gold:'diamond',diamond:'legend'}[ligueKey];
+  var nextMeta = nextKey ? LIGUE_META[nextKey] : null;
+  document.getElementById('gps-icon').innerHTML = meta.icon;
+  document.getElementById('gps-ligue').textContent = meta.name;
+  document.getElementById('gps-next').textContent = nextMeta ? 'Plus que ' + pm.toLocaleString('fr') + ' pts pour ' + nextMeta.name : 'Tu es en tete !';
+  el.classList.add('gp-show');
+}
+
+function showPopupLigueMontee(ligueKey) {
+  var el = document.getElementById('gainPopupLigue'); if (!el) return;
+  var meta = LIGUE_META[ligueKey] || LIGUE_META.gold;
+  document.getElementById('gpl-gradient').style.background = meta.gradient;
+  document.getElementById('gpl-icon').innerHTML = meta.icon;
+  document.getElementById('gpl-name').textContent = meta.name;
+  el.classList.add('gp-show');
+}
+
+function closeGainPopup(id) {
+  var el = document.getElementById(id); if (!el) return;
+  el.classList.remove('gp-show');
+  setTimeout(function(){ if(!el.classList.contains('gp-show')) el.style.display=''; }, 300);
+}
+
+function goToGains() {
+  closeGainPopup('gainPopupSeuil'); closeGainPopup('gainPopupLigue');
+  closeMonEspace();
+  switchMode('stats');
+  setTimeout(function(){ var gs=document.getElementById('gainsSection'); if(gs) gs.scrollIntoView({behavior:'smooth',block:'start'}); }, 400);
+}
+
+function renderGainsSection() {
+  if (!LOTS_ON) return;
+  var el = document.getElementById('gainsSection'); if (!el) return;
+  if (!MY_GAINS || MY_GAINS.length === 0) { el.style.display='none'; return; }
+  el.style.display='block';
+  var html=''; MY_GAINS.forEach(function(g){ html+='<div class="gain-row"><div class="gain-emoji">'+(g.lot_emoji||'&#x1F381;')+'</div><div class="gain-info"><div class="gain-nom">'+(g.lot_nom||'Récompense')+'</div><div class="gain-code">'+(g.code||'—')+'</div><div class="gain-cond">'+(g.condition?'Condition : '+g.condition:'')+'</div></div></div>'; });
+  document.getElementById('gainsList').innerHTML = html;
 }
 </script>
 
@@ -6089,6 +6361,11 @@ function saveSessionToSheets(qs, profile) {
       <div id="statsLeagueRows"></div>
       <div class="stats-lb-gap" id="statsLeagueGap"></div>
     </div>
+    <!-- GAINS SECTION -->
+    <div id="gainsSection" style="display:none;margin:0 12px 12px;background:rgba(34,201,160,.08);border:1.5px solid rgba(34,201,160,.25);border-radius:20px;padding:16px">
+      <div class="gains-header"><div class="gains-header-icon">&#x1F381;</div><div><div class="gains-header-text">Mes récompenses</div><div class="gains-header-sub">Codes reçus pour tes performances</div></div></div>
+      <div id="gainsList"></div>
+    </div>
     <div class="stats-spacer"></div>
   </div>
 </div>
@@ -6205,3 +6482,111 @@ function saveSessionToSheets(qs, profile) {
     </div>
     <button class="pwa-dismiss" style="margin-top:10px;font-size:15px" onclick="document.getElementById('pwaOverlay').classList.remove('show')">Pas maintenant</button>
   </div>
+<!-- ═══ MON ESPACE DRAWER ═══ -->
+<div class="me-overlay" id="meOverlay" onclick="if(event.target===this)closeMonEspace()">
+  <div class="me-drawer">
+    <div class="me-handle"></div>
+    <div class="me-topbar">
+      <div class="me-topbar-title">&#x1F4CA; Mon espace</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="me-topbar-pts" id="me-pts-badge">&#x2B50; 0 pts</div>
+        <button class="me-close" onclick="closeMonEspace()">&#x2715;</button>
+      </div>
+    </div>
+    <div class="me-section">
+      <div class="me-card me-card-ligue">
+        <div class="me-card-label">Ma ligue</div>
+        <div class="me-ligue-row">
+          <div class="me-ligue-icon" id="me-ligue-icon">&#x1F947;</div>
+          <div class="me-ligue-info">
+            <div class="me-ligue-name" id="me-ligue-name">Ligue Or</div>
+            <div class="me-ligue-sub" id="me-ligue-sub">Prochain palier</div>
+          </div>
+          <div class="me-rank-badge">
+            <div class="me-rank-num" id="me-rank-num">#1</div>
+            <div class="me-rank-lbl">position</div>
+          </div>
+        </div>
+        <div class="me-progress-wrap"><div class="me-progress-bar" id="me-progress-bar" style="width:0%"></div></div>
+        <div class="me-progress-labels"><span id="me-prog-cur">0 pts</span><span id="me-prog-next">—</span></div>
+        <div class="me-lb-rows" id="me-lb-rows"></div>
+        <div class="me-gap-msg" id="me-gap-msg"></div>
+      </div>
+    </div>
+    <div class="me-section" id="me-gain-section" style="display:none">
+      <div class="me-card me-card-gain">
+        <div class="me-card-label" style="color:rgba(34,201,160,.7)">&#x1F381; Lot de la semaine</div>
+        <div class="me-gain-hero">
+          <div class="me-gain-emoji" id="me-gain-emoji">&#x1F354;</div>
+          <div class="me-gain-info">
+            <div class="me-gain-nom" id="me-gain-nom">Lot de la semaine</div>
+            <div class="me-gain-rule">Remporte par <span>le 1er de ta ligue</span> dimanche soir</div>
+          </div>
+        </div>
+        <div class="me-gain-tip"><span>&#x1F4A1;</span><span>Fais des défis pour gagner des points bonus et prendre la tête du classement !</span></div>
+      </div>
+    </div>
+    <div class="me-section" id="me-gained-section" style="display:none">
+      <div class="me-card" style="background:#12102A;border:1.5px solid rgba(244,168,58,.25)">
+        <div class="me-card-label" style="color:rgba(244,168,58,.7)">&#x1F3C6; Mes récompenses</div>
+        <div id="me-gained-list"></div>
+      </div>
+    </div>
+    <div class="me-action-btns">
+      <button class="me-btn-defi" onclick="closeMonEspace();openDefis()">
+        <span style="font-size:20px">&#x2694;&#xFE0F;</span>
+        <div style="text-align:left"><div>Lancer un défi</div><div style="font-size:11px;font-weight:600;opacity:.85">Gagne des pts bonus — prends la tête</div></div>
+        <span style="margin-left:auto">&#x2192;</span>
+      </button>
+      <button class="me-btn-stats" onclick="closeMonEspace();switchMode('stats')">&#x1F4C8; Toutes mes stats</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ POPUP GAIN SEUIL ═══ -->
+<div class="gain-popup" id="gainPopupSeuil">
+  <div class="gp-card">
+    <div class="gp-top">
+      <button class="gp-close" onclick="closeGainPopup('gainPopupSeuil')">&#x2715;</button>
+      <span class="gp-big-icon" id="gps-icon">&#x1F3C6;</span>
+      <div class="gp-tag">Tu es dans la course !</div>
+      <div class="gp-title" id="gps-ligue">Ligue Or</div>
+      <div class="gp-sub" id="gps-next">Continue à réviser !</div>
+    </div>
+    <div class="gp-body">
+      <div class="gp-info-box">
+        <div class="gib-icon">&#x1F381;</div>
+        <div class="gib-text">Le 1er de la ligue en fin de semaine remporte un lot ! Continue à réviser pour rester en tête.</div>
+      </div>
+    </div>
+    <div class="gp-actions">
+      <button class="gp-btn-primary" onclick="goToGains()">&#x1F3AF; Voir mon espace</button>
+      <button class="gp-btn-ghost" onclick="closeGainPopup('gainPopupSeuil')">Continuer le quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ POPUP MONTEE DE LIGUE ═══ -->
+<div class="gain-popup" id="gainPopupLigue">
+  <div class="gp-card">
+    <div class="gp-ligue-gradient" id="gpl-gradient" style="background:linear-gradient(135deg,#F4A83A,#e8850a)">
+      <button class="gp-close" onclick="closeGainPopup('gainPopupLigue')" style="position:absolute;top:10px;right:10px">&#x2715;</button>
+      <span class="gp-ligue-crown" id="gpl-icon">&#x1F48E;</span>
+      <div class="gp-ligue-label">Nouvelle ligue !</div>
+    </div>
+    <div class="gp-top" style="padding-top:12px">
+      <div class="gp-ligue-name" id="gpl-name">Ligue Platine</div>
+      <div class="gp-sub">Tu montes de ligue ! Reste en tête pour remporter le lot de fin de semaine.</div>
+    </div>
+    <div class="gp-body">
+      <div class="gp-avantage-list">
+        <div class="gp-av-row"><span>&#x1F3C6;</span> Le 1er de ta ligue gagne un lot chaque semaine</div>
+        <div class="gp-av-row"><span>&#x1F3AF;</span> Continue à réviser pour rester au sommet</div>
+      </div>
+    </div>
+    <div class="gp-actions">
+      <button class="gp-btn-primary" onclick="goToGains()">&#x1F381; Mon espace</button>
+      <button class="gp-btn-ghost" onclick="closeGainPopup('gainPopupLigue')">Continuer</button>
+    </div>
+  </div>
+</div>
