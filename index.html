@@ -2825,13 +2825,14 @@ function switchMode(m){
   if(m==='app') renderThemeList();
   if(m==='stats'){
     renderStats();
-    // Recharger le classement en live depuis Supabase
-    if(typeof loadLeaderboardFromSupabase==='function'){
-      loadLeaderboardFromSupabase().then(function(){
-        var statsView=document.getElementById('v-stats');
-        if(statsView&&statsView.classList.contains('active')) renderStats();
-      });
-    }
+    // Recharger classement + lots en parallèle depuis Supabase
+    var reRender = function(){
+      var statsView=document.getElementById('v-stats');
+      if(statsView&&statsView.classList.contains('active')) renderStats();
+    };
+    var p1 = typeof loadLeaderboardFromSupabase==='function' ? loadLeaderboardFromSupabase() : Promise.resolve();
+    var p2 = typeof loadLotsConfig==='function' ? loadLotsConfig() : Promise.resolve();
+    Promise.all([p1, p2]).then(reRender);
   }
   if(m==='admin' && document.getElementById('v-admin')) initAdminCharts();
   // Pour le quiz, la navigation interne (qGo) gère ses propres sous-écrans
