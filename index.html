@@ -3802,7 +3802,15 @@ function doSpin(){
   document.getElementById('spinBtn').disabled = true;
   document.getElementById('spinStatus').textContent = '🎰 La roue tourne…';
   document.getElementById('banqueReveal').style.display = 'none';
-  const winIdx = Math.floor(Math.random()*BANQUES_FILTERED.length);
+  // Eviter les répétitions : jamais le même thème avant 6 tours
+  if(!QS.spinHistory) QS.spinHistory = [];
+  var attempts = 0; var winIdx;
+  do {
+    winIdx = Math.floor(Math.random()*BANQUES_FILTERED.length);
+    attempts++;
+  } while(QS.spinHistory.indexOf(winIdx) >= 0 && attempts < 50);
+  QS.spinHistory.push(winIdx);
+  if(QS.spinHistory.length > 6) QS.spinHistory.shift();
   const targetAngle = -(winIdx*ARC) - ARC/2 + Math.PI*.5;
   const totalRot = Math.PI*2*7 + targetAngle - QS.spinAngle;
   const duration = 4500; let start = null; const startA = QS.spinAngle;
@@ -3917,9 +3925,15 @@ function renderQuestion(){
   else streak.style.display='none';
 
   const letters = ['A','B','C','D'];
-  const opts = q.opts.map((o,i)=>
-    '<div class="q-opt" id="qo'+i+'" onclick="answerQ('+i+')"><div class="q-opt-letter">'+letters[i]+'</div>'+o+'</div>'
-  ).join('');
+  // Mélanger les options (Fisher-Yates) en mémorisant où est la bonne réponse
+  const correctAns = q.opts[typeof q.bon!=='undefined' ? q.bon : q.a];
+  const shuffledOpts = q.opts.slice();
+  for(var si=shuffledOpts.length-1;si>0;si--){var sj=Math.floor(Math.random()*(si+1));var st=shuffledOpts[si];shuffledOpts[si]=shuffledOpts[sj];shuffledOpts[sj]=st;}
+  QS.shuffledCorrectIdx = shuffledOpts.indexOf(correctAns);
+  QS.shuffledOpts = shuffledOpts;
+  const opts = shuffledOpts.map(function(o,i){
+    return '<div class="q-opt" id="qo'+i+'" onclick="answerQ('+i+')"><div class="q-opt-letter">'+letters[i]+'</div>'+o+'</div>';
+  }).join('');
   document.getElementById('qOpts').innerHTML = opts;
 
   // Timer
@@ -3947,7 +3961,7 @@ function answerQ(idx){
   if(QS.timerInterval){ clearInterval(QS.timerInterval); QS.timerInterval=null; }
   const q = QS.questions[QS.qIdx];
   const timeUsed = 30 - QS.timeLeft;
-  const correctIdx = (typeof q.bon!=='undefined') ? q.bon : q.a;  // compat both formats
+  const correctIdx = (QS.shuffledCorrectIdx !== undefined) ? QS.shuffledCorrectIdx : ((typeof q.bon!=='undefined') ? q.bon : q.a);
   const correct = (idx === correctIdx);
   const opts = document.querySelectorAll('.q-opt');
   opts.forEach(o=>{ o.style.pointerEvents='none'; });
@@ -5576,25 +5590,24 @@ function dfRenderWaiting(){
     }
   }
 
-  const list = document.getElementById('dfWaitPlayers');
-  let rows = '';
-  for(let i=0; i<room.cap; i++){
-    const p = room.players[i];
-    if(p){
-      rows += '<div class="df-player-row">'
-        + '<div class="df-player-ava" style="background:linear-gradient(135deg,' + p.color + ',rgba(0,0,0,.2))">' + p.ava + '</div>'
-        + '<div class="df-player-name">' + p.name + (p.isMe ? ' <span style="color:#22C9A0;font-size:11px;font-weight:800">(toi)</span>' : '') + '</div>'
-        + (p.isHost ? '<div class="df-player-host-tag">HOST</div>' : '')
-        + '<div class="df-player-status">✓ Prêt</div>'
+  var _list = document.getElementById('dfWaitPlayers');
+  if(_list) {
+    var rows = '';
+    (room.players||[]).forEach(function(p){
+      rows += '<div style="display:flex;align-items:center;gap:10px;background:' + (p.isMe?'rgba(176,108,228,.18)':'rgba(255,255,255,.04)') + ';border:1px solid ' + (p.isMe?'rgba(176,108,228,.4)':'rgba(255,255,255,.08)') + ';border-radius:12px;padding:10px 12px;margin-bottom:6px">'
+        + '<div style="width:32px;height:32px;border-radius:50%;background:' + (p.color||'#7B4FBF') + ';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">' + (p.ava||'?') + '</div>'
+        + '<div style="flex:1;font-size:14px;font-weight:700;color:#fff">' + p.name + (p.isMe?' <span style="background:#B06CE4;color:#fff;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:4px;font-weight:800">TOI</span>':'') + '</div>'
+        + (p.isHost?'<span style="background:#F4A83A;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px">HOST</span>':'<span style="font-size:12px;color:#22C9A0;font-weight:700">✓</span>')
         + '</div>';
-    } else {
-      rows += '<div class="df-player-row empty">'
-        + '<div class="df-player-ava" style="background:rgba(123,79,191,.2);color:#7B4FBF">…</div>'
-        + '<div class="df-player-name" style="color:#7A7AAA;font-weight:600;font-style:italic">En attente…</div>'
+    });
+    for(var _e=(room.players||[]).length; _e<room.cap; _e++){
+      rows += '<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;margin-bottom:6px">'
+        + '<div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:16px">…</div>'
+        + '<div style="font-size:13px;font-style:italic;color:rgba(255,255,255,.3)">En attente…</div>'
         + '</div>';
     }
+    _list.innerHTML = rows;
   }
-  list.innerHTML = rows;
 
   // Bouton lancer : actif dès 2 joueurs ET seulement si je suis le host
   const btn = document.getElementById('dfStartBtn');
@@ -6232,7 +6245,7 @@ function dfAnswerQ(idx){
   if(room.timerInt){ clearInterval(room.timerInt); room.timerInt = null; }
 
   const q = room.currentQ;
-  const correctIdx = (typeof q.bon !== 'undefined') ? q.bon : q.a;
+  const correctIdx = (QS.shuffledCorrectIdx !== undefined) ? QS.shuffledCorrectIdx : ((typeof q.bon !== 'undefined') ? q.bon : q.a);
   const correct = (idx === correctIdx);
   const elapsed = (Date.now() - room.qStartTime) / 1000;
 
