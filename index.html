@@ -703,106 +703,147 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 #userMenuBtn:hover{background:rgba(255,255,255,.14) !important}
 @keyframes palierPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 
-/* ═══ DEFIS MULTI-JOUEURS ═══ */
+/* ═══ DEFIS MULTI-JOUEURS V10 ═══ */
 .df-view{background:#0F0A1F;min-height:100vh;display:flex;flex-direction:column;font-family:'Calibri','Trebuchet MS',Arial,sans-serif}
 .df-top{background:linear-gradient(135deg,#2D1B6B,#1E1048);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
 .df-back{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:18px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .df-ttl{font-weight:800;font-size:17px;color:#fff;flex:1}
 .df-balance{background:linear-gradient(135deg,#F4A83A,#e8850a);border-radius:14px;padding:6px 12px;font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;gap:5px}
-
-.df-tabs{display:flex;background:#fff;padding:0 12px;border-bottom:1px solid rgba(123,79,191,.15);position:sticky;top:62px;z-index:40}
-.df-tab{flex:1;padding:13px 8px;font-size:13px;font-weight:700;color:#7A7AAA;text-align:center;cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;background:none;border-left:none;border-right:none;border-top:none}
-.df-tab.act{color:#7B4FBF;border-bottom-color:#B06CE4}
-
 .df-screen{flex:1;padding:14px 12px 80px;overflow-y:auto}
 .df-screen.hidden{display:none}
-
-/* Carte room */
-.df-room{background:#fff;border-radius:18px;padding:14px 16px;border:2px solid #EDE9FE;margin-bottom:12px;cursor:pointer;transition:transform .15s,box-shadow .15s}
-.df-room:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(123,79,191,.2)}
-.df-room.full{opacity:.55;cursor:not-allowed}
-.df-room.full:hover{transform:none;box-shadow:none}
-.df-room-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.df-room-host-ava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
-.df-room-host-info{flex:1;min-width:0}
-.df-room-host-name{font-weight:800;font-size:14px;color:#1E1048}
-.df-room-host-sub{font-size:11px;color:#7A7AAA;font-weight:600}
-.df-room-mise{background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;font-weight:800;font-size:14px;padding:6px 12px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;gap:4px}
-.df-room-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}
-.df-chip{background:#F0EEFF;color:#7B4FBF;font-weight:700;padding:4px 9px;border-radius:10px;display:inline-flex;align-items:center;gap:4px}
-.df-chip.green{background:rgba(34,201,160,.15);color:#0a7a55}
-.df-chip.red{background:rgba(239,86,86,.12);color:#c53030}
-.df-room-cagnotte{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(123,79,191,.2);display:flex;align-items:center;justify-content:space-between;font-size:12px}
-.df-cagnotte-val{font-weight:800;font-size:16px;color:#7B4FBF}
-
-/* CTA création */
-.df-cta-create{background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:18px;padding:16px 20px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;width:100%;display:flex;align-items:center;gap:12px;box-shadow:0 6px 24px rgba(176,108,228,.4);margin-bottom:16px}
-.df-cta-create:hover{transform:translateY(-2px)}
-
-/* Form création */
-.df-form-block{background:#1a1035;border-radius:18px;padding:16px;margin-bottom:12px;border:1.5px solid rgba(176,108,228,.25)}
-.df-form-lbl{font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.df-pills{display:flex;gap:8px;flex-wrap:wrap}
-.df-pill{flex:1;min-width:60px;padding:11px 10px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:12px;color:#9A8FBF;font-weight:700;font-size:13px;cursor:pointer;text-align:center;font-family:inherit;transition:all .15s}
-.df-pill.sel{background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border-color:#7B4FBF}
-.df-pill.disabled{opacity:.4;cursor:not-allowed}
-
-.df-form-submit{width:100%;background:linear-gradient(135deg,#22C9A0,#0fa37e);color:#fff;border:none;border-radius:16px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px;box-shadow:0 4px 18px rgba(34,201,160,.35)}
-.df-form-submit:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
-
-/* Salle d'attente */
-.df-waiting{background:#fff;border-radius:22px;padding:20px;border:2px solid #EDE9FE;margin-bottom:12px}
-.df-wait-hdr{text-align:center;padding:8px 0 16px;border-bottom:1px dashed rgba(123,79,191,.2);margin-bottom:14px}
-.df-wait-emoji{font-size:36px;margin-bottom:6px}
-.df-wait-ttl{font-size:18px;font-weight:800;color:#1E1048}
-.df-wait-sub{font-size:13px;color:#7A7AAA;font-weight:600;margin-top:4px}
-.df-cagnotte-big{background:linear-gradient(135deg,#F4A83A,#e8850a);border-radius:16px;padding:14px;text-align:center;color:#fff;margin-bottom:14px}
-.df-cagnotte-big-val{font-size:28px;font-weight:800;line-height:1}
-.df-cagnotte-big-lbl{font-size:12px;font-weight:700;opacity:.9;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
-.df-players-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.df-player-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#F0EEFF;border-radius:12px}
-.df-player-row.empty{background:#F8F7FE;border:1px dashed rgba(123,79,191,.25)}
-.df-player-ava{width:28px;height:28px;border-radius:50%;background:#B06CE4;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
-.df-player-name{flex:1;font-size:14px;font-weight:700;color:#1E1048}
-.df-player-host-tag{background:#F4A83A;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:8px}
-.df-player-status{font-size:12px;color:#22C9A0;font-weight:700}
-
-/* Live scores overlay (pendant le quiz défi) */
-/* LIVE SCORES — rétractable */
-.df-live{position:fixed;top:12px;right:10px;background:rgba(30,16,72,.96);border-radius:12px;z-index:25;backdrop-filter:blur(10px);box-shadow:0 4px 18px rgba(0,0,0,.4);overflow:hidden;min-width:42px;transition:box-shadow .2s,opacity .3s}
-.df-live.dragging{box-shadow:0 12px 40px rgba(0,0,0,.6);opacity:.92;transition:none}
+.df-section-lbl{font-size:11px;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin:16px 2px 8px;display:flex;align-items:center;gap:6px}
+.df-cta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.df-cta-btn{flex:1;border:none;border-radius:16px;padding:15px 12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .15s}
+.df-cta-btn:hover{transform:translateY(-2px)}
+.df-cta-btn.pub{background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;box-shadow:0 4px 18px rgba(176,108,228,.35)}
+.df-cta-btn.priv{background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;box-shadow:0 4px 18px rgba(244,168,58,.3)}
+.df-room{background:rgba(255,255,255,.04);border-radius:18px;padding:14px 16px;border:1.5px solid rgba(176,108,228,.2);margin-bottom:10px;cursor:pointer;transition:transform .15s,border-color .15s}
+.df-room:hover{transform:translateY(-2px);border-color:rgba(176,108,228,.5)}
+.df-room.full{opacity:.5;cursor:not-allowed}
+.df-room.full:hover{transform:none}
+.df-room-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.df-room-ava{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.df-room-info{flex:1;min-width:0}
+.df-room-name{font-weight:800;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.df-room-sub{font-size:11px;color:rgba(255,255,255,.45);font-weight:600;margin-top:2px}
+.df-room-mise-badge{background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;font-weight:800;font-size:13px;padding:5px 11px;border-radius:12px;flex-shrink:0}
+.df-room-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.df-chip{background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-weight:700;padding:4px 9px;border-radius:9px;font-size:11px;display:inline-flex;align-items:center;gap:3px}
+.df-chip.green{background:rgba(34,201,160,.15);color:#22C9A0}
+.df-chip.red{background:rgba(239,86,86,.15);color:#f87171}
+.df-chip.orange{background:rgba(244,168,58,.15);color:#F4A83A}
+.df-room-cagnotte{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding-top:8px;border-top:1px dashed rgba(255,255,255,.07)}
+.df-cagnotte-val{font-weight:800;font-size:15px;color:#F4A83A}
+.df-form-block{background:rgba(255,255,255,.04);border-radius:16px;padding:16px;margin-bottom:12px;border:1.5px solid rgba(176,108,228,.2)}
+.df-form-lbl{font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.df-pills{display:flex;gap:7px;flex-wrap:wrap}
+.df-pill{flex:1;min-width:56px;padding:10px 8px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:#9A8FBF;font-weight:700;font-size:13px;cursor:pointer;text-align:center;font-family:inherit;transition:all .15s}
+.df-pill.sel{background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border-color:#7B4FBF;box-shadow:0 3px 12px rgba(176,108,228,.4)}
+.df-pill.disabled{opacity:.35;cursor:not-allowed}
+.df-priv-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(244,168,58,.08);border:1.5px solid rgba(244,168,58,.25);border-radius:16px;margin-bottom:12px;cursor:pointer}
+.df-priv-toggle-lbl{font-size:14px;font-weight:700;color:#F4A83A}
+.df-priv-toggle-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.df-switch{width:44px;height:24px;background:rgba(255,255,255,.12);border-radius:12px;position:relative;transition:background .2s;flex-shrink:0}
+.df-switch.on{background:#F4A83A}
+.df-switch-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.df-switch.on .df-switch-knob{left:22px}
+.df-cagnotte-preview{background:rgba(176,108,228,.12);border:1.5px solid rgba(176,108,228,.25);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.df-form-submit{width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:16px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px;box-shadow:0 4px 18px rgba(176,108,228,.4)}
+.df-form-submit:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.df-wait-header{text-align:center;padding:20px 0 16px}
+.df-wait-emoji{font-size:44px;margin-bottom:10px}
+.df-wait-ttl{font-size:20px;font-weight:800;color:#fff}
+.df-wait-sub{font-size:13px;color:rgba(255,255,255,.5);font-weight:600;margin-top:5px}
+.df-cagnotte-banner{background:linear-gradient(135deg,#F4A83A,#e8850a);border-radius:16px;padding:14px;text-align:center;color:#fff;margin-bottom:16px}
+.df-cagnotte-banner-val{font-size:28px;font-weight:800}
+.df-cagnotte-banner-lbl{font-size:11px;font-weight:700;opacity:.9;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.df-players-block{background:rgba(255,255,255,.03);border:1.5px solid rgba(176,108,228,.2);border-radius:16px;padding:14px;margin-bottom:14px}
+.df-players-ttl{font-size:11px;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.df-live-dot{width:7px;height:7px;border-radius:50%;background:#22C9A0;display:inline-block;animation:dfPulse 1.4s ease-in-out infinite}
+@keyframes dfPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.df-player-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;margin-bottom:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.df-player-row.me{background:rgba(176,108,228,.18);border-color:rgba(176,108,228,.4)}
+.df-player-row.empty{background:transparent;border:1px dashed rgba(255,255,255,.1)}
+.df-player-ava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.df-player-name{flex:1;font-size:14px;font-weight:700;color:#fff}
+.df-player-tag{font-size:9px;font-weight:800;padding:2px 7px;border-radius:7px}
+.df-player-tag.host{background:#F4A83A;color:#fff}
+.df-player-tag.toi{background:#B06CE4;color:#fff}
+.df-billet{background:rgba(255,255,255,.03);border:1.5px solid rgba(176,108,228,.35);border-radius:18px;overflow:hidden;margin-bottom:14px}
+.df-billet-head{background:linear-gradient(135deg,#2d1060,#1a0535);padding:14px 16px;border-bottom:1px dashed rgba(176,108,228,.3)}
+.df-billet-lbl{font-size:9px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.df-billet-nom{font-size:18px;font-weight:800;color:#fff}
+.df-billet-cards{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px dashed rgba(176,108,228,.2)}
+.df-billet-card{padding:12px 10px;text-align:center}
+.df-billet-card+.df-billet-card{border-left:1px dashed rgba(176,108,228,.2)}
+.df-billet-card-val{font-size:15px;font-weight:800;line-height:1.2}
+.df-billet-card-lbl{font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.df-billet-lien-block{padding:12px 16px;border-bottom:1px dashed rgba(176,108,228,.2)}
+.df-billet-lien{font-size:10px;color:#D4AAFF;word-break:break-all;line-height:1.5;margin-top:4px}
+.df-billet-note{font-size:9px;color:rgba(244,168,58,.7);font-weight:700;margin-top:3px}
+.df-billet-qr{padding:12px 16px;text-align:center;border-bottom:1px dashed rgba(176,108,228,.2)}
+.df-billet-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:14px 16px}
+.df-invite-hdr{text-align:center;padding:20px 0 14px}
+.df-invite-lbl{font-size:9px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.df-invite-nom{font-size:20px;font-weight:800;color:#fff}
+.df-invite-host{font-size:12px;color:rgba(255,255,255,.45);margin-top:4px}
+.df-solde-info{background:rgba(176,108,228,.08);border:1px solid rgba(176,108,228,.2);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:rgba(255,255,255,.5);line-height:1.5}
+@keyframes dfCountPop{0%{transform:scale(1.3);opacity:.5}100%{transform:scale(1);opacity:1}}
+.df-countdown-wrap{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.df-countdown-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.df-countdown-num{font-size:110px;font-weight:800;color:#fff;line-height:1;text-shadow:0 0 40px rgba(176,108,228,.6)}
+.df-countdown-num.pop{animation:dfCountPop .25s ease-out}
+.df-countdown-theme{font-size:22px;font-weight:800;color:#F4A83A;margin-top:16px;min-height:32px}
+.df-countdown-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:6px}
+.df-countdown-avatars{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;justify-content:center}
+.df-countdown-ava{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff}
+.df-countdown-quit{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:10px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;margin-top:16px;font-family:inherit}
+.df-quiz-bar{background:linear-gradient(135deg,#2D1B6B,#1E1048);padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:40}
+.df-quiz-prog-wrap{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.df-quiz-prog-fill{height:100%;background:linear-gradient(90deg,#B06CE4,#F4A83A);border-radius:3px;transition:width .3s}
+.df-quiz-timer-wrap{background:rgba(255,255,255,.1);border-radius:10px;padding:4px 10px;display:flex;align-items:center;gap:4px}
+.df-quiz-timer{font-size:16px;font-weight:800;color:#fff;min-width:22px;text-align:center}
+.df-quiz-timer.urgent{color:#F87171}
+.df-quiz-qnum{font-size:11px;color:rgba(255,255,255,.5);font-weight:700}
+.df-quiz-body{padding:16px 14px 80px;background:#0F0A1F;min-height:calc(100vh - 60px)}
+.df-quiz-q{font-size:17px;font-weight:700;color:#fff;line-height:1.55;margin-bottom:20px}
+.df-quiz-opts{display:flex;flex-direction:column;gap:10px}
+.df-quiz-opt{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;font-family:inherit;font-size:15px;font-weight:700;color:#fff;cursor:pointer;text-align:left;transition:all .15s;width:100%}
+.df-quiz-opt:active{transform:scale(.98)}
+.df-quiz-opt.correct{background:rgba(34,201,160,.2);border-color:#22C9A0;color:#22C9A0;pointer-events:none}
+.df-quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:#F87171;color:#F87171;pointer-events:none}
+.df-quiz-opt.neutral{opacity:.5;pointer-events:none}
+.df-quiz-feedback{margin-top:14px;padding:12px 16px;border-radius:14px;font-size:14px;font-weight:700;line-height:1.5}
+.df-quiz-feedback.ok{background:rgba(34,201,160,.15);color:#22C9A0;border:1px solid rgba(34,201,160,.3)}
+.df-quiz-feedback.ko{background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.25)}
+.df-live{position:fixed;top:70px;right:10px;background:rgba(20,10,40,.95);border-radius:12px;z-index:30;box-shadow:0 4px 18px rgba(0,0,0,.5);overflow:hidden;min-width:44px;transition:opacity .3s}
 .df-live.collapsed .df-live-rows{display:none}
-.df-live.collapsed .df-live-hdr-label{display:none}
-.df-live.collapsed{min-width:42px}
-.df-live-hdr{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;cursor:grab;user-select:none;-webkit-user-select:none}
-.df-live.dragging .df-live-hdr{cursor:grabbing}
-.df-live-hdr-icon{font-size:15px;flex-shrink:0}
+.df-live-hdr{display:flex;align-items:center;gap:6px;padding:8px 10px;cursor:pointer;user-select:none}
+.df-live-hdr-icon{font-size:14px}
 .df-live-hdr-label{font-size:11px;color:rgba(255,255,255,.8);font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
-.df-live-hdr-q{font-size:10px;color:rgba(255,255,255,.5);white-space:nowrap}
-.df-live-hdr-toggle{font-size:11px;color:rgba(255,255,255,.5);flex-shrink:0;transition:transform .3s}
-.df-live.collapsed .df-live-hdr-toggle{transform:rotate(180deg)}
-.df-live-rows{display:flex;flex-direction:column;gap:3px;padding:0 10px 8px;min-width:160px}
-.df-live-row{display:flex;align-items:center;gap:7px;font-size:13px}
-.df-live-row.me{background:rgba(176,108,228,.25);border-radius:7px;padding:3px 6px;margin:0 -6px}
-.df-live-rank{width:18px;text-align:center;font-weight:800;color:rgba(255,255,255,.6);font-size:12px}
+.df-live-hdr-q{font-size:10px;color:rgba(255,255,255,.4);margin-left:auto;white-space:nowrap}
+.df-live-rows{padding:0 10px 8px;min-width:160px}
+.df-live-row{display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:3px}
+.df-live-row.me{background:rgba(176,108,228,.2);border-radius:7px;padding:2px 5px;margin:0 -5px 3px}
+.df-live-rank{width:18px;text-align:center;font-weight:800;color:rgba(255,255,255,.5);font-size:11px}
 .df-live-name{flex:1;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px}
-.df-live-pts{color:#F4A83A;font-weight:800;font-family:'Calibri','Trebuchet MS',Arial,sans-serif}
-
-/* Écran de fin de défi */
-.df-end{padding:20px 14px;text-align:center}
+.df-live-pts{color:#F4A83A;font-weight:800}
+.df-end-wrap{padding:20px 14px 40px;text-align:center}
 .df-end-emoji{font-size:64px;margin-bottom:10px}
-.df-end-ttl{font-size:24px;font-weight:800;color:#1E1048;margin-bottom:6px}
-.df-end-sub{font-size:14px;color:#7A7AAA;margin-bottom:20px}
-.df-end-cagnotte{background:linear-gradient(135deg,#F4A83A,#e8850a);border-radius:18px;padding:18px;color:#fff;margin-bottom:16px}
+.df-end-ttl{font-size:24px;font-weight:800;color:#fff;margin-bottom:6px}
+.df-end-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px;line-height:1.5}
+.df-end-cagnotte{border-radius:18px;padding:18px;color:#fff;margin-bottom:16px}
+.df-end-cagnotte.win{background:linear-gradient(135deg,#F4A83A,#e8850a)}
+.df-end-cagnotte.lose{background:linear-gradient(135deg,#7A7AAA,#5a5a7a)}
 .df-end-cagnotte-val{font-size:36px;font-weight:800;line-height:1}
 .df-end-cagnotte-lbl{font-size:13px;margin-top:4px;opacity:.92;font-weight:700}
-.df-end-podium{background:#fff;border-radius:18px;padding:14px;border:2px solid #EDE9FE;margin-bottom:14px}
-.df-podium-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;margin-bottom:5px}
-.df-podium-row.first{background:linear-gradient(90deg,rgba(244,168,58,.15),rgba(244,168,58,.05))}
-.df-podium-medal{font-size:22px;width:30px;text-align:center}
-.df-podium-name{flex:1;text-align:left;font-weight:700;color:#1E1048;font-size:15px}
-.df-podium-pts{font-weight:800;color:#7B4FBF;font-family:'Calibri','Trebuchet MS',Arial,sans-serif}
-.stats-kpi-val { font-size:22px !important; }
+.df-end-podium{background:rgba(255,255,255,.04);border:1.5px solid rgba(176,108,228,.2);border-radius:18px;padding:14px;margin-bottom:14px}
+.df-podium-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;margin-bottom:4px}
+.df-podium-row.first{background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.2)}
+.df-podium-medal{font-size:20px;width:28px;text-align:center}
+.df-podium-name{flex:1;text-align:left;font-weight:700;color:#fff;font-size:14px}
+.df-podium-pts{font-weight:800;color:#F4A83A;font-size:13px}
+
 .stats-kpi-lbl { font-size:11px !important; }
 .stats-th-card-title { font-size:16px !important; }
 .stats-score-box-val { font-size:20px !important; }
@@ -939,11 +980,6 @@ img { max-width:100%; height:auto; }
 .gain-row:last-child{border-bottom:none;padding-bottom:0}
 .gain-code{display:inline-block;font-size:12px;font-weight:800;color:#F4A83A;background:rgba(244,168,58,.1);border:1px solid rgba(244,168,58,.25);border-radius:8px;padding:2px 9px;margin-top:2px}
 /* ── LOT SEMAINE CARD ── */
-#lotSemaineCard{display:none;margin:0 14px 12px;background:linear-gradient(135deg,rgba(34,201,160,.1),rgba(34,201,160,.04));border:1.5px solid rgba(34,201,160,.25);border-radius:18px;padding:14px}
-/* ── DEFIS MODE ── */
-.df-mode-toggle{display:flex;gap:6px;background:rgba(255,255,255,.05);border-radius:12px;padding:4px;margin-bottom:12px}
-.df-mode-btn{flex:1;padding:9px;border:none;border-radius:9px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;background:transparent;color:#7A7AAA;transition:all .2s}
-.df-mode-btn.on{background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff}
 </style>
 <script>
 // ── Garde-fou preview : on attrape les TypeError sur des objets inexistants
@@ -5152,1192 +5188,630 @@ function generateQR(text){
 // ═══════════════════════════════════════════════════════════
 
 // Solde du joueur (en localStorage). Démarrage à 1240 pts pour la démo.
+// ── DÉFIS V10 ──
+var DF_IS_PRIVATE = false;
+var DF_FORM = {mise: 45, theme: 'roulette', cap: 4};
+var DF_CURRENT = null;
+var DF_ROOMS_PUBLIC = [];
+var DF_PARTICIPANTS_POLL = null;
+var DF_COUNTDOWN_INT = null;
+var DF_QUIZ_TIMER_INT = null;
 
-// ── MES DEFIS ──
-function dfGetMyDefis(){try{return JSON.parse(localStorage.getItem('flowin_my_defis')||'[]');}catch(e){return[];}}
-function dfSaveMyDefis(list){try{localStorage.setItem('flowin_my_defis',JSON.stringify(list.slice(0,50)));}catch(e){}}
-function dfAddToMyDefis(defi){
-  var list=dfGetMyDefis();
-  var idx=list.findIndex(function(d){return d.id===defi.id;});
-  if(idx>=0)list[idx]=Object.assign({},list[idx],defi);
-  else list.unshift(defi);
-  dfSaveMyDefis(list);
-}
-function dfUpdateMyDefi(id,updates){
-  var list=dfGetMyDefis();
-  var idx=list.findIndex(function(d){return d.id===id;});
-  if(idx>=0){list[idx]=Object.assign({},list[idx],updates);dfSaveMyDefis(list);}
-}
-function dfRenderMyDefis(){
-  var list=dfGetMyDefis();
-  var container=document.getElementById('dfRoomsList');
-  if(!container)return;
-  if(list.length===0){
-    container.innerHTML='<div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,.4);font-size:14px">Aucun defi pour l\'instant.<br><span style="font-size:12px">Cree ou rejoins un defi dans le lobby !</span></div>';
-    return;
-  }
-  var tEmoji={roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️'};
-  container.innerHTML=list.map(function(d){
-    var isWin=d.resultat==='gagne';
-    var isLoss=d.resultat==='perdu';
-    var canReplay=isLoss;
-    var html='<div style="background:rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,.08)">';
-    html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
-    html+='<div style="font-size:15px;font-weight:700;color:#fff">'+(tEmoji[d.theme]||'🎯')+' '+d.name+'</div>';
-    html+='<div style="font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;background:'+(isWin?'rgba(34,197,94,.2)':isLoss?'rgba(239,68,68,.2)':'rgba(255,255,255,.1)')+';color:'+(isWin?'#4ade80':isLoss?'#f87171':'rgba(255,255,255,.6)')+'">'+( isWin?'🏆 Gagne':isLoss?'😅 Perdu':'⏳ En attente')+'</div>';
-    html+='</div>';
-    html+='<div style="display:flex;gap:12px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">';
-    html+='<span>💰 Mise : '+d.mise+' pts</span>';
-    html+='<span>📅 '+(d.ts?new Date(d.ts).toLocaleDateString('fr-FR'):'—')+'</span>';
-    html+='<span>'+(d.role==='createur'?'👑 Createur':'🎮 Participant')+'</span>';
-    html+='</div>';
-    if(d.resultat)html+='<div style="font-size:13px;font-weight:700;color:'+(isWin?'#4ade80':'#f87171')+'">'+(isWin?'+'+( d.gain||0):'−'+d.mise)+' pts</div>';
-    if(canReplay)html+='<button onclick="dfReplayById(this)" data-id="'+d.id+'" data-mise="'+d.mise+'" data-theme="'+d.theme+'" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#7B4FBF,#9B6FDF);color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer">&#x1F504; Revanche</button>';
-    html+='</div>';
-    return html;
-  }).join('');
-}
-function dfReplaySetup(id,mise,theme){
-  dfSelMise(mise);
-  dfSelTheme(theme);
-  var nameInput=document.getElementById('dfRoomName');
-  var orig=dfGetMyDefis().find(function(d){return d.id===id;});
-  if(nameInput&&orig)nameInput.value='Revanche — '+orig.name;
-  dfTab('create');
-}
+const DF_MISE_OPTIONS = [25, 35, 45, 55, 75];
+const DF_THEME_LABELS = {roulette:'🎡 Roulette', hist:'📘 Histoire', geo:'🌍 Géo', emc:'⚖️ EMC', pse:'🩺 PSE'};
 
 function dfGetBalance(){
-  try { var b = localStorage.getItem('flowin_balance'); return b !== null ? parseInt(b) : (QS && QS.totalScore > 0 ? QS.totalScore : 1240); }
-  catch(e){ return 1240; }
+  try{var b=localStorage.getItem('flowin_balance');return b!==null?parseInt(b):(QS&&QS.totalScore>0?QS.totalScore:1240);}catch(e){return 1240;}
 }
 function dfSetBalance(v){
-  try { localStorage.setItem('flowin_balance', String(Math.max(0, v))); } catch(e){}
-  var el = document.getElementById('dfBalance'); if(el) el.textContent = dfGetBalance().toLocaleString('fr');
+  try{localStorage.setItem('flowin_balance',String(Math.max(0,v)));}catch(e){}
+  var el=document.getElementById('dfBalance');if(el)el.textContent=dfGetBalance().toLocaleString('fr');
 }
-
-// Pool de faux joueurs IA pour peupler le lobby
-const DF_BOTS = [
-  {name:'Lina G.',     ava:'LG', color:'#4A9FE0', skill:0.75},
-  {name:'Emma D.',     ava:'ED', color:'#E040A0', skill:0.85},
-  {name:'Lucas M.',    ava:'LM', color:'#22C9A0', skill:0.68},
-  {name:'Chloé R.',    ava:'CR', color:'#16A37B', skill:0.90},
-  {name:'Théo P.',     ava:'TP', color:'#B06CE4', skill:0.62},
-  {name:'Hugo B.',     ava:'HB', color:'#F4A83A', skill:0.55},
-  {name:'Sarah L.',    ava:'SL', color:'#D4880A', skill:0.73},
-  {name:'Yanis F.',    ava:'YF', color:'#D63E3E', skill:0.40},
-  {name:'Marine T.',   ava:'MT', color:'#7B4FBF', skill:0.78},
-  {name:'Jules N.',    ava:'JN', color:'#0fa37e', skill:0.66}
-];
-
-// Rooms ouvertes (faux contenus mis à jour à chaque ouverture du lobby)
-let DF_ROOMS = [];
-function dfGenerateRooms(){
-  const candidates = DF_BOTS.slice().sort(()=>Math.random()-.5);
-  const themes = ['roulette','hist','geo','emc'];
-  const mises = [25, 100, 250, 500];
-  const caps = [2, 3, 4, 6];
-  const rooms = [];
-  const nbRooms = 4 + Math.floor(Math.random()*3);
-  for(let i=0;i<nbRooms;i++){
-    const host = candidates[i % candidates.length];
-    const cap = caps[Math.floor(Math.random()*caps.length)];
-    const filled = 1 + Math.floor(Math.random()*Math.max(1, cap-1));
-    const others = candidates.slice(i+1, i+1+filled-1).map(b => ({name:b.name, ava:b.ava, color:b.color, isBot:true}));
-    rooms.push({
-      id: 'room_' + Date.now() + '_' + i,
-      host: {name:host.name, ava:host.ava, color:host.color, isBot:true},
-      mise: mises[Math.floor(Math.random()*mises.length)],
-      theme: themes[Math.floor(Math.random()*themes.length)],
-      cap: cap,
-      players: [{name:host.name, ava:host.ava, color:host.color, isBot:true, isHost:true}].concat(others),
-      isMine: false
-    });
-  }
-  DF_ROOMS = rooms;
+function dfGetInviteLink(roomId){
+  var base='https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026/';
+  return base+'?room='+encodeURIComponent(roomId||(DF_CURRENT&&DF_CURRENT.id)||'');
 }
-
-// État du défi en cours
-let DF_CURRENT = null;
-// Choix dans l'écran de création
-let DF_FORM = { mise: 100, theme: 'roulette', cap: 4 };
-
-const DF_THEME_LABELS = {
-  roulette: '🎡 Roulette',
-  hist:     '📘 Histoire',
-  geo:      '🌍 Géo',
-  emc:      '⚖️ EMC',
-  pse:      '🩺 PSE',
-};
-
-// ── ENTRÉE / SORTIE de la vue défis ──
 function openDefis(){
   switchMode('defis');
   dfSetBalance(dfGetBalance());
-  dfGenerateRooms();
-  dfTab('lobby');
+  dfRenderLobby();
 }
-function closeDefis(){
-  // Retour vers l'accueil (welcome si inscrit, landing sinon)
-  goHome();
-}
+function closeDefis(){goHome();}
 
-// ── ONGLETS ──
-function dfTab(name){
-  const screens = {lobby:'dfScreenLobby', create:'dfScreenCreate', billet:'dfScreenBillet', waiting:'dfScreenWaiting', invite:'dfScreenInvite', end:'dfScreenEnd'};
-  Object.values(screens).forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('hidden'); });
-  const target = screens[name] || 'dfScreenLobby';
-  const el = document.getElementById(target); if(el) el.classList.remove('hidden');
-  // Onglets visibles seulement sur lobby/my (pas pendant un défi en cours)
-  const tabs = document.getElementById('dfTabs');
-  if(tabs) tabs.style.display = (name==='lobby'||name==='my') ? '' : 'none';
-  // Titre top
-  const ttl = document.getElementById('dfTitle');
-  if(ttl){
-    if(name==='create') ttl.textContent = '➕ Créer un défi';
-    else if(name==='waiting') ttl.textContent = '⏳ Salle d\'attente';
-    else if(name==='end') ttl.textContent = '🏆 Résultats';
-    else ttl.textContent = '⚔️ Défis multi-joueurs';
-  }
-  // Onglet actif
-  document.querySelectorAll('.df-tab').forEach(t => t.classList.remove('act'));
-  if(name==='lobby'){ document.getElementById('dfTabLobby')?.classList.add('act'); dfRenderLobby(); }
-  if(name==='my'){ document.getElementById('dfTabMy')?.classList.add('act'); dfRenderMyDefis(); }
-  if(name==='waiting') dfRenderWaiting();
+function dfScreen(name){
+  var screens=['dfScrLobby','dfScrCreate','dfScrWaiting','dfScrInvite','dfScrCountdown','dfScrQuiz','dfScrEnd'];
+  screens.forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('hidden');});
+  var el=document.getElementById(name);if(el)el.classList.remove('hidden');
 }
 
-// ── JOUEURS EN LIGNE ──
-var DF_SELECTED_PLAYERS = [];
-
-function dfTogglePlayer(name, btn, row){
-  var idx = DF_SELECTED_PLAYERS.indexOf(name);
-  if(idx >= 0){
-    DF_SELECTED_PLAYERS.splice(idx,1);
-    btn.textContent = 'Defier';
-    btn.style.background = 'linear-gradient(135deg,#B06CE4,#7B4FBF)';
-    row.style.borderColor = '#EDE9FE';
-    row.style.background = '#fff';
-  } else {
-    DF_SELECTED_PLAYERS.push(name);
-    btn.textContent = 'Selectionne';
-    btn.style.background = 'linear-gradient(135deg,#1DB87A,#158a5c)';
-    row.style.borderColor = '#1DB87A';
-    row.style.background = '#f0fdf8';
-  }
-  var invBlock = document.getElementById('dfInviteSelected');
-  var invBtn = document.getElementById('dfInviteSelBtn');
-  if(invBlock) invBlock.style.display = DF_SELECTED_PLAYERS.length > 0 ? 'block' : 'none';
-  if(invBtn) invBtn.textContent = 'Inviter '+DF_SELECTED_PLAYERS.length+' joueur'+(DF_SELECTED_PLAYERS.length>1?'s':'');
-}
-
-function dfInviteSelected(){
-  var link = dfGetInviteLink(DF_CURRENT ? DF_CURRENT.id : window.location.href);
-  var myName = (userProfile && (userProfile.pseudo||userProfile.prenom)) || 'Un ami';
-  var msg = encodeURIComponent(myName+' te defie sur Flowin ! Revise et remporte la cagnotte. '+link);
-  window.open('https://wa.me/?text='+msg,'_blank');
-}
-
-function dfRenderPlayers() {
-  var list = document.getElementById('dfPlayersList');
-  if(!list) return;
-  DF_SELECTED_PLAYERS = [];
-  var invBlock = document.getElementById('dfInviteSelected');
-  if(invBlock) invBlock.style.display = 'none';
-  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
-  var players = (PLAYERS || []).filter(function(p){ return p.name && p.name !== myName && !p.me; }).slice(0,8);
-  if(players.length === 0){
-    list.innerHTML = '<div style="text-align:center;padding:12px 4px;color:#7A7AAA;font-size:13px;font-style:italic">Personne de disponible.<br>Invite un ami par WhatsApp !</div>';
+// ── LOBBY ──
+function dfRenderLobby(){
+  dfScreen('dfScrLobby');
+  var list=document.getElementById('dfRoomsPublicList');
+  if(!list)return;
+  if(DF_ROOMS_PUBLIC.length===0){
+    list.innerHTML='<div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,.3);font-size:14px">Aucune room ouverte pour l\'instant<br><span style="font-size:12px">Crée la première !</span></div>';
     return;
   }
-  var colors = ['#7B4FBF','#E84855','#2B8EF0','#1DB87A','#F5A623','#E040A0'];
-  var rows = players.map(function(p){
-    var initials = p.name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
-    var col = colors[Math.abs((p.name.charCodeAt(0)||0)) % colors.length];
-    var sn = p.name.replace(/['"<>]/g,'');
-    var pts = p.pts ? p.pts.toLocaleString('fr')+' pts' : '--';
-    return '<div class="df-pir" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:14px;margin-bottom:8px;border:1.5px solid #EDE9FE;transition:all .2s">'
-      + '<div style="width:36px;height:36px;border-radius:50%;background:'+col+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0">'+initials+'</div>'
-      + '<div style="flex:1;min-width:0">'
-      +   '<div style="font-weight:700;font-size:13px;color:#1E1048">'+p.name+'</div>'
-      +   '<div style="font-size:11px;color:#7A7AAA">'+pts+'</div>'
-      + '</div>'
-      + '<button class="df-defy-btn" data-sn="'+sn+'" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:8px 12px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s">'
-      +   'Defier'
-      + '</button>'
-      + '</div>';
-  });
-  list.innerHTML = rows.join('');
-  list.querySelectorAll('.df-defy-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var sn = this.dataset.sn;
-      var row = this.closest('.df-pir');
-      dfTogglePlayer(sn, this, row);
-    });
-  });
-}
-
-
-// ── DÉFIER UN JOUEUR DIRECTEMENT ──
-function dfChallengePlayer(btn) {
-  var playerName = btn ? btn.dataset.name : '';
-  DF_FORM.mise = 100;
-  DF_FORM.theme = 'roulette';
-  DF_FORM.cap = 2;
-  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Joueur';
-  var roomName = 'Défi ' + myName + ' vs ' + playerName;
-  document.getElementById('dfRoomName').value = roomName;
-  dfCreateRoom(playerName);
-}
-
-// ── PARTAGE D'INVITATION ──
-let DF_CURRENT_ROOM_ID = null;
-function dfRenderLobby(myOnly){
-  const list = document.getElementById('dfRoomsList');
-  if(!list) return;
-  let rooms = DF_ROOMS.slice();
-  if(myOnly) rooms = rooms.filter(r => r.isMine);
-  // Cacher les rooms privées du lobby public (sauf les miennes)
-  if(!myOnly) rooms = rooms.filter(r => !r.isPrivate || r.isMine);
-  // Afficher les joueurs en ligne seulement sur l'onglet lobby complet
-  if(!myOnly) dfRenderPlayers();
-  if(rooms.length === 0){
-    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#7A7AAA;font-size:14px;font-style:italic">'
-      + (myOnly ? 'Tu n\'as pas encore créé ou rejoint de défi.<br><br>Crée-en un pour commencer !' : 'Aucune room ouverte pour l\'instant')
-      + '</div>';
-    return;
-  }
-  list.innerHTML = rooms.map(r => {
-    const cur = r.players.length;
-    const full = cur >= r.cap;
-    const cagnotte = r.mise * cur;
-    const themeLbl = DF_THEME_LABELS[r.theme] || r.theme;
-    return '<div class="df-room' + (full?' full':'') + '" onclick="dfJoinRoom(\'' + r.id + '\')">'
-      + '<div class="df-room-top">'
-      +   '<div class="df-room-host-ava" style="background:linear-gradient(135deg,' + r.host.color + ',rgba(0,0,0,.2))">' + r.host.ava + '</div>'
-      +   '<div class="df-room-host-info">'
-      +     '<div class="df-room-host-name">' + r.host.name + (r.isMine ? ' <span style="color:#22C9A0;font-size:11px">(toi)</span>' : '') + '</div>'
-      +     '<div class="df-room-host-sub">' + cur + '/' + r.cap + ' joueurs · ' + themeLbl + '</div>'
-      +   '</div>'
-      +   '<div class="df-room-mise">⚡' + r.mise + '</div>'
-      + '</div>'
-      + '<div class="df-room-meta">'
-      +   '<span class="df-chip">' + cur + '/' + r.cap + ' joueurs</span>'
-      +   '<span class="df-chip">' + themeLbl + '</span>'
-      +   '<span class="df-chip">10 questions</span>'
-      +   (full ? '<span class="df-chip red">Complet</span>' : '<span class="df-chip green">Ouverte</span>')
-      + '</div>'
-      + '<div class="df-room-cagnotte">'
-      +   '<span style="color:#7A7AAA;font-weight:600">🏆 Cagnotte actuelle</span>'
-      +   '<span class="df-cagnotte-val">' + cagnotte.toLocaleString('fr') + ' pts</span>'
-      + '</div>'
-      + '</div>';
+  list.innerHTML=DF_ROOMS_PUBLIC.map(function(r){
+    var full=r.players.length>=r.cap;
+    var cagnotte=r.mise*r.players.length;
+    return '<div class="df-room'+(full?' full':'')+'" onclick="'+(full?'':'dfJoinPublicRoom(\''+r.id+'\')')+'">'
+      +'<div class="df-room-top">'
+      +'<div class="df-room-ava" style="background:'+r.host.color+'">'+r.host.ava+'</div>'
+      +'<div class="df-room-info"><div class="df-room-name">'+r.name+'</div><div class="df-room-sub">par '+r.host.name+'</div></div>'
+      +'<div class="df-room-mise-badge">⚡'+r.mise+'</div>'
+      +'</div>'
+      +'<div class="df-room-chips">'
+      +'<span class="df-chip">'+r.players.length+'/'+r.cap+' joueurs</span>'
+      +'<span class="df-chip">'+(DF_THEME_LABELS[r.theme]||r.theme)+'</span>'
+      +(full?'<span class="df-chip red">Complète</span>':'<span class="df-chip green">Ouverte</span>')
+      +'</div>'
+      +'<div class="df-room-cagnotte"><span style="color:rgba(255,255,255,.4)">🏆 Cagnotte</span><span class="df-cagnotte-val">'+cagnotte.toLocaleString('fr')+' pts</span></div>'
+      +'</div>';
   }).join('');
 }
 
-// ── CRÉATION ──
-function dfShowCreate(){
-  const bal = dfGetBalance();
-  // Désactiver les mises trop chères pour le solde actuel
-  document.querySelectorAll('#dfMisePills .df-pill').forEach(p => {
-    const m = parseInt(p.dataset.mise);
-    if(m > bal){ p.classList.add('disabled'); p.style.pointerEvents='none'; }
-    else { p.classList.remove('disabled'); p.style.pointerEvents=''; }
-  });
-  // Si la mise sélectionnée est trop chère, prendre la plus haute possible
-  if(DF_FORM.mise > bal){
-    const pillsOk = Array.from(document.querySelectorAll('#dfMisePills .df-pill')).filter(p => parseInt(p.dataset.mise) <= bal);
-    if(pillsOk.length > 0){
-      const best = pillsOk[pillsOk.length-1];
-      dfSelMise(parseInt(best.dataset.mise));
-    }
-  }
+// ── CRÉATION ROOM ──
+function dfShowCreate(isPrivate){
+  DF_IS_PRIVATE=!!isPrivate;
+  dfScreen('dfScrCreate');
+  document.getElementById('dfCreateTitle').textContent=isPrivate?'🔒 Room privée':'🌐 Room publique';
+  var sw=document.getElementById('dfPrivSwitch');
+  if(sw){sw.classList.toggle('on',DF_IS_PRIVATE);}
+  dfUpdateMisePills();
   dfUpdateCagnottePreview();
-  dfTab('create');
+}
+function dfTogglePrivate(){
+  DF_IS_PRIVATE=!DF_IS_PRIVATE;
+  var sw=document.getElementById('dfPrivSwitch');
+  if(sw)sw.classList.toggle('on',DF_IS_PRIVATE);
 }
 function dfSelMise(m){
-  if(m > dfGetBalance()){
-    document.getElementById('dfMiseWarn').style.display='block';
-    return;
+  if(m>dfGetBalance()){
+    var w=document.getElementById('dfMiseWarn');if(w)w.style.display='block';return;
   }
-  document.getElementById('dfMiseWarn').style.display='none';
-  DF_FORM.mise = m;
-  document.querySelectorAll('#dfMisePills .df-pill').forEach(p => p.classList.toggle('sel', parseInt(p.dataset.mise) === m));
+  var w=document.getElementById('dfMiseWarn');if(w)w.style.display='none';
+  DF_FORM.mise=m;
+  dfUpdateMisePills();
   dfUpdateCagnottePreview();
 }
+function dfUpdateMisePills(){
+  var bal=dfGetBalance();
+  document.querySelectorAll('#dfMisePills .df-pill').forEach(function(p){
+    var m=parseInt(p.dataset.mise);
+    p.classList.toggle('sel',m===DF_FORM.mise);
+    p.classList.toggle('disabled',m>bal);
+    p.style.pointerEvents=m>bal?'none':'';
+  });
+}
 function dfSelTheme(t){
-  DF_FORM.theme = t;
-  document.querySelectorAll('#dfThemePills .df-pill').forEach(p => p.classList.toggle('sel', p.dataset.theme === t));
-  const notes = {
-    roulette: '🎡 Roulette : le thème sera tiré au sort au moment du lancement (suspense !) · Chaque joueur reçoit ses propres questions sur le thème tiré (anti-triche)',
-    hist:     '📘 Histoire : tu imposes le thème · Chaque joueur reçoit ses propres questions sur ce thème (anti-triche)',
-    geo:      '🌍 Géographie : tu imposes le thème · Chaque joueur reçoit ses propres questions sur ce thème (anti-triche)',
-    emc:      '⚖️ EMC : tu imposes le thème · Chaque joueur reçoit ses propres questions sur ce thème (anti-triche)',
-    pse:      '🩺 PSE : tu imposes le thème · Chaque joueur reçoit ses propres questions PSE (anti-triche)'
+  DF_FORM.theme=t;
+  document.querySelectorAll('#dfThemePills .df-pill').forEach(function(p){p.classList.toggle('sel',p.dataset.theme===t);});
+  var notes={
+    roulette:'🎡 Thème tiré pendant le compte à rebours — tout le monde découvre ensemble',
+    hist:'📘 Histoire imposée — mêmes questions pour tous',
+    geo:'🌍 Géographie imposée — mêmes questions pour tous',
+    emc:'⚖️ EMC imposé — mêmes questions pour tous',
+    pse:'🩺 PSE imposé — mêmes questions pour tous'
   };
-  document.getElementById('dfThemeNote').textContent = notes[t] || '';
+  var n=document.getElementById('dfThemeNote');if(n)n.textContent=notes[t]||'';
 }
 function dfSelCap(c){
-  DF_FORM.cap = c;
-  document.querySelectorAll('#dfCapPills .df-pill').forEach(p => p.classList.toggle('sel', parseInt(p.dataset.cap) === c));
+  DF_FORM.cap=c;
+  document.querySelectorAll('#dfCapPills .df-pill').forEach(function(p){p.classList.toggle('sel',parseInt(p.dataset.cap)===c);});
   dfUpdateCagnottePreview();
 }
 function dfUpdateCagnottePreview(){
-  const total = DF_FORM.mise * DF_FORM.cap;
-  const el = document.getElementById('dfCagnottePreview');
-  if(el) el.textContent = total.toLocaleString('fr');
+  var el=document.getElementById('dfCagnottePreview');
+  if(el)el.textContent=(DF_FORM.mise*DF_FORM.cap).toLocaleString('fr');
 }
 
-function dfSimulateBotJoins(){
-  if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
-  const interval = setInterval(() => {
-    if(!DF_CURRENT || DF_CURRENT.id !== room.id){ clearInterval(interval); return; }
-    if(room.players.length >= room.cap){ clearInterval(interval); dfRenderWaiting(); return; }
-    // 60% de chance qu'un bot rejoigne à chaque tick
-    if(Math.random() > 0.4){
-      const taken = new Set(room.players.map(p => p.name));
-      const free = DF_BOTS.filter(b => !taken.has(b.name));
-      if(free.length === 0){ clearInterval(interval); return; }
-      const bot = free[Math.floor(Math.random()*free.length)];
-      room.players.push({name:bot.name, ava:bot.ava, color:bot.color, isBot:true, skill:bot.skill});
-      dfRenderWaiting();
-    }
-  }, 2200);
-  // Sécurité : stop après 30s
-  setTimeout(() => clearInterval(interval), 30000);
+function dfCreateRoom(){
+  var bal=dfGetBalance();
+  if(DF_FORM.mise>bal){alert('⚠️ Solde insuffisant. Tu as '+bal+' pts, il en faut '+DF_FORM.mise+'.');return;}
+  dfSetBalance(bal-DF_FORM.mise);
+  var nameInput=document.getElementById('dfRoomName');
+  var roomName=(nameInput&&nameInput.value.trim())||('Défi de '+(userProfile.pseudo||userProfile.prenom||'Toi'));
+  var myName=userProfile.pseudo||userProfile.prenom||'Toi';
+  var myAva=((userProfile.prenom||'T').charAt(0)+(userProfile.nom||'').charAt(0)).toUpperCase()||'TO';
+  var roomId='room_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  var room={
+    id:roomId, name:roomName, isPrivate:DF_IS_PRIVATE,
+    host:{name:myName,ava:myAva,color:'#7B4FBF',isMe:true},
+    mise:DF_FORM.mise, theme:DF_FORM.theme, cap:DF_FORM.cap,
+    players:[{name:myName,ava:myAva,color:'#7B4FBF',isMe:true,isHost:true}],
+    isMine:true, status:'waiting', ts:new Date().toISOString()
+  };
+  if(!DF_IS_PRIVATE) DF_ROOMS_PUBLIC.unshift(room);
+  DF_CURRENT=room;
+  supabaseInsert('defis',{id:roomId,ts:room.ts,nom:roomName,createur:myName,mise:room.mise,theme:room.theme,nb_joueurs:room.cap,status:'waiting',ecole:userProfile.ecole||''});
+  if(DF_IS_PRIVATE){
+    dfShowBilletCreateur(room);
+  } else {
+    dfShowWaiting();
+  }
+}
+
+// ── BILLET CRÉATEUR (room privée) ──
+function dfShowBilletCreateur(room){
+  var link=dfGetInviteLink(room.id);
+  var el=function(id){return document.getElementById(id);};
+  if(el('dbNom'))el('dbNom').textContent=room.name;
+  if(el('dbCreateur'))el('dbCreateur').textContent=room.host.name;
+  if(el('dbMise'))el('dbMise').textContent=room.mise+' pts';
+  if(el('dbTheme'))el('dbTheme').textContent=DF_THEME_LABELS[room.theme]||room.theme;
+  if(el('dbCagnotte'))el('dbCagnotte').textContent=(room.mise*room.cap).toLocaleString('fr')+' pts';
+  if(el('dbJoueurs'))el('dbJoueurs').textContent=room.cap+' joueurs max';
+  if(el('dbLien'))el('dbLien').textContent=link;
+  if(el('dbQR'))el('dbQR').src='https://api.qrserver.com/v1/create-qr-code/?size=110x110&data='+encodeURIComponent(link);
+  dfScreen('dfScrCreate');
+  document.getElementById('dfScrCreate').classList.add('hidden');
+  // Afficher le billet dans la salle d'attente
+  dfShowWaiting();
+}
+
+function dbShareWhatsApp(){
+  var room=DF_CURRENT;if(!room)return;
+  var link=dfGetInviteLink(room.id);
+  var myName=userProfile.pseudo||userProfile.prenom||'Un ami';
+  var cagnotte=room.mise*room.cap;
+  var msg='⚔️ '+myName+' te défie sur Flowin ! Thème : '+(DF_THEME_LABELS[room.theme]||room.theme)+' | Mise : '+room.mise+' pts | Cagnotte : '+cagnotte+' pts. Rejoins ici : '+link;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function dbShareSMS(){
+  var room=DF_CURRENT;if(!room)return;
+  var link=dfGetInviteLink(room.id);
+  var myName=userProfile.pseudo||userProfile.prenom||'Un ami';
+  var msg='⚔️ '+myName+' te défie sur Flowin ! Mise : '+room.mise+' pts. Rejoins : '+link;
+  window.open('sms:?body='+encodeURIComponent(msg),'_blank');
+}
+function dbCopyLink(){
+  var room=DF_CURRENT;if(!room)return;
+  var link=dfGetInviteLink(room.id);
+  if(navigator.clipboard){navigator.clipboard.writeText(link);}
+  else{var ta=document.createElement('textarea');ta.value=link;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
+  var b=document.getElementById('dbCopyBtn');if(b){b.textContent='✅ Copié !';setTimeout(function(){b.textContent='🔗 Copier';},2000);}
 }
 
 // ── SALLE D'ATTENTE ──
-function dfCopyLinkWait(){
-  var link = dfGetInviteLink(DF_CURRENT ? DF_CURRENT.id : '');
-  if(navigator.clipboard){ navigator.clipboard.writeText(link); }
-  var b=document.getElementById('dfCopyBtn2');
-  if(b){ b.textContent='✅ Copie!'; setTimeout(function(){b.textContent='🔗 Copier';},2000); }
-}
-function dfRenderWaiting(){
-  if(!DF_CURRENT) return;
-  var room = DF_CURRENT;
-  var isFull = room.players.length >= room.cap;
-  var emojiEl = document.getElementById('dfWaitEmoji');
-  if(emojiEl) emojiEl.textContent = isFull ? '✅' : '⏳';
-  document.getElementById('dfWaitTtl').textContent = isFull ? 'Room complete ! Prets ?' : 'En attente de joueurs…';
-  document.getElementById('dfWaitSub').textContent = room.players.length + '/' + room.cap + ' joueurs · ' + (DF_THEME_LABELS[room.theme]||room.theme);
-  var link = dfGetInviteLink(room.id);
-  var qrImg = document.getElementById('dfQRimg');
-  if(qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(link);
-  // Remplir le billet
-  var bn = document.getElementById('dfBilletNom'); if(bn) bn.textContent = room.name || 'Défi Flowin';
-  var bm = document.getElementById('dfBilletMise'); if(bm) bm.textContent = room.mise + ' pts';
-  var bt = document.getElementById('dfBilletTheme'); if(bt) bt.textContent = DF_THEME_LABELS[room.theme] || room.theme;
-  var bj = document.getElementById('dfBilletJoueurs'); if(bj) bj.textContent = room.cap + ' max';
-  var bl = document.getElementById('dfBilletLien'); if(bl) bl.textContent = link;
-  document.getElementById('dfWaitMise').textContent = room.mise;
-  document.getElementById('dfWaitCagnotte').textContent = (room.mise * room.players.length).toLocaleString('fr');
-
-  // Badge privé + PIN
-  var badge = document.getElementById('dfPrivateBadge');
-  var pin = document.getElementById('dfPinDisplay');
-  if(badge && pin){
-    if(room.isPrivate && room.pin){
-      badge.style.display = 'block';
-      pin.textContent = room.pin;
-    } else {
-      badge.style.display = 'none';
-    }
-  }
-
-  var _list = document.getElementById('dfWaitPlayers');
-  if(_list) {
-    var rows = '';
-    (room.players||[]).forEach(function(p){
-      rows += '<div style="display:flex;align-items:center;gap:10px;background:' + (p.isMe?'rgba(176,108,228,.18)':'rgba(255,255,255,.04)') + ';border:1px solid ' + (p.isMe?'rgba(176,108,228,.4)':'rgba(255,255,255,.08)') + ';border-radius:12px;padding:10px 12px;margin-bottom:6px">'
-        + '<div style="width:32px;height:32px;border-radius:50%;background:' + (p.color||'#7B4FBF') + ';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">' + (p.ava||'?') + '</div>'
-        + '<div style="flex:1;font-size:14px;font-weight:700;color:#fff">' + p.name + (p.isMe?' <span style="background:#B06CE4;color:#fff;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:4px;font-weight:800">TOI</span>':'') + '</div>'
-        + (p.isHost?'<span style="background:#F4A83A;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px">HOST</span>':'<span style="font-size:12px;color:#22C9A0;font-weight:700">✓</span>')
-        + '</div>';
-    });
-    for(var _e=(room.players||[]).length; _e<room.cap; _e++){
-      rows += '<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;margin-bottom:6px">'
-        + '<div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:16px">…</div>'
-        + '<div style="font-size:13px;font-style:italic;color:rgba(255,255,255,.3)">En attente…</div>'
-        + '</div>';
-    }
-    _list.innerHTML = rows;
-  }
-
-  // Bouton lancer : actif dès 2 joueurs ET seulement si je suis le host
-  const btn = document.getElementById('dfStartBtn');
-  const hint = document.getElementById('dfWaitHint');
-  const meIsHost = room.players.find(p => p.isMe && p.isHost);
-  if(!meIsHost){
-    // J'ai rejoint, c'est l'host qui décide
-    btn.style.display = 'none';
-    hint.textContent = '⏳ ' + room.host.name + ' va lancer le défi…';
-    hint.style.color = '#7B4FBF';
-  } else if(room.players.length >= 2){
-    btn.style.display = '';
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    hint.textContent = '✅ Tu peux lancer le défi maintenant';
-    hint.style.color = '#22C9A0';
-  } else {
-    btn.style.display = '';
-    btn.disabled = true;
-    btn.style.opacity = '.5';
-    hint.textContent = 'Il faut au moins 2 joueurs pour lancer';
-    hint.style.color = '#7A7AAA';
-  }
-}
-
-function dfCancelRoom(){
-  if(!confirm('Annuler la room ? Ta mise te sera remboursée.')) return;
-  if(DF_CURRENT){
-    dfSetBalance(dfGetBalance() + DF_CURRENT.mise);
-    DF_ROOMS = DF_ROOMS.filter(r => r.id !== DF_CURRENT.id);
-    DF_CURRENT = null;
-  }
-  dfTab('lobby');
-}
-
-// ── BILLET CRÉATEUR ──
-function dfShowBilletCreateur(room) {
-  var el = function(id){ return document.getElementById(id); };
-  var link = dfGetInviteLink(room.id);
-  if(el('dbNom'))      el('dbNom').textContent      = room.name;
-  if(el('dbCreateur')) el('dbCreateur').textContent  = room.host.name;
-  if(el('dbMise'))     el('dbMise').textContent      = room.mise + ' pts';
-  if(el('dbTheme'))    el('dbTheme').textContent     = DF_THEME_LABELS[room.theme] || room.theme;
-  if(el('dbJoueurs'))  el('dbJoueurs').textContent   = room.cap + ' joueurs max';
-  if(el('dbCagnotte')) el('dbCagnotte').textContent  = (room.mise * room.cap) + ' pts';
-  if(el('dbLien'))     el('dbLien').textContent      = link;
-  var qr = el('dbQR');
-  if(qr) qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent(link);
-  dfTab('billet');
-}
-
-function dbShareWhatsApp() {
-  var room = DF_CURRENT;
-  if(!room) return;
-  var link = dfGetInviteLink(room.id);
-  var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
-  var cagnotte = room.mise * room.cap;
-  var theme = DF_THEME_LABELS[room.theme] || room.theme;
-  var msg = 'Defi Flowin de ' + myName + ' ! Theme : ' + theme + ' | Mise : ' + room.mise + ' pts | Cagnotte : ' + cagnotte + ' pts. Rejoins : ' + link;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-}
-
-function dbShareSMS() {
-  var room = DF_CURRENT;
-  if(!room) return;
-  var link = dfGetInviteLink(room.id);
-  var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
-  var msg = '⚔️ ' + myName + ' te défie sur Flowin ! Mise : ' + room.mise + ' pts. Rejoins : ' + link;
-  window.open('sms:?body=' + encodeURIComponent(msg), '_blank');
-}
-
-function dbCopyLink() {
-  var room = DF_CURRENT;
-  if(!room) return;
-  var link = dfGetInviteLink(room.id);
-  if(navigator.clipboard) {
-    navigator.clipboard.writeText(link);
-  } else {
-    var ta = document.createElement('textarea');
-    ta.value = link; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-  }
-  var b = document.getElementById('dbCopyBtn');
-  if(b) { b.textContent = '✅ Copié !'; setTimeout(function(){ b.textContent = '🔗 Copier'; }, 2000); }
-}
-
-function dbGoToWaiting() {
-  dfTab('waiting');
+function dfShowWaiting(){
+  if(!DF_CURRENT)return;
+  dfScreen('dfScrWaiting');
+  dfRenderWaiting();
   dfStartPollingParticipants(DF_CURRENT.id);
 }
-
-// ── LIEN INVITATION ──
-function dfGetInviteLink(roomId) {
-  var base = 'https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026/';
-  return base + '?room=' + encodeURIComponent(roomId || (DF_CURRENT && DF_CURRENT.id) || '');
-}
-
-function dfShareWhatsApp() {
-  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
-  var link = dfGetInviteLink();
-  var room = DF_CURRENT;
-  var msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! Rejoins ma room : ' + link);
-  window.open('https://wa.me/?text=' + msg, '_blank');
-}
-function dfShareSMS() {
-  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
-  var link = dfGetInviteLink();
-  var msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! ' + link);
-  window.open('sms:?body=' + msg, '_blank');
-}
-function dfCopyLinkWait() {
-  var link = dfGetInviteLink();
-  if(navigator.clipboard) {
-    navigator.clipboard.writeText(link);
-  } else {
-    var ta = document.createElement('textarea');
-    ta.value = link;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+function dfRenderWaiting(){
+  if(!DF_CURRENT)return;
+  var room=DF_CURRENT;
+  var isFull=room.players.length>=room.cap;
+  var emojiEl=document.getElementById('dfWaitEmoji');if(emojiEl)emojiEl.textContent=isFull?'✅':'⏳';
+  var ttlEl=document.getElementById('dfWaitTtl');if(ttlEl)ttlEl.textContent=isFull?'Room complète !':'En attente de joueurs…';
+  var subEl=document.getElementById('dfWaitSub');if(subEl)subEl.textContent=room.players.length+'/'+room.cap+' joueurs · '+(DF_THEME_LABELS[room.theme]||room.theme);
+  var cagEl=document.getElementById('dfWaitCagnotte');if(cagEl)cagEl.textContent=(room.mise*room.players.length).toLocaleString('fr')+' pts';
+  // Billet dans la salle d'attente
+  var bl=document.getElementById('dfWaitBilletLien');if(bl)bl.textContent=dfGetInviteLink(room.id);
+  var bqr=document.getElementById('dfWaitQRimg');if(bqr)bqr.src='https://api.qrserver.com/v1/create-qr-code/?size=90x90&data='+encodeURIComponent(dfGetInviteLink(room.id));
+  // Liste joueurs
+  var listEl=document.getElementById('dfWaitPlayers');
+  if(listEl){
+    var rows='';
+    room.players.forEach(function(p){
+      rows+='<div class="df-player-row'+(p.isMe?' me':'')+'"><div class="df-player-ava" style="background:'+(p.color||'#7B4FBF')+'">'+p.ava+'</div>'
+        +'<div class="df-player-name">'+p.name+'</div>'
+        +(p.isHost?'<span class="df-player-tag host">HOST</span>':'<span style="font-size:12px;color:#22C9A0;font-weight:700">✓</span>')
+        +(p.isMe&&!p.isHost?'<span class="df-player-tag toi" style="margin-left:4px">TOI</span>':'')
+        +'</div>';
+    });
+    for(var e=room.players.length;e<room.cap;e++){
+      rows+='<div class="df-player-row empty"><div class="df-player-ava" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.2);font-size:16px">…</div><div class="df-player-name" style="color:rgba(255,255,255,.25);font-style:italic;font-size:13px">En attente…</div></div>';
+    }
+    listEl.innerHTML=rows;
   }
-  var b = document.getElementById('dfCopyBtn2');
-  if(b) { b.textContent = '✅ Copié !'; setTimeout(function(){ b.textContent = '🔗 Copier'; }, 2000); }
-}
-
-// ── CRÉER ROOM ──
-function dfCreateRoom() {
-  var bal = dfGetBalance();
-  if(DF_FORM.mise > bal) {
-    alert('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + DF_FORM.mise + '.');
-    return;
+  // Si room pleine → lancer le compte à rebours
+  if(isFull&&!room._countdownStarted){
+    room._countdownStarted=true;
+    clearInterval(DF_PARTICIPANTS_POLL);
+    dfStartCountdown();
   }
-  dfSetBalance(bal - DF_FORM.mise);
-  var roomNameInput = document.getElementById('dfRoomName');
-  var roomName = (roomNameInput && roomNameInput.value.trim()) || ('Défi de ' + (userProfile.pseudo || userProfile.prenom || 'Toi'));
-  var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
-  var myAva = ((userProfile.prenom || 'T').charAt(0) + (userProfile.nom || '').charAt(0)).toUpperCase() || 'TO';
-  var roomId = 'room_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-  var room = {
-    id: roomId, name: roomName,
-    host: {name: myName, ava: myAva, color: '#7B4FBF', isMe: true},
-    mise: DF_FORM.mise, theme: DF_FORM.theme, cap: DF_FORM.cap,
-    players: [{name: myName, ava: myAva, color: '#7B4FBF', isMe: true, isHost: true}],
-    isMine: true, status: 'waiting', ts: new Date().toISOString()
-  };
-  DF_ROOMS.unshift(room);
-  DF_CURRENT = room;
-  supabaseInsert('defis', {
-    id: roomId, ts: room.ts, nom: roomName,
-    createur: myName, mise: room.mise, theme: room.theme,
-    nb_joueurs: room.cap, status: 'waiting', ecole: userProfile.ecole || ''
-  });
-  dfAddToMyDefis({id: roomId, name: roomName, role: 'createur', mise: room.mise, theme: room.theme, status: 'waiting', ts: room.ts, resultat: null});
-  dfShowBilletCreateur(room);
+}
+function dfWaitShareWhatsApp(){
+  var room=DF_CURRENT;if(!room)return;
+  var link=dfGetInviteLink(room.id);
+  var myName=userProfile.pseudo||userProfile.prenom||'Un ami';
+  var msg='⚔️ '+myName+' te défie sur Flowin ! Rejoins ma room : '+link;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function dfWaitShareSMS(){
+  var room=DF_CURRENT;if(!room)return;
+  var link=dfGetInviteLink(room.id);
+  var myName=userProfile.pseudo||userProfile.prenom||'Un ami';
+  window.open('sms:?body='+encodeURIComponent('⚔️ '+myName+' te défie ! '+link),'_blank');
+}
+function dfWaitCopyLink(){
+  var link=dfGetInviteLink(DF_CURRENT?DF_CURRENT.id:'');
+  if(navigator.clipboard)navigator.clipboard.writeText(link);
+  var b=document.getElementById('dfWaitCopyBtn');if(b){b.textContent='✅ Copié !';setTimeout(function(){b.textContent='🔗 Copier';},2000);}
+}
+function dfCancelRoom(){
+  if(!confirm('Annuler la room ? Ta mise te sera remboursée.'))return;
+  if(DF_CURRENT){
+    dfSetBalance(dfGetBalance()+DF_CURRENT.mise);
+    DF_ROOMS_PUBLIC=DF_ROOMS_PUBLIC.filter(function(r){return r.id!==DF_CURRENT.id;});
+    var hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+    fetch(SUPABASE_URL+'/rest/v1/defis_participants?defi_id=eq.'+encodeURIComponent(DF_CURRENT.id),{method:'DELETE',headers:hdrs}).catch(function(){});
+    clearInterval(DF_PARTICIPANTS_POLL);
+    clearInterval(DF_COUNTDOWN_INT);
+    DF_CURRENT=null;
+  }
+  dfRenderLobby();
+}
+function dfQuitDuringCountdown(){
+  if(!confirm('Quitter ? Ta mise te sera remboursée.'))return;
+  if(DF_CURRENT){
+    dfSetBalance(dfGetBalance()+DF_CURRENT.mise);
+    var hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+    fetch(SUPABASE_URL+'/rest/v1/defis_participants?defi_id=eq.'+encodeURIComponent(DF_CURRENT.id)+'&pseudo=eq.'+encodeURIComponent(userProfile.pseudo||userProfile.prenom||''),{method:'DELETE',headers:hdrs}).catch(function(){});
+    clearInterval(DF_COUNTDOWN_INT);
+    DF_CURRENT._countdownStarted=false;
+    DF_CURRENT=null;
+  }
+  dfRenderLobby();
 }
 
-// ── REJOINDRE VIA LIEN (invité) ──
-async function dfLoadRoomFromSupabase(roomId) {
-  try {
-    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-    var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=*', {headers: hdrs});
-    if(!r.ok) return null;
-    var rows = await r.json();
-    if(!Array.isArray(rows) || rows.length === 0) return null;
-    var d = rows[0];
-    return {
-      id: d.id,
-      name: d.nom || ('Défi de ' + (d.createur || '?')),
-      host: {name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false},
-      mise: d.mise || 0, theme: d.theme || 'roulette', cap: d.nb_joueurs || 4,
-      players: [{name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false, isHost: true}],
-      isMine: false, status: d.status || 'waiting', ts: d.ts || new Date().toISOString()
+// ── POLLING CRÉATEUR ──
+function dfStartPollingParticipants(roomId){
+  clearInterval(DF_PARTICIPANTS_POLL);
+  DF_PARTICIPANTS_POLL=setInterval(async function(){
+    if(!DF_CURRENT||DF_CURRENT.id!==roomId){clearInterval(DF_PARTICIPANTS_POLL);return;}
+    try{
+      var hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+      var r=await fetch(SUPABASE_URL+'/rest/v1/defis_participants?defi_id=eq.'+encodeURIComponent(roomId)+'&select=pseudo,ts&order=ts.asc',{headers:hdrs});
+      if(!r.ok)return;
+      var rows=await r.json();
+      if(!Array.isArray(rows))return;
+      var creatorName=DF_CURRENT.host?DF_CURRENT.host.name:'';
+      var players=[{name:creatorName,ava:creatorName.charAt(0).toUpperCase(),color:'#7B4FBF',isMe:true,isHost:true}];
+      rows.forEach(function(p){
+        if(p.pseudo&&p.pseudo!==creatorName){
+          players.push({name:p.pseudo,ava:p.pseudo.charAt(0).toUpperCase(),color:'#22C9A0',isMe:false});
+        }
+      });
+      DF_CURRENT.players=players;
+      dfRenderWaiting();
+      var badge=document.getElementById('dfSyncBadge');if(badge)badge.style.display='inline-flex';
+    }catch(e){}
+  },3000);
+  setTimeout(function(){clearInterval(DF_PARTICIPANTS_POLL);},600000);
+}
+
+// ── FLUX INVITÉ (arrivée via lien) ──
+async function dfLoadThenJoin(roomId){
+  var existing=DF_ROOMS_PUBLIC.find(function(r){return r.id===roomId;});
+  if(existing){dfShowBilletInvite(existing);return;}
+  try{
+    var hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+    var res=await fetch(SUPABASE_URL+'/rest/v1/defis?id=eq.'+encodeURIComponent(roomId)+'&select=*',{headers:hdrs});
+    if(!res.ok){alert('❌ Room introuvable ou expirée.');return;}
+    var rows=await res.json();
+    if(!Array.isArray(rows)||rows.length===0){alert('❌ Room introuvable ou expirée.');return;}
+    var d=rows[0];
+    if(d.status==='termine'){alert('❌ Ce défi est déjà terminé.');return;}
+    var room={
+      id:d.id, name:d.nom||('Défi de '+(d.createur||'?')),
+      host:{name:d.createur||'?',ava:(d.createur||'?').charAt(0).toUpperCase(),color:'#7B4FBF',isMe:false},
+      mise:d.mise||0, theme:d.theme||'roulette', cap:d.nb_joueurs||4,
+      players:[{name:d.createur||'?',ava:(d.createur||'?').charAt(0).toUpperCase(),color:'#7B4FBF',isMe:false,isHost:true}],
+      isMine:false, status:d.status||'waiting', ts:d.ts||new Date().toISOString()
     };
-  } catch(e) { return null; }
+    dfShowBilletInvite(room);
+  }catch(e){alert('❌ Impossible de charger la room.');}
 }
-
-async function dfLoadThenJoin(roomId) {
-  var existing = DF_ROOMS.find(function(r){ return r.id === roomId; });
-  if(existing) { dfJoinRoom(roomId); return; }
-  var room = await dfLoadRoomFromSupabase(roomId);
-  if(!room) { alert('❌ Room introuvable ou expirée.'); return; }
-  DF_ROOMS.unshift(room);
-  dfJoinRoom(roomId);
-}
-
-function dfJoinRoom(roomId) {
-  var room = DF_ROOMS.find(function(r){ return r.id === roomId; });
-  if(!room) return;
-  if(room.isMine) { DF_CURRENT = room; dfTab('waiting'); dfStartPollingParticipants(roomId); return; }
-  // Invité : afficher le billet de la room
+function dfJoinPublicRoom(roomId){
+  var room=DF_ROOMS_PUBLIC.find(function(r){return r.id===roomId;});
+  if(!room||room.players.length>=room.cap)return;
+  if(room.isMine){DF_CURRENT=room;dfShowWaiting();return;}
   dfShowBilletInvite(room);
 }
-
-function dfShowBilletInvite(room) {
-  // Remplir le billet invité
-  var el = function(id){ return document.getElementById(id); };
-  if(el('diBilletNom')) el('diBilletNom').textContent = room.name || ('Défi de ' + room.host.name);
-  if(el('diBilletHost')) el('diBilletHost').textContent = room.host.name;
-  if(el('diBilletMise')) el('diBilletMise').textContent = room.mise + ' pts';
-  if(el('diBilletTheme')) el('diBilletTheme').textContent = DF_THEME_LABELS[room.theme] || room.theme;
-  if(el('diBilletJoueurs')) el('diBilletJoueurs').textContent = room.players.length + '/' + room.cap;
-  if(el('diBilletCagnotte')) el('diBilletCagnotte').textContent = (room.mise * room.cap) + ' pts max';
-  // Solde
-  var bal = dfGetBalance();
-  var soldeOk = room.mise <= bal;
-  if(el('diBilletWarn')) el('diBilletWarn').style.display = soldeOk ? 'none' : 'block';
-  if(el('diBilletWarnTxt')) el('diBilletWarnTxt').textContent = 'Solde insuffisant — tu as ' + bal + ' pts, il en faut ' + room.mise;
-  var btn = el('diBilletBtn');
-  if(btn) { btn.disabled = !soldeOk; btn.style.opacity = soldeOk ? '1' : '.4'; }
-  // Stocker la room
-  window._diRoom = room;
-  dfTab('invite');
+function dfShowBilletInvite(room){
+  var el=function(id){return document.getElementById(id);};
+  if(el('diBilletNom'))el('diBilletNom').textContent=room.name||('Défi de '+room.host.name);
+  if(el('diBilletHost'))el('diBilletHost').textContent=room.host.name;
+  if(el('diBilletMise'))el('diBilletMise').textContent=room.mise+' pts';
+  if(el('diBilletTheme'))el('diBilletTheme').textContent=DF_THEME_LABELS[room.theme]||room.theme;
+  if(el('diBilletJoueurs'))el('diBilletJoueurs').textContent=room.players.length+'/'+room.cap;
+  if(el('diBilletCagnotte'))el('diBilletCagnotte').textContent=(room.mise*room.cap).toLocaleString('fr')+' pts max';
+  var bal=dfGetBalance();
+  var soldeOk=room.mise<=bal;
+  if(el('diBilletWarn'))el('diBilletWarn').style.display=soldeOk?'none':'block';
+  if(el('diBilletWarnTxt'))el('diBilletWarnTxt').textContent='Solde insuffisant — tu as '+bal+' pts, il en faut '+room.mise;
+  // Infos solde
+  if(el('diSoldeInfo'))el('diSoldeInfo').innerHTML='💰 Ton solde : <strong style="color:#F4A83A">'+bal.toLocaleString('fr')+' pts</strong> · Mise : <strong style="color:#F4A83A">'+room.mise+' pts</strong><br>Il te restera <strong style="color:#fff">'+(bal-room.mise).toLocaleString('fr')+' pts</strong> si tu rejoins';
+  var btn=el('diBilletBtn');
+  if(btn){btn.disabled=!soldeOk;btn.style.opacity=soldeOk?'1':'.4';}
+  window._diRoom=room;
+  dfScreen('dfScrInvite');
 }
-
-function diConfirmJoin() {
-  var room = window._diRoom;
-  if(!room) return;
-  var bal = dfGetBalance();
-  if(room.mise > bal) return;
-  dfSetBalance(bal - room.mise);
-  var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
-  var myAva = ((userProfile.prenom || 'T').charAt(0) + (userProfile.nom || '').charAt(0)).toUpperCase() || 'TO';
-  room.players.push({name: myName, ava: myAva, color: '#22C9A0', isMe: true});
-  room.iJoined = true;
-  DF_CURRENT = room;
-  supabaseInsert('defis_participants', {defi_id: room.id, pseudo: myName, mise: room.mise});
-  dfAddToMyDefis({id: room.id, name: room.name, role: 'participant', mise: room.mise, theme: room.theme, status: 'en_cours', ts: new Date().toISOString(), resultat: null});
-  dfTab('waiting');
+function diConfirmJoin(){
+  var room=window._diRoom;if(!room)return;
+  var bal=dfGetBalance();if(room.mise>bal)return;
+  dfSetBalance(bal-room.mise);
+  var myName=userProfile.pseudo||userProfile.prenom||'Toi';
+  var myAva=((userProfile.prenom||'T').charAt(0)+(userProfile.nom||'').charAt(0)).toUpperCase()||'TO';
+  room.players.push({name:myName,ava:myAva,color:'#22C9A0',isMe:true});
+  room.iJoined=true;
+  DF_CURRENT=room;
+  supabaseInsert('defis_participants',{defi_id:room.id,pseudo:myName,mise:room.mise});
+  dfScreen('dfScrWaiting');
+  dfRenderWaiting();
   dfPollForGameStart(room.id);
 }
 
-// ── POLLING CRÉATEUR : voir les participants arriver ──
-var DF_PARTICIPANTS_POLL = null;
-function dfStartPollingParticipants(roomId) {
-  if(DF_PARTICIPANTS_POLL) clearInterval(DF_PARTICIPANTS_POLL);
-  DF_PARTICIPANTS_POLL = setInterval(async function() {
-    if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_PARTICIPANTS_POLL); return; }
-    try {
-      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-      var r = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo,ts&order=ts.asc', {headers: hdrs});
-      if(!r.ok) return;
-      var rows = await r.json();
-      if(!Array.isArray(rows)) return;
-      var creatorName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
-      var players = [{name: creatorName, ava: creatorName.charAt(0).toUpperCase(), color: '#7B4FBF', isMe: true, isHost: true}];
-      rows.forEach(function(p) {
-        if(p.pseudo && p.pseudo !== creatorName) {
-          players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: '#22C9A0', isMe: false});
-        }
-      });
-      DF_CURRENT.players = players;
-      dfRenderWaiting();
-      var syncBadge = document.getElementById('dfSyncBadge');
-      if(syncBadge) syncBadge.style.display = 'inline-flex';
-    } catch(e){}
-  }, 3000);
-  setTimeout(function(){ clearInterval(DF_PARTICIPANTS_POLL); }, 600000);
-}
-
-// ── POLLING INVITÉ : attendre le lancement ──
-var DF_GAME_START_POLL = null;
-function dfPollForGameStart(roomId) {
-  if(DF_GAME_START_POLL) clearInterval(DF_GAME_START_POLL);
-  DF_GAME_START_POLL = setInterval(async function() {
-    if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_GAME_START_POLL); return; }
-    try {
-      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-      var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=status', {headers: hdrs});
-      if(!r.ok) return;
-      var rows = await r.json();
-      if(!Array.isArray(rows) || rows.length === 0) return;
-      // Mettre à jour la liste joueurs
-      var r2 = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo&order=ts.asc', {headers: hdrs});
-      if(r2.ok) {
-        var pts = await r2.json();
-        if(Array.isArray(pts)) {
-          var hostName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
-          var myName = userProfile.pseudo || userProfile.prenom || '';
-          var players = [{name: hostName, ava: hostName.charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false, isHost: true}];
-          pts.forEach(function(p) {
-            players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: p.pseudo === myName ? '#F4A83A' : '#22C9A0', isMe: p.pseudo === myName});
-          });
-          DF_CURRENT.players = players;
+// ── POLLING INVITÉ ──
+var DF_GAME_START_POLL=null;
+function dfPollForGameStart(roomId){
+  clearInterval(DF_GAME_START_POLL);
+  DF_GAME_START_POLL=setInterval(async function(){
+    if(!DF_CURRENT||DF_CURRENT.id!==roomId){clearInterval(DF_GAME_START_POLL);return;}
+    try{
+      var hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+      var r=await fetch(SUPABASE_URL+'/rest/v1/defis?id=eq.'+encodeURIComponent(roomId)+'&select=status,nb_joueurs',{headers:hdrs});
+      if(!r.ok)return;
+      var rows=await r.json();
+      if(!Array.isArray(rows)||rows.length===0)return;
+      // Mettre à jour joueurs
+      var r2=await fetch(SUPABASE_URL+'/rest/v1/defis_participants?defi_id=eq.'+encodeURIComponent(roomId)+'&select=pseudo&order=ts.asc',{headers:hdrs});
+      if(r2.ok){
+        var pts=await r2.json();
+        if(Array.isArray(pts)){
+          var hostName=DF_CURRENT.host?DF_CURRENT.host.name:'';
+          var myName=userProfile.pseudo||userProfile.prenom||'';
+          var players=[{name:hostName,ava:hostName.charAt(0).toUpperCase(),color:'#7B4FBF',isMe:false,isHost:true}];
+          pts.forEach(function(p){players.push({name:p.pseudo,ava:p.pseudo.charAt(0).toUpperCase(),color:p.pseudo===myName?'#F4A83A':'#22C9A0',isMe:p.pseudo===myName});});
+          DF_CURRENT.players=players;
           dfRenderWaiting();
         }
       }
-      if(rows[0].status === 'en_cours') {
+      if(rows[0].status==='en_cours'&&!DF_CURRENT._countdownStarted){
         clearInterval(DF_GAME_START_POLL);
-        dfStartGame();
+        DF_CURRENT._countdownStarted=true;
+        dfStartCountdown();
       }
-    } catch(e){}
-  }, 3000);
-  setTimeout(function(){ clearInterval(DF_GAME_START_POLL); }, 600000);
+    }catch(e){}
+  },3000);
+  setTimeout(function(){clearInterval(DF_GAME_START_POLL);},600000);
 }
 
-// ── RESET ROOM ──
-function dfResetRoom() {
-  if(!DF_CURRENT || !DF_CURRENT.isMine) return;
-  if(!confirm('Remettre la room à 0 joueur ?')) return;
-  var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
-  var myAva = ((userProfile.prenom || 'T').charAt(0) + (userProfile.nom || '').charAt(0)).toUpperCase() || 'TO';
-  DF_CURRENT.players = [{name: myName, ava: myAva, color: '#7B4FBF', isMe: true, isHost: true}];
-  // Supprimer les participants dans Supabase
-  var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-  fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(DF_CURRENT.id), {
-    method: 'DELETE', headers: hdrs
-  }).catch(function(){});
-  dfRenderWaiting();
-}
-
-// ── LANCEMENT DU DÉFI ──
-// ── LANCEMENT DU DÉFI ──
-function dfConfirmStart(){
-  if(!DF_CURRENT) return;
-  var mise = DF_CURRENT.mise;
-  var nb = DF_CURRENT.players.length;
-  var cagnotte = mise * nb;
-  var m = document.createElement('div');
-  m.id = 'dfConfirmModal';
-  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
-  m.innerHTML = '<div style="background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center">'    + '<div style="font-size:36px;margin-bottom:12px">⚔️</div>'    + '<div style="font-weight:800;font-size:18px;color:#1E1048;margin-bottom:8px">Confirmer le defi</div>'    + '<div style="font-size:14px;color:#7A7AAA;margin-bottom:16px;line-height:1.5">Tu vas miser <b style=\"color:#F4A83A\">'+mise+' pts</b>.<br>Cagnotte totale : <b style=\"color:#7B4FBF\">'+cagnotte+' pts</b>.<br>Le meilleur score remporte tout.<br><span style=\"color:#EF4444;font-weight:700\">Si tu perds, tu perds ta mise.</span></div>'    + '<div style="display:flex;gap:10px">'    +   '<button onclick="document.getElementById(\'dfConfirmModal\').remove();" style="flex:1;background:#F3F4F6;color:#6B7280;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">Annuler</button>'    +   '<button onclick="document.getElementById(\'dfConfirmModal\').remove();dfStartGame();" style="flex:1;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">Oui, je joue !</button>'    + '</div>'    + '</div>';
-  document.body.appendChild(m);
-}
-
-function dfStartGame(){
-  // Signaler le lancement dans Supabase (l'ami poll ce champ)
-  if(DF_CURRENT && DF_CURRENT.isMine) {
-    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates'};
-    fetch(SUPABASE_URL + '/rest/v1/defis', {
-      method: 'POST', headers: hdrs,
-      body: JSON.stringify({id: DF_CURRENT.id, status: 'en_cours'})
-    }).catch(function(){});
-    clearInterval(DF_PARTICIPANTS_POLL);
+// ── COMPTE À REBOURS ──
+function dfStartCountdown(){
+  if(!DF_CURRENT)return;
+  clearInterval(DF_COUNTDOWN_INT);
+  // Signaler lancement si créateur
+  if(DF_CURRENT.isMine){
+    var hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
+    fetch(SUPABASE_URL+'/rest/v1/defis',{method:'POST',headers:hdrs,body:JSON.stringify({id:DF_CURRENT.id,status:'en_cours'})}).catch(function(){});
   }
-  if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
-  if(room.players.length < 2) return;
-
-  // Si le thème est "roulette", on tire au sort un thème avant de lancer
-  if(room.theme === 'roulette'){
-    dfShowRouletteAnim(room, function(chosenTheme){
-      room.theme = chosenTheme;          // On remplace par le thème tiré
-      room.themeWasRoulette = true;
-      setTimeout(() => dfStartGameForReal(room), 800);
-    });
-    return;
+  // Afficher screen countdown
+  dfScreen('dfScrCountdown');
+  // Remplir avatars joueurs
+  var avasEl=document.getElementById('dfCountdownAvas');
+  if(avasEl){
+    avasEl.innerHTML=DF_CURRENT.players.map(function(p){
+      return '<div class="df-countdown-ava" style="background:'+(p.color||'#7B4FBF')+'">'+p.ava+'</div>';
+    }).join('');
   }
-  dfStartGameForReal(room);
-}
-
-function dfShowRouletteAnim(room, callback){
-  // Crée un overlay plein écran avec animation roulette
-  const overlay = document.createElement('div');
-  overlay.id = 'dfRouletteOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1E1048,#2D1B6B);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Calibri,Arial,sans-serif;color:#fff;padding:20px';
-  overlay.innerHTML =
-    '<div style="font-size:15px;font-weight:800;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🎡 Tirage du thème</div>' +
-    '<div style="font-size:22px;font-weight:800;margin-bottom:30px;text-align:center">Quel thème allez-vous affronter ?</div>' +
-    '<div id="dfRoulSlot" style="background:rgba(255,255,255,.08);border:3px solid #B06CE4;border-radius:24px;padding:30px 40px;font-size:48px;font-weight:800;min-width:280px;text-align:center;box-shadow:0 12px 40px rgba(176,108,228,.5);transition:transform .1s">📘</div>' +
-    '<div id="dfRoulName" style="font-size:18px;font-weight:700;margin-top:14px;opacity:0;transition:opacity .4s">Histoire</div>';
-  document.body.appendChild(overlay);
-
-  const slot = document.getElementById('dfRoulSlot');
-  const nameEl = document.getElementById('dfRoulName');
-  const themes = [
-    {id:'hist', emoji:'📘', name:'Histoire', color:'#7B6FFF'},
-    {id:'geo',  emoji:'🌍', name:'Géographie', color:'#22C9A0'},
-    {id:'emc',  emoji:'⚖️', name:'EMC', color:'#E040A0'}
-  ];
-  // Tirage final
-  const finalIdx = Math.floor(Math.random() * themes.length);
-  const finalTheme = themes[finalIdx];
-
-  // Animation : on cycle rapidement, puis on ralentit
-  let i = 0;
-  let speed = 80;
-  let totalSteps = 18 + finalIdx; // pour finir sur le bon thème
-  function tick(){
-    const t = themes[i % themes.length];
-    slot.textContent = t.emoji;
-    slot.style.borderColor = t.color;
-    i++;
-    if(i < totalSteps){
-      // Décélération progressive
-      speed = 80 + Math.pow(i, 1.6);
-      setTimeout(tick, speed);
-    } else {
-      // Atterrissage sur le thème final
-      slot.textContent = finalTheme.emoji;
-      slot.style.borderColor = finalTheme.color;
-      slot.style.transform = 'scale(1.15)';
-      nameEl.textContent = finalTheme.name + ' !';
-      nameEl.style.opacity = '1';
-      nameEl.style.color = finalTheme.color;
-      setTimeout(() => {
-        slot.style.transform = 'scale(1)';
-        // Disparition
-        setTimeout(() => {
-          overlay.style.transition = 'opacity .4s';
-          overlay.style.opacity = '0';
-          setTimeout(() => { overlay.remove(); callback(finalTheme.id); }, 400);
-        }, 1100);
-      }, 200);
+  // Thème
+  var themeEl=document.getElementById('dfCountdownTheme');
+  if(themeEl)themeEl.textContent='';
+  // Résolution roulette
+  var finalTheme=DF_CURRENT.theme;
+  if(finalTheme==='roulette'){
+    var themes=[{id:'hist',label:'📘 Histoire'},{id:'geo',label:'🌍 Géographie'},{id:'emc',label:'⚖️ EMC'}];
+    finalTheme=themes[Math.floor(Math.random()*themes.length)].id;
+  }
+  var n=5;
+  var numEl=document.getElementById('dfCountdownNum');
+  if(numEl){numEl.textContent=n;numEl.classList.add('pop');setTimeout(function(){numEl.classList.remove('pop');},250);}
+  DF_COUNTDOWN_INT=setInterval(function(){
+    n--;
+    if(numEl){
+      if(n>0){
+        numEl.textContent=n;
+        numEl.classList.add('pop');
+        setTimeout(function(){numEl.classList.remove('pop');},250);
+      }
     }
-  }
-  tick();
+    // Révéler thème à 3
+    if(n===3&&themeEl){
+      themeEl.textContent=DF_THEME_LABELS[finalTheme]||finalTheme;
+      DF_CURRENT.theme=finalTheme;
+    }
+    if(n<=0){
+      clearInterval(DF_COUNTDOWN_INT);
+      dfStartGameForReal(DF_CURRENT);
+    }
+  },1000);
 }
 
+// ── QUIZ ──
 function dfStartGameForReal(room){
-  // Construire le pool de questions selon le thème (théoriquement résolu après roulette)
-  let pool = [];
-  const themeMap = {hist:'hist', geo:'geo', emc:'emc'};
-  if(room.theme && themeMap[room.theme]){
-    THEMES.forEach(t => { if(t.id && t.id.indexOf(themeMap[room.theme]) === 0) pool = pool.concat((t.questions || [])); });
+  var pool=[];
+  if(room.theme&&room.theme!=='roulette'){
+    THEMES.forEach(function(t){if(t.id&&t.id.indexOf(room.theme)===0)pool=pool.concat(t.questions||[]);});
   }
-  // Fallback : tous les thèmes si pool vide
-  if(pool.length === 0) THEMES.forEach(t => { pool = pool.concat((t.questions || [])); });
-
-  // Anti-triche systématique : chaque joueur tire SES propres 10 questions dans le pool partagé
-  const NB_Q = 10;
-  function pickPool(){
-    const shuffled = pool.slice().sort(() => Math.random() - .5);
-    let qs = shuffled.slice(0, NB_Q);
-    while(qs.length < NB_Q && pool.length > 0){
-      qs.push(pool[Math.floor(Math.random()*pool.length)]);
-    }
-    return qs;
-  }
-  // MES questions
-  room.questionsShared = pickPool();
-  room.scores = {};
-  room.players.forEach(p => { room.scores[p.name] = 0; });
-  room.questionIdx = 0;
-  room.myAnswers = [];
-  room.botFinished = false;
-
-  // Lancer le quiz : on réutilise l'écran qs-quiz existant en mode défi
-  DF_CURRENT.inGame = true;
-  dfPrepareQuizUI();
+  if(pool.length===0)THEMES.forEach(function(t){pool=pool.concat(t.questions||[]);});
+  var NB_Q=10;
+  var shuffled=pool.slice().sort(function(){return Math.random()-.5;});
+  room.questions=shuffled.slice(0,NB_Q);
+  while(room.questions.length<NB_Q&&pool.length>0)room.questions.push(pool[Math.floor(Math.random()*pool.length)]);
+  room.scores={};
+  room.responseTimes={};
+  room.players.forEach(function(p){room.scores[p.name]=0;room.responseTimes[p.name]=[];});
+  room.questionIdx=0;
+  room.answered=false;
+  room.inGame=true;
+  dfScreen('dfScrQuiz');
   dfShowQuestion();
 }
-
-// Préparation : on cache l'overlay défi dans le quiz et on cache les boutons normaux
-function dfPrepareQuizUI(){
-  // Aller dans la vue quiz
-  switchMode('quiz');
-  // Sélectionner l'écran qs-quiz
-  document.querySelectorAll('.q-screen').forEach(s => s.classList.remove('act'));
-  const qsQuiz = document.getElementById('qs-quiz');
-  if(qsQuiz) qsQuiz.classList.add('act');
-
-  // Ajouter overlay live scores
-  let live = document.getElementById('dfLiveOverlay');
-  if(!live){
-    live = document.createElement('div');
-    live.id = 'dfLiveOverlay';
-    live.className = 'df-live';
-    live.innerHTML = '<div class="df-live-hdr" onclick="dfToggleLive()"><span class="df-live-hdr-icon">🏆</span><span class="df-live-hdr-label">Scores live</span><span class="df-live-hdr-q" id="dfLiveQ">Q 1/10</span><span class="df-live-hdr-toggle">▲</span></div><div class="df-live-rows" id="dfLiveRows"></div>';
-    document.body.appendChild(live);
-  }
-  live.style.display = 'block';
-  if(sessionStorage.getItem('dfLiveCollapsed')==='1') live.classList.add('collapsed');
-  else live.classList.remove('collapsed');
-  dfRestoreLivePos(live);
-  dfMakeDraggable(live);
-  dfUpdateLiveScores();
-}
-
-function dfToggleLive(){
-  const live = document.getElementById('dfLiveOverlay');
-  if(!live) return;
-  live.classList.toggle('collapsed');
-  sessionStorage.setItem('dfLiveCollapsed', live.classList.contains('collapsed')?'1':'0');
-}
-
-function dfMakeDraggable(el) {
-  const hdr = el.querySelector('.df-live-hdr');
-  if(!hdr || hdr._draggable) return;
-  hdr._draggable = true;
-
-  let startX, startY, startLeft, startTop, dragging = false, moved = false;
-
-  function getPos() {
-    const r = el.getBoundingClientRect();
-    return { left: r.left, top: r.top };
-  }
-
-  function onStart(cx, cy) {
-    const pos = getPos();
-    startX = cx; startY = cy;
-    startLeft = pos.left; startTop = pos.top;
-    dragging = true; moved = false;
-    el.style.right = 'auto';
-    el.style.left = startLeft + 'px';
-    el.style.top  = startTop  + 'px';
-  }
-
-  function onMove(cx, cy) {
-    if(!dragging) return;
-    const dx = cx - startX, dy = cy - startY;
-    if(Math.abs(dx) > 4 || Math.abs(dy) > 4) {
-      moved = true;
-      el.classList.add('dragging');
-    }
-    if(!moved) return;
-    const W = window.innerWidth, H = window.innerHeight;
-    const w = el.offsetWidth, h = el.offsetHeight;
-    const newLeft = Math.max(0, Math.min(W - w, startLeft + dx));
-    const newTop  = Math.max(0, Math.min(H - h, startTop  + dy));
-    el.style.left = newLeft + 'px';
-    el.style.top  = newTop  + 'px';
-  }
-
-  function onEnd() {
-    if(!dragging) return;
-    dragging = false;
-    el.classList.remove('dragging');
-    // Snap to nearest edge corner
-    const W = window.innerWidth, H = window.innerHeight;
-    const r = el.getBoundingClientRect();
-    const cx = r.left + r.width/2, cy = r.top + r.height/2;
-    const toRight = cx > W/2, toBottom = cy > H/2;
-    el.style.left = 'auto'; el.style.top = 'auto';
-    el.style.right  = toRight  ? '10px' : 'auto';
-    el.style.left   = toRight  ? 'auto' : '10px';
-    el.style.bottom = toBottom ? '70px' : 'auto';
-    el.style.top    = toBottom ? 'auto' : '12px';
-    // Save position
-    try { sessionStorage.setItem('dfLivePos', JSON.stringify({toRight,toBottom})); } catch(e){}
-    if(!moved) dfToggleLive(); // was a tap, not a drag
-  }
-
-  // Touch
-  hdr.addEventListener('touchstart', function(e){ const t=e.touches[0]; onStart(t.clientX,t.clientY); }, {passive:true});
-  hdr.addEventListener('touchmove',  function(e){ const t=e.touches[0]; onMove(t.clientX,t.clientY); e.preventDefault(); }, {passive:false});
-  hdr.addEventListener('touchend',   onEnd, {passive:true});
-  // Mouse
-  hdr.addEventListener('mousedown', function(e){ onStart(e.clientX,e.clientY); });
-  document.addEventListener('mousemove', function(e){ if(dragging) onMove(e.clientX,e.clientY); });
-  document.addEventListener('mouseup',   function(e){ if(dragging) onEnd(); });
-}
-
-function dfRestoreLivePos(el) {
-  try {
-    const pos = JSON.parse(sessionStorage.getItem('dfLivePos')||'null');
-    if(!pos) return;
-    el.style.left   = pos.toRight  ? 'auto' : '10px';
-    el.style.right  = pos.toRight  ? '10px' : 'auto';
-    el.style.top    = pos.toBottom ? 'auto' : '12px';
-    el.style.bottom = pos.toBottom ? '70px' : 'auto';
-  } catch(e) {}
-}
-
-function dfUpdateLiveScores(){
-  if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
-  const sorted = room.players.slice().sort((a,b) => (room.scores[b.name]||0) - (room.scores[a.name]||0));
-  const rowsEl = document.getElementById('dfLiveRows');
-  if(!rowsEl) return;
-  rowsEl.innerHTML = sorted.slice(0, 5).map((p, i) => {
-    const score = room.scores[p.name] || 0;
-    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1);
-    return '<div class="df-live-row' + (p.isMe?' me':'') + '">'
-      + '<div class="df-live-rank">' + medal + '</div>'
-      + '<div class="df-live-name">' + p.name + '</div>'
-      + '<div class="df-live-pts">' + score + '</div>'
-      + '</div>';
-  }).join('');
-  const qLive = document.getElementById('dfLiveQ');
-  if(qLive) qLive.textContent = 'Q ' + (room.questionIdx + 1) + '/10';
-}
-
 function dfShowQuestion(){
-  if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
-  if(room.questionIdx >= 10){ dfEndGame(); return; }
-
-  // Question pour MOI (chaque joueur a déjà ses propres questions tirées dans pickPool)
-  const myQ = room.questionsShared[room.questionIdx];
-
-  // Affichage
-  const total = 10;
-  document.getElementById('qLabel').textContent = 'Question ' + (room.questionIdx+1) + ' / ' + total;
-  document.getElementById('qProgress').style.width = (((room.questionIdx+1)/total)*100) + '%';
-  document.getElementById('qText').textContent = myQ.q;
-  const optsHtml = myQ.opts.map((opt, i) =>
-    '<button class="q-opt" onclick="dfAnswerQ(' + i + ')">' + opt + '</button>'
-  ).join('');
-  document.getElementById('qOpts').innerHTML = optsHtml;
-  document.getElementById('qFeedback').innerHTML = '';
-  document.getElementById('qFeedback').className = 'q-feedback';
-  // Cacher le bouton next du quiz solo
-  const nextBtn = document.getElementById('qNextBtn');
-  if(nextBtn) nextBtn.style.display = 'none';
-
-  room.currentQ = myQ;
-  room.qStartTime = Date.now();
-  room.answered = false;
-
-  // Timer 30s
-  const tn = document.getElementById('timerNum');
-  const bar = document.getElementById('timerBar');
-  if(tn) tn.textContent = '30';
-  if(bar) bar.style.width = '100%';
-  if(room.timerInt) clearInterval(room.timerInt);
-  room.timerInt = setInterval(() => {
-    if(!DF_CURRENT || DF_CURRENT.id !== room.id){ clearInterval(room.timerInt); return; }
-    const elapsed = Math.floor((Date.now() - room.qStartTime) / 1000);
-    const left = Math.max(0, 30 - elapsed);
-    if(tn) tn.textContent = left;
-    if(bar) bar.style.width = (left/30*100) + '%';
-    if(left === 0 && !room.answered){ dfAnswerQ(-1); }
-  }, 200);
-
-  // Bots jouent en arrière-plan : chacun "répond" après un délai aléatoire
-  room.players.forEach(p => {
-    if(p.isMe) return;
-    const skill = p.skill || 0.7;
-    const delay = 3000 + Math.random() * 14000;
-    setTimeout(() => {
-      if(!DF_CURRENT || DF_CURRENT.id !== room.id || room.questionIdx !== getCurrentIdxFor(room)) return;
-      const correct = Math.random() < skill;
-      // Score : 100 par bonne réponse + bonus rapidité (jusqu'à 50)
-      if(correct){
-        const speedBonus = Math.round(Math.max(0, 50 - delay/1000*2));
-        room.scores[p.name] = (room.scores[p.name] || 0) + 100 + speedBonus;
-      }
-      dfUpdateLiveScores();
-    }, delay);
-  });
-}
-function getCurrentIdxFor(room){ return room.questionIdx; }
-
-function dfAnswerQ(idx){
-  if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
-  if(room.answered) return;
-  room.answered = true;
-  if(room.timerInt){ clearInterval(room.timerInt); room.timerInt = null; }
-
-  const q = room.currentQ;
-  const correctIdx = (QS.shuffledCorrectIdx !== undefined) ? QS.shuffledCorrectIdx : ((typeof q.bon !== 'undefined') ? q.bon : q.a);
-  const correct = (idx === correctIdx);
-  const elapsed = (Date.now() - room.qStartTime) / 1000;
-
-  // Score moi
-  if(correct){
-    const speedBonus = Math.round(Math.max(0, 50 - elapsed*2));
-    const myName = room.players.find(p => p.isMe).name;
-    room.scores[myName] = (room.scores[myName] || 0) + 100 + speedBonus;
-  }
-
-  // Visuel
-  const opts = document.querySelectorAll('.q-opt');
-  opts.forEach((o, i) => {
-    o.style.pointerEvents = 'none';
-    if(i === correctIdx) o.classList.add('correct');
-    else if(i === idx && !correct) o.classList.add('wrong');
-  });
-  const fb = document.getElementById('qFeedback');
-  fb.className = 'q-feedback show ' + (correct ? 'ok' : 'ko');
-  fb.innerHTML = (correct ? '✅ Bonne réponse ! +' + (100 + Math.round(Math.max(0, 50 - elapsed*2))) + ' pts' : (idx === -1 ? '⏰ Temps écoulé !' : '❌ Mauvaise réponse')) + (q.expl ? '<div style="margin-top:6px;font-size:13px;color:rgba(255,255,255,.85);font-weight:500">' + q.expl + '</div>' : '');
-
-  dfUpdateLiveScores();
-
-  // Question suivante après 2.5s
-  setTimeout(() => {
-    if(!DF_CURRENT || DF_CURRENT.id !== room.id) return;
-    room.questionIdx++;
-    if(room.questionIdx >= 10) dfEndGame();
-    else dfShowQuestion();
-  }, 2500);
-}
-
-function dfEndGame(){
-  if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
-  if(room.timerInt){ clearInterval(room.timerInt); }
-
-  // Cacher overlay
-  const live = document.getElementById('dfLiveOverlay');
-  if(live) live.style.display = 'none';
-
-  // Classement final
-  const sorted = room.players.slice().sort((a,b) => (room.scores[b.name]||0) - (room.scores[a.name]||0));
-  const winner = sorted[0];
-  const myName = room.players.find(p => p.isMe).name;
-  const myScore = room.scores[myName] || 0;
-  const topScore = room.scores[winner.name] || 0;
-  const cagnotte = room.mise * room.players.length;
-
-  // Égalité ? (mort subite simplifiée : on ajoute +50 pts random au gagnant pour départager visuellement)
-  const tied = sorted.filter(p => (room.scores[p.name]||0) === topScore);
-  let tieMsg = '';
-  if(tied.length > 1){
-    const lucky = tied[Math.floor(Math.random()*tied.length)];
-    room.scores[lucky.name] += 50;
-    tieMsg = '⚡ Mort subite remportée par ' + lucky.name + ' !';
-    sorted.sort((a,b) => (room.scores[b.name]||0) - (room.scores[a.name]||0));
-  }
-  const finalWinner = sorted[0];
-  const meWon = finalWinner.isMe;
-
-  // Crédite/debite le joueur selon résultat
-  const gain = meWon ? cagnotte : 0;
-  if(meWon){
-    dfSetBalance(dfGetBalance() + cagnotte);
-    // Ajouter les points gagnés au total Supabase
-    QS.totalScore += cagnotte;
-    QS.totalPts   += cagnotte;
-    // Mettre à jour PLAYERS[me]
-    var meP = PLAYERS.find(function(p){return p.me;});
-    if(meP) meP.pts = QS.totalScore;
-  }
-
-  // Enregistrer dans mes défis
-  dfUpdateMyDefi(room.id, {
-    resultat: meWon ? 'gagne' : 'perdu',
-    gain: gain,
-    status: 'termine',
-    score: myScore,
-    players: sorted.map(function(p){return p.name;})
-  });
-
-  // Sauvegarder résultat dans Supabase
-  supabaseInsert('sessions', {
-    ts: new Date().toISOString(),
-    pseudo:      userProfile.pseudo || userProfile.prenom || 'Anonyme',
-    ecole:       userProfile.ecole  || '',
-    classe:      userProfile.classe || '',
-    theme:       'Defi ' + room.theme + ' — ' + (room.name||room.id),
-    matiere:     room.theme === 'hist' ? 'Histoire' : room.theme === 'geo' ? 'Geographie' : room.theme === 'emc' ? 'EMC' : 'Roulette',
-    score_pct:   room.players.length > 0 ? Math.round(myScore / Math.max(topScore,1) * 100) : 0,
-    pts_round:   meWon ? cagnotte : -room.mise,
-    pts_total:   QS.totalScore,
-    streak:      QS.dailyStreak || 0,
-    nb_questions: 10,
-    ref:         'defi'
-  });
-
-  // Aussi mettre à jour la table defis
-  supabaseUpsert('defis', {
-    id:         room.id,
-    status:     'termine',
-    gagnant:    finalWinner.name,
-    score_moi:  myScore,
-    score_max:  topScore
-  });
-
-  // Affichage écran fin
-  document.getElementById('dfEndEmoji').textContent = meWon ? '🏆' : '😅';
-  document.getElementById('dfEndTtl').textContent = meWon ? 'Tu as gagné !' : 'Pas cette fois…';
-  document.getElementById('dfEndSub').textContent = (tieMsg || (meWon ? 'Bien joué, tu remportes la cagnotte' : 'C\'est ' + finalWinner.name + ' qui rafle la mise'));
-  document.getElementById('dfEndPts').textContent = (meWon ? '+' : '−') + (meWon ? cagnotte : room.mise).toLocaleString('fr');
-  document.getElementById('dfEndPts').style.color = meWon ? '#fff' : '#fff';
-  document.getElementById('dfEndCagnotte') && (document.getElementById('dfEndCagnotte').style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)');
-  const cag = document.querySelector('#dfScreenEnd .df-end-cagnotte');
-  if(cag) cag.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
-  document.getElementById('dfEndPtsLbl').textContent = meWon ? 'points remportés (cagnotte de ' + cagnotte + ')' : 'mise perdue';
-
-  const podium = sorted.map((p, i) => {
-    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i+1);
-    return '<div class="df-podium-row' + (i===0?' first':'') + '">'
-      + '<div class="df-podium-medal">' + medal + '</div>'
-      + '<div class="df-podium-name">' + p.name + (p.isMe ? ' (toi)' : '') + '</div>'
-      + '<div class="df-podium-pts">' + (room.scores[p.name]||0) + ' pts</div>'
-      + '</div>';
+  if(!DF_CURRENT)return;
+  var room=DF_CURRENT;
+  if(room.questionIdx>=10){dfEndGame();return;}
+  var q=room.questions[room.questionIdx];
+  // Shuffle options Fisher-Yates
+  var shuffledOpts=q.opts.slice();
+  for(var si=shuffledOpts.length-1;si>0;si--){var sj=Math.floor(Math.random()*(si+1));var st=shuffledOpts[si];shuffledOpts[si]=shuffledOpts[sj];shuffledOpts[sj]=st;}
+  var correctOpt=q.opts[typeof q.bon!=='undefined'?q.bon:q.a];
+  var shuffledCorrectIdx=shuffledOpts.indexOf(correctOpt);
+  room._shuffledCorrectIdx=shuffledCorrectIdx;
+  // UI
+  var total=10;
+  var progEl=document.getElementById('dfQuizProg');if(progEl)progEl.style.width=(((room.questionIdx+1)/total)*100)+'%';
+  var qnumEl=document.getElementById('dfQuizQnum');if(qnumEl)qnumEl.textContent='Q '+(room.questionIdx+1)+'/'+total;
+  var qEl=document.getElementById('dfQuizQuestion');if(qEl)qEl.textContent=q.q;
+  var optsEl=document.getElementById('dfQuizOpts');
+  if(optsEl)optsEl.innerHTML=shuffledOpts.map(function(opt,i){
+    return '<button class="df-quiz-opt" onclick="dfAnswerQ('+i+')" style="animation:qFade .2s ease '+(i*0.06)+'s both">'+opt+'</button>';
   }).join('');
-  document.getElementById('dfEndPodium').innerHTML = podium;
-
-  // Retour à la vue défis
-  switchMode('defis');
-  dfTab('end');
-
-  // Nettoyer la room (elle quitte le lobby)
-  DF_ROOMS = DF_ROOMS.filter(r => r.id !== room.id);
-  DF_CURRENT = null;
+  var fbEl=document.getElementById('dfQuizFeedback');if(fbEl){fbEl.textContent='';fbEl.className='df-quiz-feedback';}
+  var nextBtn=document.getElementById('qNextBtn');if(nextBtn)nextBtn.style.display='none';
+  room.answered=false;
+  room.qStartTime=Date.now();
+  // Timer
+  var tn=document.getElementById('dfQuizTimer');var bar=document.getElementById('dfQuizTimerBar');
+  if(tn)tn.textContent='30';if(bar)bar.style.width='100%';
+  if(tn)tn.className='df-quiz-timer';
+  clearInterval(DF_QUIZ_TIMER_INT);
+  DF_QUIZ_TIMER_INT=setInterval(function(){
+    if(!DF_CURRENT||DF_CURRENT.id!==room.id){clearInterval(DF_QUIZ_TIMER_INT);return;}
+    var elapsed=Math.floor((Date.now()-room.qStartTime)/1000);
+    var left=Math.max(0,30-elapsed);
+    if(tn)tn.textContent=left;
+    if(bar)bar.style.width=(left/30*100)+'%';
+    if(left<=10&&tn)tn.className='df-quiz-timer urgent';
+    if(left===0&&!room.answered){dfAnswerQ(-1);}
+  },200);
+  dfUpdateLiveScores();
 }
+function dfAnswerQ(idx){
+  if(!DF_CURRENT)return;
+  var room=DF_CURRENT;
+  if(room.answered)return;
+  room.answered=true;
+  clearInterval(DF_QUIZ_TIMER_INT);
+  var q=room.questions[room.questionIdx];
+  var correctIdx=room._shuffledCorrectIdx;
+  var correct=(idx===correctIdx);
+  var elapsed=(Date.now()-room.qStartTime)/1000;
+  var myName=room.players.find(function(p){return p.isMe;});
+  myName=myName?myName.name:'';
+  if(correct){
+    var speedBonus=Math.round(Math.max(0,50-elapsed*1.5));
+    room.scores[myName]=(room.scores[myName]||0)+100+speedBonus;
+    if(!room.responseTimes[myName])room.responseTimes[myName]=[];
+    room.responseTimes[myName].push(elapsed);
+  } else {
+    if(!room.responseTimes[myName])room.responseTimes[myName]=[];
+    room.responseTimes[myName].push(30);
+  }
+  // Visuel options
+  var opts=document.querySelectorAll('.df-quiz-opt');
+  opts.forEach(function(o,i){
+    o.style.pointerEvents='none';
+    if(i===correctIdx)o.classList.add('correct');
+    else if(i===idx&&!correct)o.classList.add('wrong');
+    else o.classList.add('neutral');
+  });
+  var fb=document.getElementById('dfQuizFeedback');
+  if(fb){
+    fb.className='df-quiz-feedback '+(correct?'ok':'ko');
+    fb.innerHTML=(correct?'✅ Bonne réponse ! +'+(100+Math.round(Math.max(0,50-elapsed*1.5)))+' pts':(idx===-1?'⏰ Temps écoulé !':'❌ Mauvaise réponse'))+(q.expl?'<div style="margin-top:6px;font-size:12px;opacity:.85">'+q.expl+'</div>':'');
+  }
+  // Bots jouent en parallèle
+  room.players.forEach(function(p){
+    if(p.isMe)return;
+    var skill=p.skill||0.7;
+    var delay=2000+Math.random()*12000;
+    setTimeout(function(){
+      if(!DF_CURRENT||DF_CURRENT.id!==room.id||room.questionIdx!==room.questions.indexOf(q))return;
+      var botCorrect=Math.random()<skill;
+      if(botCorrect){var sp=Math.round(Math.max(0,50-delay/1000));room.scores[p.name]=(room.scores[p.name]||0)+100+sp;}
+      if(!room.responseTimes[p.name])room.responseTimes[p.name]=[];
+      room.responseTimes[p.name].push(botCorrect?delay/1000:30);
+      dfUpdateLiveScores();
+    },delay);
+  });
+  dfUpdateLiveScores();
+  setTimeout(function(){
+    if(!DF_CURRENT||DF_CURRENT.id!==room.id)return;
+    room.questionIdx++;
+    if(room.questionIdx>=10)dfEndGame();
+    else dfShowQuestion();
+  },2500);
+}
+function dfUpdateLiveScores(){
+  if(!DF_CURRENT)return;
+  var room=DF_CURRENT;
+  var sorted=room.players.slice().sort(function(a,b){return(room.scores[b.name]||0)-(room.scores[a.name]||0);});
+  var rowsEl=document.getElementById('dfLiveRows');
+  if(!rowsEl)return;
+  rowsEl.innerHTML=sorted.slice(0,5).map(function(p,i){
+    var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+    return '<div class="df-live-row'+(p.isMe?' me':'')+'"><div class="df-live-rank">'+medal+'</div><div class="df-live-name">'+p.name+'</div><div class="df-live-pts">'+(room.scores[p.name]||0)+'</div></div>';
+  }).join('');
+  var qEl=document.getElementById('dfLiveQ');if(qEl)qEl.textContent='Q '+(room.questionIdx+1)+'/10';
+}
+
+// ── FIN DE DÉFI ──
+function dfEndGame(){
+  if(!DF_CURRENT)return;
+  var room=DF_CURRENT;
+  clearInterval(DF_QUIZ_TIMER_INT);
+  // Départager par temps moyen en cas d'égalité
+  var sorted=room.players.slice().sort(function(a,b){
+    var sa=room.scores[a.name]||0;
+    var sb=room.scores[b.name]||0;
+    if(sb!==sa)return sb-sa;
+    var ta=room.responseTimes[a.name]||[];
+    var tb=room.responseTimes[b.name]||[];
+    var avgA=ta.length>0?ta.reduce(function(s,v){return s+v;},0)/ta.length:30;
+    var avgB=tb.length>0?tb.reduce(function(s,v){return s+v;},0)/tb.length:30;
+    return avgA-avgB;
+  });
+  var winner=sorted[0];
+  var myName=room.players.find(function(p){return p.isMe;});myName=myName?myName.name:'';
+  var myScore=room.scores[myName]||0;
+  var cagnotte=room.mise*room.players.length;
+  var meWon=winner&&winner.isMe;
+  if(meWon){
+    dfSetBalance(dfGetBalance()+cagnotte);
+    if(QS){QS.totalScore+=cagnotte;QS.totalPts=(QS.totalPts||0)+cagnotte;}
+    var meP=PLAYERS&&PLAYERS.find(function(p){return p.me;});if(meP)meP.pts=QS.totalScore;
+  }
+  // Supabase
+  supabaseInsert('sessions',{ts:new Date().toISOString(),pseudo:userProfile.pseudo||userProfile.prenom||'Anonyme',ecole:userProfile.ecole||'',classe:userProfile.classe||'',theme:'Défi '+(room.theme)+' — '+(room.name||room.id),matiere:room.theme==='hist'?'Histoire':room.theme==='geo'?'Géographie':room.theme==='emc'?'EMC':'Roulette',score_pct:sorted.length>0?Math.round(myScore/Math.max(room.scores[sorted[0].name]||1,1)*100):0,pts_round:meWon?cagnotte:-room.mise,pts_total:QS?QS.totalScore:0,streak:QS?QS.dailyStreak||0:0,nb_questions:10,ref:'defi'});
+  supabaseUpsert('defis',{id:room.id,status:'termine',gagnant:winner?winner.name:'',score_moi:myScore,score_max:room.scores[sorted[0]?sorted[0].name:'']||0});
+  // Affichage résultats
+  dfScreen('dfScrEnd');
+  var emojiEl=document.getElementById('dfEndEmoji');if(emojiEl)emojiEl.textContent=meWon?'🏆':'😅';
+  var ttlEl=document.getElementById('dfEndTtl');if(ttlEl)ttlEl.textContent=meWon?'Tu as gagné !':'Pas cette fois…';
+  var subEl=document.getElementById('dfEndSub');
+  if(subEl){
+    var isTie=sorted.length>1&&(room.scores[sorted[0].name]||0)===(room.scores[sorted[1]?sorted[1].name:'']||0+1);
+    subEl.textContent=meWon?'Meilleur score · tu rafles la cagnotte !':'C\'est '+winner.name+' qui remporte tout';
+    if(isTie&&meWon)subEl.textContent='Égalité → départagé par le temps de réponse moyen · tu gagnes !';
+  }
+  var cagEl=document.getElementById('dfEndCagnotte');
+  if(cagEl){cagEl.className='df-end-cagnotte '+(meWon?'win':'lose');document.getElementById('dfEndPts').textContent=(meWon?'+':'-')+(meWon?cagnotte:room.mise).toLocaleString('fr')+' pts';document.getElementById('dfEndPtsLbl').textContent=meWon?'cagnotte remportée':'mise perdue';}
+  var podiumEl=document.getElementById('dfEndPodium');
+  if(podiumEl)podiumEl.innerHTML=sorted.map(function(p,i){
+    var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+    return '<div class="df-podium-row'+(i===0?' first':'')+'"><div class="df-podium-medal">'+medal+'</div><div class="df-podium-name">'+p.name+(p.isMe?' <span style="background:#7B4FBF;color:#fff;font-size:9px;padding:1px 5px;border-radius:5px;vertical-align:middle">TOI</span>':'')+'</div><div class="df-podium-pts">'+(room.scores[p.name]||0)+' pts</div></div>';
+  }).join('');
+  DF_ROOMS_PUBLIC=DF_ROOMS_PUBLIC.filter(function(r){return r.id!==room.id;});
+  DF_CURRENT=null;
+}
+
 
 // ═══════════════════════════════════════════════════════
 // FLOWIN — SUPABASE SYNC
@@ -6530,340 +6004,261 @@ function dfSetMode(mode) {
 }
 </script>
 
-<!-- ═══ DEFIS MULTI-JOUEURS ═══ -->
+<!-- ═══ DEFIS MULTI-JOUEURS V10 ═══ -->
 <div class="view" id="v-defis">
   <div class="df-view">
     <div class="df-top">
       <button class="df-back" onclick="closeDefis()">← Retour</button>
-      <div class="df-ttl" id="dfTitle">⚔️ Défis multi-joueurs</div>
+      <div class="df-ttl" id="dfTitle">⚔️ Défis</div>
       <div class="df-balance">⚡ <span id="dfBalance">1240</span></div>
     </div>
 
-    <div class="df-tabs" id="dfTabs">
-      <button class="df-tab act" id="dfTabLobby" onclick="dfTab('lobby')">🏛️ Lobby</button>
-      <button class="df-tab" id="dfTabMy" onclick="dfTab('my')">🎯 Mes défis</button>
-    </div>
-
-    <!-- ÉCRAN LOBBY -->
-    <div class="df-screen" id="dfScreenLobby">
-
-      <!-- ACCROCHE DÉFIS GAMING -->
-      <div style="background:linear-gradient(135deg,#0d001a,#1a0035,#0d001a);border-radius:16px;padding:20px 16px;margin-bottom:16px;font-family:inherit;overflow:hidden;position:relative">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+    <!-- LOBBY -->
+    <div class="df-screen" id="dfScrLobby">
+      <div style="background:linear-gradient(135deg,#0d001a,#1a0035);border-radius:16px;padding:18px 16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
           <div style="width:3px;height:18px;background:linear-gradient(180deg,#F4A83A,#B06CE4);border-radius:2px"></div>
-          <span style="font-size:13px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:1.2px">⚔️ Mode défi</span>
-          <div style="margin-left:auto;display:flex;gap:5px;align-items:center">
-            <span style="width:8px;height:8px;border-radius:50%;background:#E84855;display:inline-block;box-shadow:0 0 6px #E84855"></span>
-            <span style="width:8px;height:8px;border-radius:50%;background:#F4A83A;display:inline-block;box-shadow:0 0 6px #F4A83A"></span>
-            <span style="width:8px;height:8px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 6px #1DB87A"></span>
-          </div>
+          <span style="font-size:12px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:1px">⚔️ Mode défi · Mise tes points</span>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-          <div style="background:rgba(176,108,228,.12);border:1.5px solid rgba(176,108,228,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
-            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#B06CE4;border-radius:14px 14px 0 0"></div>
-            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(176,108,228,.8))">💌</div>
-            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Invite</div>
-            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Envoie le lien à un camarade par WhatsApp ou SMS</div>
-          </div>
-          <div style="background:rgba(244,168,58,.12);border:1.5px solid rgba(244,168,58,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
-            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#F4A83A;border-radius:14px 14px 0 0"></div>
-            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(244,168,58,.8))">💰</div>
-            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Mise tes pts</div>
-            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Mise des points gagnés en révisant tes fiches</div>
-          </div>
-          <div style="background:rgba(29,184,122,.12);border:1.5px solid rgba(29,184,122,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
-            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#1DB87A;border-radius:14px 14px 0 0"></div>
-            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(29,184,122,.8))">🏆</div>
-            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Rafle tout</div>
-            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Meilleur score au quiz = toute la cagnotte pour toi</div>
-          </div>
-        </div>
-        <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:8px">
-          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
-          <span style="font-size:12px;color:rgba(255,255,255,.55);font-style:italic">Les points se gagnent en révisant · Les défis font tout perdre ou tout gagner</span>
-          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div style="background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.35);border-radius:12px;padding:12px 8px;text-align:center"><div style="font-size:26px;margin-bottom:6px">💌</div><div style="font-size:12px;font-weight:800;color:#fff">Invite</div><div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.4">Envoie le lien à un camarade</div></div>
+          <div style="background:rgba(244,168,58,.1);border:1px solid rgba(244,168,58,.35);border-radius:12px;padding:12px 8px;text-align:center"><div style="font-size:26px;margin-bottom:6px">💰</div><div style="font-size:12px;font-weight:800;color:#fff">Mise</div><div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.4">Mise tes points gagnés</div></div>
+          <div style="background:rgba(29,184,122,.1);border:1px solid rgba(29,184,122,.35);border-radius:12px;padding:12px 8px;text-align:center"><div style="font-size:26px;margin-bottom:6px">🏆</div><div style="font-size:12px;font-weight:800;color:#fff">Rafle tout</div><div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.4">Meilleur score = cagnotte</div></div>
         </div>
       </div>
-
-      <!-- CRÉER -->
-      <button class="df-cta-create" onclick="dfShowCreate()">
-        <div style="font-size:24px">➕</div>
-        <div style="flex:1;text-align:left">
-          <div>Créer un défi</div>
-          <div style="font-size:12px;font-weight:600;opacity:.85;margin-top:2px">Choisis ta mise · Invite · Rafle la cagnotte</div>
-        </div>
-        <div style="font-size:18px">→</div>
-      </button>
-
-      <!-- JOUEURS ACTIFS -->
-      <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin:14px 4px 8px">⚡ Joueurs actifs — défie-les !</div>
-      <div class="df-mode-toggle"><button class="df-mode-btn on" id="dfModeAll" onclick="dfSetMode('all')">🌐 Tout le monde</button><button class="df-mode-btn" id="dfModePriv" onclick="dfSetMode('priv')">🔗 Privé</button></div>
-      <div id="dfPrivMsg" style="display:none;text-align:center;padding:14px;background:rgba(176,108,228,.08);border-radius:14px;margin-bottom:10px"><div style="font-size:13px;font-weight:800;color:#F7F5FF;margin-bottom:6px">Mode privé</div><div style="font-size:12px;color:#7A7AAA;margin-bottom:10px">Seuls tes amis avec ton lien</div><button onclick="dfInviteSelected()" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:none;border-radius:12px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:800;color:#fff;cursor:pointer">📤 Envoyer mon lien</button></div>
-      <div id="dfPlayersList" style="margin-bottom:4px"></div>
-      <div id="dfInviteSelected" style="display:none;padding:10px 0">
-        <button id="dfInviteSelBtn" onclick="dfInviteSelected()" style="width:100%;background:linear-gradient(135deg,#25D366,#1da851);color:#fff;border:none;border-radius:14px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">
-          💬 Inviter les joueurs sélectionnés par WhatsApp
+      <div class="df-cta-row">
+        <button class="df-cta-btn pub" onclick="dfShowCreate(false)">
+          <span style="font-size:24px">🌐</span>
+          <span>Room publique</span>
+          <span style="font-size:11px;opacity:.8;font-weight:600">Rejoins ou crée</span>
+        </button>
+        <button class="df-cta-btn priv" onclick="dfShowCreate(true)">
+          <span style="font-size:24px">🔒</span>
+          <span>Room privée</span>
+          <span style="font-size:11px;opacity:.8;font-weight:600">Invite tes amis</span>
         </button>
       </div>
-
-      <!-- ROOMS -->
-      <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin:14px 4px 10px">🔥 Rooms ouvertes — rejoins !</div>
-      <div id="dfRoomsList"></div>
+      <div class="df-section-lbl">🔥 Rooms ouvertes — rejoins !</div>
+      <div id="dfRoomsPublicList"></div>
     </div>
 
-    <!-- ÉCRAN CRÉATION -->
-    <div class="df-screen hidden" id="dfScreenCreate">
-      <button class="df-back" onclick="dfTab('lobby')" style="background:#fff;color:#7B4FBF;border-color:rgba(123,79,191,.2);margin-bottom:12px">← Annuler</button>
+    <!-- CRÉATION ROOM -->
+    <div class="df-screen hidden" id="dfScrCreate">
+      <button style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);border-radius:14px;padding:8px 16px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:14px" onclick="dfRenderLobby()">← Annuler</button>
+      <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:14px" id="dfCreateTitle">🌐 Room publique</div>
 
-      <div class="df-form-block" style="margin-bottom:12px">
-        <div class="df-form-lbl">🏷️ Nom de la room</div>
-        <input id="dfRoomName" placeholder="Ex: Révision Guerre Froide, Défi EMC…" maxlength="40"
-          style="width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(176,108,228,.3);border-radius:14px;padding:12px 16px;font-size:15px;font-family:inherit;color:#fff;outline:none;box-sizing:border-box"
-          onfocus="this.style.borderColor='#7B4FBF'" onblur="this.style.borderColor='rgba(123,79,191,.2)'">
-        <div style="font-size:12px;color:rgba(123,79,191,.6);margin-top:5px;padding-left:4px">Visible par les autres joueurs dans le lobby</div>
-      </div>
       <div class="df-form-block">
-        <div class="df-form-lbl">💰 Ta mise (par joueur)</div>
+        <div class="df-form-lbl">🏷️ Nom de la room</div>
+        <input id="dfRoomName" placeholder="Ex : Révision Guerre Froide…" maxlength="40" style="width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(176,108,228,.3);border-radius:14px;padding:11px 16px;font-size:14px;font-family:inherit;color:#fff;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#7B4FBF'" onblur="this.style.borderColor='rgba(123,79,191,.3)'">
+      </div>
+
+      <div class="df-form-block">
+        <div class="df-form-lbl">💰 Mise par joueur</div>
         <div class="df-pills" id="dfMisePills">
           <button class="df-pill" data-mise="25" onclick="dfSelMise(25)">25 pts</button>
-          <button class="df-pill sel" data-mise="100" onclick="dfSelMise(100)">100 pts</button>
-          <button class="df-pill" data-mise="250" onclick="dfSelMise(250)">250 pts</button>
-          <button class="df-pill" data-mise="500" onclick="dfSelMise(500)">500 pts</button>
+          <button class="df-pill" data-mise="35" onclick="dfSelMise(35)">35 pts</button>
+          <button class="df-pill sel" data-mise="45" onclick="dfSelMise(45)">45 pts</button>
+          <button class="df-pill" data-mise="55" onclick="dfSelMise(55)">55 pts</button>
+          <button class="df-pill" data-mise="75" onclick="dfSelMise(75)">75 pts</button>
         </div>
-        <div id="dfMiseWarn" style="font-size:12px;color:#EF4444;font-weight:700;margin-top:8px;display:none">⚠️ Solde insuffisant pour cette mise</div>
+        <div id="dfMiseWarn" style="font-size:12px;color:#F87171;font-weight:700;margin-top:8px;display:none">⚠️ Solde insuffisant pour cette mise</div>
       </div>
 
       <div class="df-form-block">
         <div class="df-form-lbl">📚 Thème</div>
         <div class="df-pills" id="dfThemePills">
           <button class="df-pill sel" data-theme="roulette" onclick="dfSelTheme('roulette')">🎡 Roulette</button>
-          <button class="df-pill" data-theme="hist" onclick="dfSelTheme('hist')">📘 Histoire</button>
+          <button class="df-pill" data-theme="hist" onclick="dfSelTheme('hist')">📘 Hist.</button>
           <button class="df-pill" data-theme="geo" onclick="dfSelTheme('geo')">🌍 Géo</button>
           <button class="df-pill" data-theme="emc" onclick="dfSelTheme('emc')">⚖️ EMC</button>
-          <button class="df-pill" data-theme="pse" onclick="dfSelTheme('pse')">🩺 PSE</button>
         </div>
-        <div style="font-size:12px;color:#7A7AAA;font-weight:600;margin-top:8px" id="dfThemeNote">🎡 Roulette : le thème sera tiré au sort au moment du lancement (suspense !) · Chaque joueur reçoit ses propres questions sur le thème tiré (anti-triche)</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:8px;line-height:1.5" id="dfThemeNote">🎡 Thème tiré pendant le compte à rebours — tout le monde découvre ensemble</div>
       </div>
 
       <div class="df-form-block">
-        <div class="df-form-lbl">👥 Nombre max de joueurs</div>
+        <div class="df-form-lbl">👥 Joueurs max</div>
         <div class="df-pills" id="dfCapPills">
           <button class="df-pill" data-cap="2" onclick="dfSelCap(2)">2</button>
           <button class="df-pill" data-cap="3" onclick="dfSelCap(3)">3</button>
           <button class="df-pill sel" data-cap="4" onclick="dfSelCap(4)">4</button>
+          <button class="df-pill" data-cap="5" onclick="dfSelCap(5)">5</button>
           <button class="df-pill" data-cap="6" onclick="dfSelCap(6)">6</button>
           <button class="df-pill" data-cap="8" onclick="dfSelCap(8)">8</button>
         </div>
       </div>
 
-      <div class="df-form-block" style="background:rgba(176,108,228,.15);border:1.5px solid rgba(176,108,228,.3)">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div style="font-size:12px;color:rgba(176,108,228,.7);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Cagnotte max</div>
-            <div style="font-size:24px;font-weight:800;color:#D4AAFF;font-family:'Calibri','Trebuchet MS',Arial,sans-serif"><span id="dfCagnottePreview">400</span> pts</div>
-          </div>
-          <div style="font-size:32px">🏆</div>
+      <div class="df-priv-toggle" onclick="dfTogglePrivate()" id="dfPrivToggle">
+        <div>
+          <div class="df-priv-toggle-lbl">🔒 Room privée</div>
+          <div class="df-priv-toggle-sub">Invisible dans le lobby · invitations uniquement</div>
         </div>
-        <div style="font-size:12px;color:#7A7AAA;font-weight:600;margin-top:6px">Le gagnant remporte tout · 10 questions</div>
+        <div class="df-switch" id="dfPrivSwitch"><div class="df-switch-knob"></div></div>
       </div>
 
-      <button class="df-form-submit" id="dfCreateBtn" onclick="dfCreateRoom()">
-        🚀 Lancer ma room
-      </button>
-    </div>
-
-    <!-- BILLET CRÉATEUR -->
-    <div class="df-screen hidden" id="dfScreenBillet">
-      <div style="padding:4px 0 60px">
-
-        <div style="text-align:center;padding:24px 0 16px">
-          <div style="font-size:52px;margin-bottom:12px">⚔️</div>
-          <div style="font-size:20px;font-weight:800;color:#fff" id="dbNom">Défi</div>
-          <div style="font-size:13px;color:#9A8FBF;margin-top:5px">par <span id="dbCreateur" style="color:#D4AAFF;font-weight:600"></span></div>
+      <div class="df-cagnotte-preview">
+        <div>
+          <div style="font-size:10px;color:rgba(176,108,228,.65);font-weight:800;text-transform:uppercase;letter-spacing:.4px">Cagnotte max</div>
+          <div style="font-size:22px;font-weight:800;color:#D4AAFF"><span id="dfCagnottePreview">180</span> pts</div>
         </div>
+        <div style="font-size:28px">🏆</div>
+      </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
-          <div style="background:rgba(244,168,58,.1);border:1px solid rgba(244,168,58,.3);border-radius:12px;padding:14px 10px;text-align:center">
-            <div style="font-size:18px;font-weight:800;color:#F4A83A" id="dbMise">—</div>
-            <div style="font-size:9px;font-weight:700;color:rgba(244,168,58,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Mise</div>
+      <!-- BILLET CRÉATEUR (room privée) - affiché ici avant d'aller en salle d'attente -->
+      <div id="dfBilletCreateur" style="display:none">
+        <div class="df-billet">
+          <div class="df-billet-head">
+            <div class="df-billet-lbl">🎟️ Billet d'invitation privé</div>
+            <div class="df-billet-nom" id="dbNom">Défi Flowin</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:4px">par <span id="dbCreateur" style="color:#D4AAFF"></span></div>
           </div>
-          <div style="background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.3);border-radius:12px;padding:14px 10px;text-align:center">
-            <div style="font-size:13px;font-weight:800;color:#B06CE4;line-height:1.2" id="dbTheme">—</div>
-            <div style="font-size:9px;font-weight:700;color:rgba(176,108,228,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Thème</div>
+          <div class="df-billet-cards">
+            <div class="df-billet-card"><div class="df-billet-card-val" style="color:#F4A83A" id="dbMise">—</div><div class="df-billet-card-lbl">Mise</div></div>
+            <div class="df-billet-card"><div class="df-billet-card-val" style="color:#B06CE4;font-size:12px" id="dbTheme">—</div><div class="df-billet-card-lbl">Thème</div></div>
+            <div class="df-billet-card"><div class="df-billet-card-val" style="color:#22C9A0" id="dbCagnotte">—</div><div class="df-billet-card-lbl">Cagnotte</div></div>
           </div>
-          <div style="background:rgba(34,201,160,.1);border:1px solid rgba(34,201,160,.3);border-radius:12px;padding:14px 10px;text-align:center">
-            <div style="font-size:18px;font-weight:800;color:#22C9A0" id="dbCagnotte">—</div>
-            <div style="font-size:9px;font-weight:700;color:rgba(34,201,160,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Cagnotte</div>
+          <div class="df-billet-lien-block">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">🔗 Lien d'accès direct à la room</div>
+            <div id="dbLien" class="df-billet-lien"></div>
+            <div class="df-billet-note">⚠️ Ce lien mène directement à cette room privée</div>
           </div>
-        </div>
-
-        <div style="background:#1a0a30;border:1.5px solid rgba(176,108,228,.3);border-radius:16px;overflow:hidden;margin-bottom:16px">
-          <div style="padding:12px 16px;border-bottom:1px solid rgba(176,108,228,.15)">
-            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Places</div>
-            <div style="font-size:13px;color:#fff;font-weight:600" id="dbJoueurs">—</div>
-          </div>
-          <div style="padding:12px 16px;border-bottom:1px solid rgba(176,108,228,.15)">
-            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Lien d'accès direct</div>
-            <div id="dbLien" style="font-size:10px;color:#D4AAFF;word-break:break-all;line-height:1.5"></div>
-          </div>
-          <div style="padding:12px 16px;text-align:center">
+          <div class="df-billet-qr">
             <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">QR Code</div>
-            <div style="background:#fff;border-radius:10px;padding:6px;display:inline-block">
-              <img id="dbQR" src="" alt="QR" style="width:100px;height:100px;display:block">
-            </div>
+            <div style="background:#fff;border-radius:10px;padding:6px;display:inline-block"><img id="dbQR" src="" alt="QR" style="width:110px;height:110px;display:block"></div>
+          </div>
+          <div class="df-billet-btns">
+            <button onclick="dbShareWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:10px;padding:11px 4px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer">💬 WhatsApp</button>
+            <button onclick="dbShareSMS()" style="background:#5856D6;color:#fff;border:none;border-radius:10px;padding:11px 4px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer">📱 SMS</button>
+            <button onclick="dbCopyLink()" id="dbCopyBtn" style="background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:10px;padding:11px 4px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer">🔗 Copier</button>
           </div>
         </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;line-height:1.5;padding:0 8px;margin-bottom:14px">La partie démarre automatiquement quand les <span id="dbJoueurs"></span> sont réunis</div>
+        <button onclick="dfShowWaiting()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px">⏳ Voir la salle d'attente</button>
+      </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-          <button onclick="dbShareWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">💬 WhatsApp</button>
-          <button onclick="dbShareSMS()" style="background:#5856D6;color:#fff;border:none;border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">📱 SMS</button>
-          <button onclick="dbCopyLink()" id="dbCopyBtn" style="background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">🔗 Copier</button>
+      <button class="df-form-submit" id="dfCreateBtn" onclick="dfCreateRoom()">🚀 Créer la room</button>
+    </div>
+
+    <!-- SALLE D'ATTENTE -->
+    <div class="df-screen hidden" id="dfScrWaiting">
+      <div style="padding:4px 0 60px">
+        <div class="df-wait-header">
+          <div class="df-wait-emoji" id="dfWaitEmoji">⏳</div>
+          <div class="df-wait-ttl" id="dfWaitTtl">En attente de joueurs…</div>
+          <div class="df-wait-sub" id="dfWaitSub">0/4 joueurs</div>
         </div>
-
-        <button onclick="dbGoToWaiting()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px">
-          ⏳ Voir la salle d'attente
-        </button>
-        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
-          Retour au lobby
-        </button>
-
+        <div class="df-cagnotte-banner">
+          <div class="df-cagnotte-banner-val">🏆 <span id="dfWaitCagnotte">0</span></div>
+          <div class="df-cagnotte-banner-lbl">Cagnotte · <span id="dfWaitMiseLbl">45 pts</span>/joueur</div>
+        </div>
+        <div class="df-players-block">
+          <div class="df-players-ttl"><span class="df-live-dot"></span> Joueurs dans la room <span id="dfSyncBadge" style="display:none;background:#0a1e15;border:1px solid #1D9E75;border-radius:20px;padding:1px 7px;font-size:9px;color:#22C9A0;font-weight:700">● live</span></div>
+          <div id="dfWaitPlayers"></div>
+        </div>
+        <!-- Billet d'invitation intégré dans la salle d'attente -->
+        <div class="df-billet" style="margin-bottom:14px">
+          <div class="df-billet-head">
+            <div class="df-billet-lbl">🎟️ Partage l'invitation</div>
+          </div>
+          <div class="df-billet-lien-block">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Lien d'accès direct</div>
+            <div id="dfWaitBilletLien" class="df-billet-lien"></div>
+          </div>
+          <div class="df-billet-qr">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">QR Code</div>
+            <div style="background:#fff;border-radius:8px;padding:5px;display:inline-block"><img id="dfWaitQRimg" src="" alt="QR" style="width:90px;height:90px;display:block"></div>
+          </div>
+          <div class="df-billet-btns">
+            <button onclick="dfWaitShareWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:10px;padding:11px 4px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer">💬 WhatsApp</button>
+            <button onclick="dfWaitShareSMS()" style="background:#5856D6;color:#fff;border:none;border-radius:10px;padding:11px 4px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer">📱 SMS</button>
+            <button onclick="dfWaitCopyLink()" id="dfWaitCopyBtn" style="background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:10px;padding:11px 4px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer">🔗 Copier</button>
+          </div>
+        </div>
+        <button onclick="dfCancelRoom()" style="width:100%;background:transparent;border:none;color:rgba(239,68,68,.7);font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
       </div>
     </div>
 
-    <!-- ÉCRAN SALLE D'ATTENTE CRÉATEUR -->
-    <div class="df-screen hidden" id="dfScreenWaiting">
+    <!-- BILLET INVITÉ -->
+    <div class="df-screen hidden" id="dfScrInvite">
       <div style="padding:4px 0 60px">
-        <div style="text-align:center;padding:18px 0 12px">
-          <div style="font-size:40px;margin-bottom:10px" id="dfWaitEmoji">⏳</div>
-          <div style="font-size:19px;font-weight:800;color:#fff" id="dfWaitTtl">En attente de joueurs…</div>
-          <div style="font-size:13px;color:#9A8FBF;margin-top:5px" id="dfWaitSub">0/4 joueurs</div>
+        <div class="df-invite-hdr">
+          <div style="font-size:44px;margin-bottom:10px">⚔️</div>
+          <div class="df-invite-lbl">Invitation reçue</div>
+          <div class="df-invite-nom" id="diBilletNom">Défi Flowin</div>
+          <div class="df-invite-host">Créé par <span id="diBilletHost" style="color:#D4AAFF;font-weight:600"></span></div>
         </div>
-
-        <div style="background:#F4A83A;border-radius:14px;padding:12px 16px;text-align:center;margin-bottom:14px">
-          <div style="font-size:24px;font-weight:800;color:#fff">🏆 <span id="dfWaitCagnotte">0</span> pts</div>
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;margin-top:3px">Cagnotte · Mise : <span id="dfWaitMise">100</span> pts/joueur</div>
-        </div>
-        <div style="font-size:11px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-          👥 Joueurs dans la room
-          <span id="dfSyncBadge" style="display:none;background:#0a1e15;border:1px solid #1D9E75;border-radius:20px;padding:2px 8px;font-size:9px;color:#22C9A0;font-weight:700">● live</span>
-        </div>
-        <div id="dfWaitPlayers" style="margin-bottom:14px"></div>
-        <!-- BILLET D'INVITATION -->
-        <div style="background:#1a0a30;border:1.5px solid rgba(176,108,228,.5);border-radius:18px;overflow:hidden;margin-bottom:14px">
-          <!-- En-tête billet -->
-          <div style="background:linear-gradient(135deg,#2d1060,#1a0535);padding:14px 16px;border-bottom:1px dashed rgba(176,108,228,.3)">
-            <div style="font-size:10px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">🎟️ Billet d'invitation</div>
-            <div style="font-size:18px;font-weight:800;color:#fff" id="dfBilletNom">Défi Flowin</div>
+        <div class="df-billet" style="margin-bottom:14px">
+          <div class="df-billet-cards" style="border-bottom:none">
+            <div class="df-billet-card"><div class="df-billet-card-val" style="color:#F4A83A" id="diBilletMise">—</div><div class="df-billet-card-lbl">Mise</div></div>
+            <div class="df-billet-card"><div class="df-billet-card-val" style="color:#B06CE4;font-size:12px" id="diBilletTheme">—</div><div class="df-billet-card-lbl">Thème</div></div>
+            <div class="df-billet-card"><div class="df-billet-card-val" style="color:#22C9A0" id="diBilletJoueurs">—</div><div class="df-billet-card-lbl">Joueurs</div></div>
           </div>
-          <!-- Infos billet -->
-          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-bottom:1px dashed rgba(176,108,228,.3)">
-            <div style="text-align:center">
-              <div style="font-size:16px;font-weight:800;color:#F4A83A" id="dfBilletMise">—</div>
-              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Mise</div>
-            </div>
-            <div style="text-align:center">
-              <div style="font-size:13px;font-weight:800;color:#B06CE4" id="dfBilletTheme">—</div>
-              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Thème</div>
-            </div>
-            <div style="text-align:center">
-              <div style="font-size:16px;font-weight:800;color:#22C9A0" id="dfBilletJoueurs">—</div>
-              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Places</div>
-            </div>
-          </div>
-          <!-- Lien -->
-          <div style="padding:12px 16px;border-bottom:1px dashed rgba(176,108,228,.3)">
-            <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Lien d'accès</div>
-            <div id="dfBilletLien" style="font-size:10px;color:#D4AAFF;word-break:break-all;line-height:1.4"></div>
-          </div>
-          <!-- QR code -->
-          <div style="padding:12px 16px;text-align:center;border-bottom:1px dashed rgba(176,108,228,.3)">
-            <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">QR Code</div>
-            <div style="background:#fff;border-radius:10px;padding:6px;display:inline-block">
-              <img id="dfQRimg" src="" alt="QR" style="width:90px;height:90px;display:block">
-            </div>
-          </div>
-          <!-- Boutons envoi -->
-          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-            <button onclick="dfShareWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:12px;padding:13px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">💬 WhatsApp</button>
-            <button onclick="dfShareSMS()" style="background:#5856D6;color:#fff;border:none;border-radius:12px;padding:13px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">📱 SMS</button>
-            <button onclick="dfCopyLinkWait()" id="dfCopyBtn2" style="background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">🔗 Copier</button>
-          </div>
-        </div>
-        <button class="df-form-submit" id="dfStartBtn" onclick="dfConfirmStart()" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF)">🎮 Lancer le défi maintenant</button>
-        <div style="text-align:center;font-size:12px;color:#7A7AAA;margin-top:8px;font-weight:600" id="dfWaitHint">Il faut au moins 2 joueurs pour lancer</div>
-        <button onclick="dfResetRoom()" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:700;padding:8px;margin-top:2px;cursor:pointer">🔄 Remettre à 0 joueur</button>
-        <button onclick="dfCancelRoom()" style="width:100%;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:700;padding:8px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
-      </div>
-    </div>
-
-    <!-- ÉCRAN BILLET INVITÉ -->
-    <div class="df-screen hidden" id="dfScreenInvite">
-      <div style="padding:4px 0 60px">
-
-        <div style="text-align:center;padding:16px 0 12px">
-          <div style="font-size:11px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🎟️ Invitation reçue</div>
-          <div style="font-size:20px;font-weight:800;color:#fff" id="diBilletNom">Défi</div>
-          <div style="font-size:13px;color:#9A8FBF;margin-top:4px">Créé par <span id="diBilletHost" style="color:#D4AAFF;font-weight:600"></span></div>
-        </div>
-
-        <!-- BILLET -->
-        <div style="background:#1a0a30;border:1.5px solid rgba(176,108,228,.5);border-radius:18px;overflow:hidden;margin-bottom:16px">
-          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-bottom:1px dashed rgba(176,108,228,.3)">
-            <div style="text-align:center">
-              <div style="font-size:18px;font-weight:800;color:#F4A83A" id="diBilletMise">—</div>
-              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Mise</div>
-            </div>
-            <div style="text-align:center">
-              <div style="font-size:13px;font-weight:800;color:#B06CE4;line-height:1.2" id="diBilletTheme">—</div>
-              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Thème</div>
-            </div>
-            <div style="text-align:center">
-              <div style="font-size:18px;font-weight:800;color:#22C9A0" id="diBilletJoueurs">—</div>
-              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Joueurs</div>
-            </div>
-          </div>
-          <div style="padding:12px 16px;text-align:center">
-            <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Cagnotte potentielle</div>
+          <div style="padding:10px 14px;text-align:center;border-top:1px dashed rgba(176,108,228,.2)">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Cagnotte potentielle</div>
             <div style="font-size:22px;font-weight:800;color:#F4A83A" id="diBilletCagnotte">—</div>
           </div>
         </div>
-
-        <!-- ALERTE SOLDE -->
-        <div id="diBilletWarn" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#F87171;font-weight:600;text-align:center" id="diBilletWarnTxt">
+        <div class="df-solde-info" id="diSoldeInfo"></div>
+        <div id="diBilletWarn" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#F87171;font-weight:600;text-align:center">
           <span id="diBilletWarnTxt">Solde insuffisant</span>
         </div>
-
-        <!-- BOUTON REJOINDRE -->
-        <button id="diBilletBtn" onclick="diConfirmJoin()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:17px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">
-          ⚔️ Rejoindre le défi !
-        </button>
-        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
-          Annuler
-        </button>
-
+        <button id="diBilletBtn" onclick="diConfirmJoin()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:16px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">⚔️ Rejoindre le défi !</button>
+        <button onclick="dfRenderLobby()" style="width:100%;background:transparent;border:none;color:rgba(255,255,255,.4);font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">Annuler</button>
       </div>
     </div>
 
-    <!-- ÉCRAN FIN DE DÉFI -->
-    <div class="df-screen hidden" id="dfScreenEnd">
-      <div class="df-end">
+    <!-- COMPTE À REBOURS -->
+    <div class="df-screen hidden" id="dfScrCountdown">
+      <div class="df-countdown-wrap">
+        <div class="df-countdown-label">La partie commence dans</div>
+        <div class="df-countdown-num" id="dfCountdownNum">5</div>
+        <div class="df-countdown-theme" id="dfCountdownTheme"></div>
+        <div class="df-countdown-sub">À vos marques — même questions pour tous</div>
+        <div class="df-countdown-avatars" id="dfCountdownAvas"></div>
+        <button class="df-countdown-quit" onclick="dfQuitDuringCountdown()">Quitter (mise remboursée)</button>
+      </div>
+    </div>
+
+    <!-- QUIZ DÉFIS -->
+    <div class="df-screen hidden" id="dfScrQuiz">
+      <div class="df-quiz-bar">
+        <div class="df-quiz-qnum" id="dfQuizQnum">Q 1/10</div>
+        <div class="df-quiz-prog-wrap"><div class="df-quiz-prog-fill" id="dfQuizProg" style="width:10%"></div></div>
+        <div class="df-quiz-timer-wrap">
+          <div class="df-quiz-timer" id="dfQuizTimer">30</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4)">s</div>
+        </div>
+      </div>
+      <div class="df-quiz-body">
+        <div class="df-quiz-q" id="dfQuizQuestion"></div>
+        <div class="df-quiz-opts" id="dfQuizOpts"></div>
+        <div id="dfQuizFeedback" class="df-quiz-feedback"></div>
+        <!-- Scores live -->
+        <div class="df-live" id="dfLiveOverlay" style="display:none">
+          <div class="df-live-hdr" onclick="this.closest('.df-live').classList.toggle('collapsed')">
+            <span class="df-live-hdr-icon">🏆</span>
+            <span class="df-live-hdr-label">Live</span>
+            <span class="df-live-hdr-q" id="dfLiveQ">Q 1/10</span>
+          </div>
+          <div class="df-live-rows" id="dfLiveRows"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIN DE DÉFI / RÉSULTATS -->
+    <div class="df-screen hidden" id="dfScrEnd">
+      <div class="df-end-wrap">
         <div class="df-end-emoji" id="dfEndEmoji">🏆</div>
         <div class="df-end-ttl" id="dfEndTtl">Tu as gagné !</div>
-        <div class="df-end-sub" id="dfEndSub">Bien joué, tu remportes la cagnotte</div>
-
-        <div class="df-end-cagnotte" id="dfEndCagnotte">
-          <div class="df-end-cagnotte-val" id="dfEndPts">+400</div>
-          <div class="df-end-cagnotte-lbl" id="dfEndPtsLbl">points remportés</div>
+        <div class="df-end-sub" id="dfEndSub">Bien joué !</div>
+        <div class="df-end-cagnotte win" id="dfEndCagnotte">
+          <div class="df-end-cagnotte-val" id="dfEndPts">+180 pts</div>
+          <div class="df-end-cagnotte-lbl" id="dfEndPtsLbl">cagnotte remportée</div>
         </div>
-
         <div class="df-end-podium">
-          <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;text-align:left">📊 Classement final</div>
+          <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;text-align:left">📊 Classement final</div>
           <div id="dfEndPodium"></div>
         </div>
-
-        <button class="df-form-submit" onclick="dfTab('lobby')" style="background:linear-gradient(135deg,#22C9A0,#0fa37e)">
-          🏛️ Retour au lobby
-        </button>
+        <button class="df-form-submit" style="background:linear-gradient(135deg,#22C9A0,#0fa37e)" onclick="dfRenderLobby()">🏛️ Retour au lobby</button>
       </div>
     </div>
 
