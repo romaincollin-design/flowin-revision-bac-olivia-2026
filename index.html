@@ -611,6 +611,28 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 }
 .flabel { font-size:13px !important; margin-bottom:5px; }
 
+/* ── ROULETTE iOS ── */
+.ios-picker-wrap{position:relative;border-radius:14px;border:2px solid var(--warm);background:var(--cream);overflow:hidden;min-height:52px;cursor:pointer}
+.ios-picker-display{display:flex;align-items:center;padding:14px;font-size:17px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;color:var(--ink);min-height:52px;gap:6px}
+.ios-picker-display .ios-placeholder{color:#9a9a9a}
+.ios-picker-display .ios-arrow{margin-left:auto;font-size:12px;color:#aaa;flex-shrink:0}
+.ios-drum-overlay{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.18);z-index:9999;padding:0 0 env(safe-area-inset-bottom,16px);transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1)}
+.ios-drum-overlay.open{transform:translateY(0)}
+.ios-drum-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 10px;border-bottom:1px solid #f0f0f0}
+.ios-drum-title{font-size:15px;font-weight:700;color:#333}
+.ios-drum-done{font-size:16px;font-weight:700;color:var(--pink);cursor:pointer;padding:4px 8px}
+.ios-drum-cols{display:flex;gap:0;position:relative}
+.ios-drum-col{flex:1;height:216px;overflow:hidden;position:relative;cursor:pointer}
+.ios-drum-col::before,.ios-drum-col::after{content:'';position:absolute;left:0;right:0;height:80px;pointer-events:none;z-index:2}
+.ios-drum-col::before{top:0;background:linear-gradient(to bottom,rgba(255,255,255,.95),rgba(255,255,255,0))}
+.ios-drum-col::after{bottom:0;background:linear-gradient(to top,rgba(255,255,255,.95),rgba(255,255,255,0))}
+.ios-drum-sel-line{position:absolute;top:50%;left:8px;right:8px;height:44px;margin-top:-22px;background:rgba(176,108,228,.1);border-radius:10px;border:1.5px solid rgba(176,108,228,.25);pointer-events:none;z-index:1}
+.ios-drum-list{display:flex;flex-direction:column;transition:none;will-change:transform;user-select:none;-webkit-user-select:none}
+.ios-drum-item{height:44px;display:flex;align-items:center;justify-content:center;font-size:17px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;color:#777;flex-shrink:0;transition:color .15s,font-weight .15s}
+.ios-drum-item.sel{color:#111;font-weight:700;font-size:18px}
+.ios-drum-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9998;display:none}
+.ios-drum-backdrop.open{display:block}
+
 /* Inscription modal — full screen on mobile */
 .insc-view { padding:0 !important; align-items:stretch !important; }
 .insc-modal {
@@ -682,7 +704,7 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 @keyframes palierPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 
 /* ═══ DEFIS MULTI-JOUEURS ═══ */
-.df-view{background:#F0EEFF;min-height:100vh;display:flex;flex-direction:column;font-family:'Calibri','Trebuchet MS',Arial,sans-serif}
+.df-view{background:#0F0A1F;min-height:100vh;display:flex;flex-direction:column;font-family:'Calibri','Trebuchet MS',Arial,sans-serif}
 .df-top{background:linear-gradient(135deg,#2D1B6B,#1E1048);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
 .df-back{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:18px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .df-ttl{font-weight:800;font-size:17px;color:#fff;flex:1}
@@ -718,10 +740,10 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 .df-cta-create:hover{transform:translateY(-2px)}
 
 /* Form création */
-.df-form-block{background:#fff;border-radius:18px;padding:16px;margin-bottom:12px;border:2px solid #EDE9FE}
-.df-form-lbl{font-size:11px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.df-form-block{background:#1a1035;border-radius:18px;padding:16px;margin-bottom:12px;border:1.5px solid rgba(176,108,228,.25)}
+.df-form-lbl{font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
 .df-pills{display:flex;gap:8px;flex-wrap:wrap}
-.df-pill{flex:1;min-width:60px;padding:11px 10px;background:#F0EEFF;border:2px solid transparent;border-radius:12px;color:#7A7AAA;font-weight:700;font-size:13px;cursor:pointer;text-align:center;font-family:inherit;transition:all .15s}
+.df-pill{flex:1;min-width:60px;padding:11px 10px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:12px;color:#9A8FBF;font-weight:700;font-size:13px;cursor:pointer;text-align:center;font-family:inherit;transition:all .15s}
 .df-pill.sel{background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border-color:#7B4FBF}
 .df-pill.disabled{opacity:.4;cursor:not-allowed}
 
@@ -940,6 +962,7 @@ window.addEventListener('unhandledrejection', function(e){
 </script>
 </head>
 <body>
+<div id="modal-root" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999"></div>
 <!-- Netlify Forms détection -->
 <form name="flowin-signup" netlify netlify-honeypot="bot-field" hidden>
   <input type="text" name="type"/><input type="text" name="ts"/><input type="text" name="pseudo"/>
@@ -1021,6 +1044,16 @@ window.addEventListener('unhandledrejection', function(e){
           <div style="flex:1;min-width:0">
             <div style="font-size:18px;font-weight:800;line-height:1.2">Réviser mes cours</div>
             <div style="font-size:13px;font-weight:600;opacity:.8;margin-top:3px" id="welcomeLastTheme">23 fiches t'attendent</div>
+          </div>
+          <div style="font-size:22px;opacity:.7;flex-shrink:0">→</div>
+        </button>
+
+        <!-- QUIZ RAPIDE -->
+        <button onclick="switchMode('quiz');setTimeout(function(){qGo('land')},80)" style="width:100%;background:linear-gradient(135deg,#22C55E,#16A34A);color:#fff;border:none;padding:18px 20px;border-radius:18px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;cursor:pointer;display:flex;align-items:center;gap:16px;text-align:left;transition:transform .12s,opacity .12s" onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''" ontouchstart="this.style.opacity='.85'" ontouchend="this.style.opacity='1'">
+          <div style="font-size:38px;flex-shrink:0;line-height:1">🎯</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:18px;font-weight:800;line-height:1.2">Quiz · Révise &amp; Gagne</div>
+            <div style="font-size:13px;font-weight:600;opacity:.85;margin-top:3px" id="welcomeQuizSub">Deviens meilleur · Gagne des points</div>
           </div>
           <div style="font-size:22px;opacity:.7;flex-shrink:0">→</div>
         </button>
@@ -1247,8 +1280,20 @@ window.addEventListener('unhandledrejection', function(e){
         <input class="finput" id="finscPseudo" placeholder="Ex : SuperRévise06…" maxlength="20" autocomplete="off" style="border-color:var(--pink);background:rgba(176,108,228,.06)">
       </div>
       <div class="form-row2">
-        <div><div class="flabel">Mon école *</div><input class="finput" id="finscEcole" placeholder=""></div>
-        <div><div class="flabel">Ma classe *</div><input class="finput" id="finscClasse" placeholder=""></div>
+        <div>
+          <div class="flabel">Mon école *</div>
+          <div class="ios-picker-wrap" id="pickerEcoleWrap" onclick="iosPicker('ecole')">
+            <div class="ios-picker-display" id="pickerEcoleDisplay"><span class="ios-placeholder" id="pickerEcoleLabel">Sélectionner…</span><span class="ios-arrow">▼</span></div>
+          </div>
+          <input type="hidden" id="finscEcole" value="">
+        </div>
+        <div id="insc-classe-row">
+          <div class="flabel">Ma classe *</div>
+          <div class="ios-picker-wrap" id="pickerClasseWrap" onclick="iosPicker('classe')">
+            <div class="ios-picker-display" id="pickerClasseDisplay"><span class="ios-placeholder" id="pickerClasseLabel">Sélectionner…</span><span class="ios-arrow">▼</span></div>
+          </div>
+          <input type="hidden" id="finscClasse" value="">
+        </div>
       </div>
       <div class="form-row2">
         <div><div class="flabel">Prénom *</div><input class="finput" id="finscPrenom" placeholder=""></div>
@@ -1264,7 +1309,13 @@ window.addEventListener('unhandledrejection', function(e){
       <div class="form-full2"><div class="flabel">Email *</div><input class="finput" id="finscEmail" inputmode="email" autocomplete="email" placeholder=""></div>
       <div class="form-row2">
         <div><div class="flabel">Code postal *</div><input class="finput" id="finscCP" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder=""></div>
-        <div><div class="flabel">Tranche d'âge *</div><select class="finput" id="finscAge" style="font-size:17px;min-height:52px"><option>15–17 ans</option><option>18–20 ans</option></select></div>
+        <div id="insc-ddn-row">
+          <div class="flabel">Date de naissance</div>
+          <div class="ios-picker-wrap" id="pickerDdnWrap" onclick="iosPicker('ddn')">
+            <div class="ios-picker-display" id="pickerDdnDisplay"><span class="ios-placeholder" id="pickerDdnLabel">Jour / Mois / Année</span><span class="ios-arrow">▼</span></div>
+          </div>
+          <input type="hidden" id="finscDdn" value="">
+        </div>
       </div>
       <div class="rgpd-row">
         <input type="checkbox" id="rgpd" checked>
@@ -1686,6 +1737,12 @@ window.addEventListener('unhandledrejection', function(e){
           <div class="q-lb-rows" id="leagueRows"></div>
           <div class="q-lb-gap-msg" id="leagueGapMsg"></div>
         </div>
+        <!-- LOT À GAGNER -->
+        <div id="qs-lot-block" style="display:none;margin:12px 0">
+          <div style="font-size:11px;font-weight:800;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🎁 Lot à gagner</div>
+          <div id="qs-lot-inner"></div>
+        </div>
+
         <div class="q-league-foot">
           <button class="q-btn-replay" onclick="qGo('spin')">🎲 Jouer pour progresser !</button>
           <button class="q-btn-back-home" onclick="qGo('land')">← Retour accueil quiz</button>
@@ -2828,7 +2885,7 @@ function switchMode(m){
     // Recharger classement + lots en parallèle depuis Supabase
     var p1 = typeof loadLeaderboardFromSupabase==='function' ? loadLeaderboardFromSupabase() : Promise.resolve();
     var p2 = typeof loadLotsConfig==='function' ? loadLotsConfig() : Promise.resolve();
-    Promise.all([p1, p2]).then(function(){ renderStats(); });
+    Promise.all([p1, p2]).then(function(){ try{ renderStats(); }catch(e){ console.error('[stats async]',e); } }).catch(function(e){ console.error('[stats load]',e); try{ renderStats(); }catch(e2){ console.error('[stats catch]',e2); } });
   }
   if(m==='admin' && document.getElementById('v-admin')) initAdminCharts();
   // Pour le quiz, la navigation interne (qGo) gère ses propres sous-écrans
@@ -2867,7 +2924,16 @@ function submitFlowinSignup(){
   // → Google Sheets (inscription)
   saveProfileToSheets(userProfile);
 
-  switchMode('app');
+  // Si invitation reçue avant inscription
+  var pendingRoom = null;
+  try { pendingRoom = localStorage.getItem('flowin_pending_room'); } catch(e){}
+  if(pendingRoom) {
+    try { localStorage.removeItem('flowin_pending_room'); } catch(e){}
+    switchMode('defis');
+    setTimeout(function(){ dfLoadThenJoin(pendingRoom); }, 600);
+  } else {
+    switchMode('app');
+  }
 }
 
 // ═══ PWA ═══
@@ -3081,19 +3147,29 @@ function setSpinMode(mode){
 // Détecter un lien d'invitation dans l'URL
 (function() {
   try {
-    const params = new URLSearchParams(window.location.search);
-    const roomId = params.get('room');
-    if(roomId) {
-      // Stocker pour rejoindre après inscription
-      localStorage.setItem('flowin_pending_room', roomId);
-      // Si déjà inscrit → rejoindre directement
-      const saved = localStorage.getItem('flowin_profile');
-      if(saved) {
+    var params = new URLSearchParams(window.location.search);
+    var roomId = params.get('room');
+    if(!roomId) return;
+    localStorage.setItem('flowin_pending_room', roomId);
+    var saved = localStorage.getItem('flowin_profile');
+    if(saved) {
+      // Inscrit : attendre que tout soit chargé puis afficher le modal
+      window.addEventListener('load', function() {
         setTimeout(function() {
           switchMode('defis');
-          dfJoinRoom(roomId);
-        }, 800);
-      }
+          setTimeout(function() { dfLoadThenJoin(roomId); }, 400);
+        }, 600);
+      });
+    } else {
+      // Pas inscrit : afficher un banner sur la landing pour l'inciter à s'inscrire
+      window.addEventListener('load', function() {
+        var banner = document.createElement('div');
+        banner.id = 'roomInviteBanner';
+        banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1A1035;border-top:2px solid #B06CE4;padding:14px 18px;z-index:9999;display:flex;align-items:center;gap:12px;box-sizing:border-box';
+        banner.innerHTML = '<div style="flex:1"><div style="color:#fff;font-size:14px;font-weight:700">Invitation reçue !</div><div style="color:#9A8FBF;font-size:12px">Crée ton profil pour rejoindre le défi</div></div>'
+          + '<button onclick="switchMode(\'inscription\')" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap">S\'inscrire</button>';
+        document.body.appendChild(banner);
+      });
     }
   } catch(e) {}
 })();
@@ -3250,19 +3326,63 @@ let LIGUES_CONFIG = [
   {name:'Légende', key:'legend',  min:5000, max:99999}
 ];
 
+// Config formulaire par défaut
+var FORM_CONFIG_APP = {
+  titre:'Créer mon profil',
+  subtitle:'Résultats sauvegardés · 30 secondes',
+  cta:'🚀 Lancer le quiz !',
+  rgpd:"J'accepte que mes données soient utilisées pour personnaliser ma progression.",
+  champs:[
+    {id:'pseudo',actif:true,label:'Pseudo',placeholder:'Ex : SuperRévise06…',requis:true},
+    {id:'prenom',actif:true,label:'Prénom',placeholder:'Ton prénom',requis:true},
+    {id:'nom',actif:true,label:'Nom',placeholder:'Ton nom',requis:true},
+    {id:'email',actif:true,label:'Email',placeholder:'ton@email.com',requis:true},
+    {id:'ecole',actif:true,label:'École',placeholder:'Nom de ton école',requis:true},
+    {id:'classe',actif:true,label:'Classe',placeholder:'Ex : BAC PRO 2nde',requis:false},
+    {id:'cp',actif:true,label:'Code postal',placeholder:'06000',requis:true},
+    {id:'ddn',actif:true,label:'Date de naissance',placeholder:'',requis:false},
+    {id:'genre',actif:true,label:'Genre',placeholder:'',requis:false}
+  ]
+};
+
 async function loadConfigFromSupabase() {
   try {
     const hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-    const r = await fetch(SUPABASE_URL + '/rest/v1/config?key=in.(bareme,ligues_seuils)&select=key,value', {headers: hdrs});
+    const r = await fetch(SUPABASE_URL + '/rest/v1/config?key=in.(bareme,ligues_seuils,form_config)&select=key,value', {headers: hdrs});
     if (!r.ok) return;
     const rows = await r.json();
     rows.forEach(row => {
       if (row.key === 'bareme' && row.value) BAREME_CONFIG = {...BAREME_CONFIG, ...row.value};
       if (row.key === 'ligues_seuils' && Array.isArray(row.value)) LIGUES_CONFIG = row.value;
+      if (row.key === 'form_config' && row.value) {
+        Object.assign(FORM_CONFIG_APP, row.value);
+        applyFormConfig();
+      }
     });
-  } catch(e) {
-    // Utilise les valeurs par défaut
-  }
+  } catch(e) {}
+}
+
+function applyFormConfig() {
+  var cfg = FORM_CONFIG_APP;
+  // Titre et sous-titre
+  var t = document.querySelector('.insc-title'); if(t) t.textContent = cfg.titre;
+  var s = document.querySelector('.insc-sub');   if(s) s.textContent = cfg.subtitle;
+  var b = document.querySelector('.btn-submit'); if(b) b.textContent = cfg.cta;
+  // RGPD
+  var rg = document.querySelector('#rgpd + label'); if(rg) rg.firstChild.textContent = cfg.rgpd+' ';
+  // Date de naissance
+  var ddnChamp = cfg.champs.find(function(c){return c.id==='ddn';});
+  var ddnRow = document.getElementById('insc-ddn-row');
+  if(ddnRow) ddnRow.style.display = (ddnChamp&&ddnChamp.actif) ? '' : 'none';
+  // Champ classe
+  var classeChamp = cfg.champs.find(function(c){return c.id==='classe';});
+  var classeRow = document.getElementById('insc-classe-row');
+  if(classeRow) classeRow.style.display = (classeChamp&&classeChamp.actif) ? '' : 'none';
+  // Placeholders dynamiques
+  cfg.champs.forEach(function(ch) {
+    var inp = document.getElementById('finsc'+ch.id.charAt(0).toUpperCase()+ch.id.slice(1));
+    if(inp && ch.placeholder) inp.placeholder = ch.placeholder;
+  });
 }
 
 (function restoreProfile(){
@@ -3353,6 +3473,8 @@ async function loadPlayerStatsFromSupabase(pseudo) {
 }
 
       loadPlayerStatsFromSupabase(p.pseudo || p.prenom);
+      loadLeaderboardFromSupabase();
+      loadLotsConfig();
       // Bascule vers la vue welcome au lieu de la landing
       if(document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
@@ -3620,7 +3742,14 @@ function qGo(id){
   if(id==='spin') initSpin();
   if(id==='crm') initCRM();
   if(id==='round') renderRound();
-  if(id==='league') renderLeague(QS.league);
+  if(id==='league') {
+    renderLeague(QS.league);
+    // Recharger classement + lots en live
+    Promise.all([
+      typeof loadLeaderboardFromSupabase==='function' ? loadLeaderboardFromSupabase() : Promise.resolve(),
+      typeof loadLotsConfig==='function' ? loadLotsConfig() : Promise.resolve()
+    ]).then(function(){ renderLeague(QS.league); });
+  }
   if(id==='land') document.getElementById('qStatScore').textContent = QS.totalScore;
   window.scrollTo(0,0);
 }
@@ -4185,27 +4314,29 @@ function renderLeagueUI(league){
   const tierIdx = tiers.indexOf(league);
   if(tierIdx>=0) document.querySelectorAll('.q-tier')[tierIdx].classList.add('active');
   document.getElementById('lbTitle').textContent = leagueEmojis[league]+' League '+leagueNames[league]+' — Ce soir';
-  document.getElementById('lbCount').textContent = PLAYERS.length+' joueurs';
-  const max = PLAYERS[0].pts;
+  var nbJ = PLAYERS.length;
+  document.getElementById('lbCount').textContent = nbJ+' joueur'+(nbJ>1?'s':'');
+  const max = Math.max.apply(null, PLAYERS.map(function(p){return p.pts;})) || 1;
   const myIdx = PLAYERS.findIndex(p=>p.me);
   const medals=['🥇','🥈','🥉'];
   let rows='';
+  if(nbJ<=1) rows += '<div style="text-align:center;padding:14px;font-size:12px;color:var(--t3)">👥 Sois le premier à jouer et domine le classement !</div>';
   PLAYERS.forEach((p,i)=>{
     const isMe=!!p.me;
-    const pct=Math.round((p.pts/max)*100);
+    const pct=Math.max(4,Math.round((p.pts/max)*100));
     const promoZone = i<3;
     if(i===3) rows += '<div class="q-lb-sep">── ZONE DE PROMOTION · TOP 3 ──</div>';
-    rows+='<div class="q-lb-row'+(isMe?' me':'')+(promoZone?' promo-zone':'')+'">'
+    rows+='<div class="q-lb-row'+(isMe?' me':'')+(promoZone?' promo-zone':'')+'">'  
       +'<div class="q-lb-rank-num'+(i===0?' top1':i===1?' top2':i===2?' top3':'')+'">'+(i<3?medals[i]:(i+1))+'</div>'
       +'<div class="q-lb-avatar">'+p.emoji+'</div>'
       +'<div class="q-lb-info">'
         +'<div class="q-lb-name">'+p.name+(isMe?'<span class="q-lb-you-tag">VOUS</span>':'')+'</div>'
-        +'<div class="q-lb-sub">'+p.rounds+' rounds · série '+p.streak+'🔥</div>'
+        +'<div class="q-lb-sub">'+(p.pts>0?p.pts.toLocaleString('fr')+' pts':p.rounds+' rounds')+' · série '+p.streak+'🔥</div>'
       +'</div>'
       +'<div class="q-lb-bar-col"><div class="q-lb-mini-bar"><div class="q-lb-mini-fill" style="width:'+pct+'%"></div></div></div>'
       +'<div class="q-lb-right">'
-        +'<div class="q-lb-pts">'+p.pts+'</div>'
-        +'<div class="q-lb-streak">'+(p.streak>=3?'🔥 En feu !':p.streak>=1?'↑ +'+p.streak:'—')+'</div>'
+        +'<div class="q-lb-pts">'+(p.pts>0?p.pts.toLocaleString('fr'):isMe?'—':'0')+'</div>'
+        +'<div class="q-lb-streak">'+(p.streak>=3?'🔥 En feu !':p.streak>=1?'↑ +'+p.streak:isMe?'Joue !':'—')+'</div>'
       +'</div>'
     +'</div>';
   });
@@ -4216,15 +4347,52 @@ function renderLeagueUI(league){
   if(myIdx===0){
     gapDiv.innerHTML='<span class="gap-icon">🏆</span><div class="gap-text">Tu es en <b>1ère place</b> ! Rejoue pour maintenir ton avance.</div>';
   } else {
-    gapDiv.innerHTML='<span class="gap-icon">🎯</span><div class="gap-text"><b>'+gap+'</b> pts séparent de <b>'+above+'</b></div><div class="gap-pts">'+gap+'</div>';
+    gapDiv.innerHTML='<span class="gap-icon">🎯</span><div class="gap-text"><b>'+gap+'</b> pts pour dépasser <b>'+above+'</b> et remporter le lot !</div><div class="gap-pts">'+gap+'</div>';
+  }
+
+  // ── Lot à gagner ──
+  var lotBlock = document.getElementById('qs-lot-block');
+  var lotInner = document.getElementById('qs-lot-inner');
+  var lotsOn = typeof window.LOTS_ON !== 'undefined' && window.LOTS_ON;
+  var lotsCache = typeof window.LOTS_DB_CACHE !== 'undefined' ? window.LOTS_DB_CACHE : [];
+  var activeLots = lotsCache.filter(function(l){ return l.actif !== false; });
+  if(lotBlock && lotInner && lotsOn && activeLots.length) {
+    lotBlock.style.display = 'block';
+    var now = new Date();
+    var sunday = new Date(now);
+    sunday.setDate(now.getDate() + ((7 - now.getDay()) % 7 || 7));
+    sunday.setHours(23,59,59,0);
+    var joursRestants = Math.ceil((sunday - now) / 86400000);
+    var stimMsg;
+    if(myIdx===0) stimMsg = '🔥 Tu es en tête ! Continue et remporte le lot.';
+    else { var diff=(PLAYERS[0]?PLAYERS[0].pts:0)-(PLAYERS[myIdx]?PLAYERS[myIdx].pts:0); stimMsg='Plus que <b>'+diff+' pts</b> pour être en tête et remporter le lot !'; }
+    var condMap = {'gold_semaine':'🥇 Être en Ligue Or 7 jours','top1_semaine':'🏆 Rester Top 1 cette semaine'};
+    lotInner.innerHTML = activeLots.map(function(lot) {
+      var dispo = (typeof window.LOTS_STOCK_CACHE!=='undefined'?window.LOTS_STOCK_CACHE:[]).filter(function(s){return s.lot_id===lot.id&&s.statut==='disponible';}).length;
+      var condLbl = condMap[lot.cond] || lot.condLbl || '';
+      return '<div style="background:linear-gradient(135deg,#2D1B6B,#1E1048);border-radius:16px;padding:14px 16px;color:#fff;margin-bottom:10px">'
+        +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'
+          +'<div style="font-size:36px;line-height:1">'+(lot.emoji||'🎁')+'</div>'
+          +'<div style="flex:1">'
+            +'<div style="font-size:15px;font-weight:800">'+(lot.titre||lot.nom||'Lot')+'</div>'
+            +'<div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">'+condLbl+'</div>'
+          +'</div>'
+          +'<div style="text-align:center;background:rgba(244,168,58,.15);border:1.5px solid rgba(244,168,58,.3);border-radius:10px;padding:8px 12px">'
+            +'<div style="font-size:18px;font-weight:800;color:#F4A83A;line-height:1">'+joursRestants+'j</div>'
+            +'<div style="font-size:9px;color:rgba(244,168,58,.7);text-transform:uppercase;font-weight:700;margin-top:2px">restants</div>'
+          +'</div>'
+        +'</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.5;margin-bottom:10px">'+stimMsg+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+          +'<div style="font-size:11px;color:rgba(255,255,255,.4)">'+dispo+' code'+(dispo>1?'s':'')+' dispo</div>'
+          +'<button onclick="qGo(\'spin\')" style="margin-left:auto;background:linear-gradient(135deg,#22C55E,#16A34A);border:none;color:#fff;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">⚡ Jouer maintenant</button>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+  } else if(lotBlock) {
+    lotBlock.style.display = 'none';
   }
 }
-function switchLeague(l){ renderLeague(l); }
-
-// Init roulette au premier load
-setTimeout(()=>{ if(document.getElementById('spinCanvas')) drawSpin(0); }, 100);
-
-// ═══ ADMIN ═══
 function showAdmSection(id,btn){
   document.querySelectorAll('.adm-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('as-'+id).classList.add('active');
@@ -4258,6 +4426,10 @@ renderThemeList();
 // ═══ STATS DASHBOARD v3 ═══
 
 function renderStats(){
+  // Ne pas exécuter si la vue stats n'est pas dans le DOM
+  var _statsEl = document.getElementById('v-stats');
+  if(!_statsEl) return;
+  try{
   // ── Recalculer scores thèmes depuis USER_SESSIONS (données réelles Supabase) ──
   // Toujours remettre à zéro d'abord pour ne pas afficher les valeurs hardcodées
   THEMES.forEach(function(t){ t.scoreReal = 0; t.sessionsReal = 0; });
@@ -4297,12 +4469,12 @@ function renderStats(){
   // ── Streak ──
   el=document.getElementById('sp-streak-main'); if(el) el.textContent=streak+' jour'+(streak>1?'s':'')+' de suite !';
   el=document.getElementById('sp-streak-pill'); if(el) el.textContent='x'+streak;
-  el=document.getElementById('sp-streak-sub');
-  if(el){
-    if(streak===0) el.textContent='Lance-toi pour démarrer ton streak 💪';
-    else if(streak<3) el.textContent='Continue comme ça '+myName+' 💪';
-    else if(streak<7) el.textContent='Bonne série ! Garde le rythme 🔥';
-    else el.textContent='Incroyable ! '+streak+' jours de suite 👑';
+  var _stSub=document.getElementById('sp-streak-sub');
+  if(_stSub){
+    if(streak===0) _stSub.textContent='Lance-toi pour démarrer ton streak 💪';
+    else if(streak<3) _stSub.textContent='Continue comme ça '+myName+' 💪';
+    else if(streak<7) _stSub.textContent='Bonne série ! Garde le rythme 🔥';
+    else _stSub.textContent='Incroyable ! '+streak+' jours de suite 👑';
   }
 
   // ── Ligue ──
@@ -4334,21 +4506,67 @@ function renderStats(){
   el=document.getElementById('sp-bar-l'); if(el) el.textContent=myPts.toLocaleString('fr')+' pts';
   el=document.getElementById('sp-bar-r'); if(el) el.textContent=nd?nd.n+' : '+ligMax.toLocaleString('fr')+' pts':'Ligue max';
 
-  // ── Classement ──
+  // ── Onglets ligues ──
+  var LIGUE_TABS = [
+    {key:'bronze',  icon:'🥉', name:'Bronze'},
+    {key:'silver',  icon:'🥈', name:'Argent'},
+    {key:'gold',    icon:'🥇', name:'Or'},
+    {key:'diamond', icon:'💎', name:'Platine'},
+    {key:'legend',  icon:'👑', name:'Légende'}
+  ];
+  var tabsEl = document.getElementById('sp-lg-tabs');
+  if(tabsEl) {
+    tabsEl.innerHTML = LIGUE_TABS.map(function(t) {
+      var isMine = t.key === ligueKey;
+      return '<div class="sp3-lg-tab'+(isMine?' mine':'')+'" onclick="sp3ShowLigue(\''+t.key+'\')">'
+        + t.icon + '<span>' + t.name + '</span>'
+        + (isMine ? '<span style="font-size:9px;background:rgba(244,168,58,.3);border-radius:6px;padding:1px 5px;margin-left:2px">TOI</span>' : '')
+        + '</div>';
+    }).join('');
+    // Marquer l'onglet actif
+    var tabs = tabsEl.querySelectorAll('.sp3-lg-tab');
+    var myTabIdx = LIGUE_TABS.findIndex(function(t){return t.key===ligueKey;});
+    if(tabs[myTabIdx]) tabs[myTabIdx].classList.add('active');
+  }
+
+  // ── Nb joueurs live ──
+  var lgCountEl = document.getElementById('sp-lg-joueurs-count');
+  if(lgCountEl) {
+    var nbJoueurs = sorted.length;
+    lgCountEl.textContent = nbJoueurs + ' joueur' + (nbJoueurs>1?'s':'') + ' dans cette ligue';
+  }
+
+  // ── Classement style Duolingo ──
+  var maxPts = sorted.length ? sorted[0].pts || 1 : 1;
   var show=[0,1,2,myIdx].filter(function(v,i,a){return v>=0&&v<sorted.length&&a.indexOf(v)===i;}).sort(function(a,b){return a-b;});
   var lb=document.getElementById('sp-lb');
   if(lb){
     var html='';
-    show.forEach(function(i){
-      var p=sorted[i],isMe=!!p.me;
-      var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
-      var posText=medal||('#'+(i+1));
-      html+='<div class="sp3-lb-row'+(isMe?' me':'')+'">'+
-        '<div class="sp3-lb-pos">'+posText+'</div>'+
-        '<div class="sp3-lb-ava">'+(p.emoji||'😊')+'</div>'+
-        '<div class="sp3-lb-name">'+p.name+(isMe?'<span class="sp3-lb-you">TOI</span>':'')+'</div>'+
-        '<div class="sp3-lb-pts">'+p.pts.toLocaleString('fr')+' pts</div></div>';
+    // Afficher TOUS les joueurs de la ligue si peu nombreux, sinon top3 + moi
+    var toShow = sorted.length <= 8 ? sorted.map(function(_,i){return i;}) : show;
+    toShow.forEach(function(i){
+      var p=sorted[i], isMe=!!p.me;
+      var isTop1 = i===0;
+      var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+      var posText = medal || ('#'+(i+1));
+      var barPct = maxPts ? Math.max(4, Math.round(p.pts/maxPts*100)) : 4;
+      html+='<div class="sp3-lb-row'+(isMe?' me':'')+(isTop1?' top1':'')+'">'
+        +'<div class="sp3-lb-pos">'+posText+'</div>'
+        +'<div class="sp3-lb-ava'+(isMe?' me-ava':'')+'">'+(p.emoji||'😊')+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div class="sp3-lb-name">'+p.name+(isMe?'<span class="sp3-lb-you">TOI</span>':'')+'</div>'
+          +'<div class="sp3-lb-minibar"><div class="sp3-lb-minibar-fill" style="width:'+barPct+'%"></div></div>'
+        +'</div>'
+        +'<div class="sp3-lb-pts">'+p.pts.toLocaleString('fr')+'</div>'
+        +'</div>';
     });
+    // Séparateur si on ne montre pas tous les joueurs
+    if(sorted.length > 8 && myIdx > 3) {
+      html = html.replace('</div><div class="sp3-lb-row'+( !!sorted[myIdx].me?' me':''),(
+        '</div><div style="text-align:center;padding:4px 0;font-size:11px;color:rgba(255,255,255,.3)">· · ·</div>'
+        +'<div class="sp3-lb-row'+(!!sorted[myIdx].me?' me':'')
+      ));
+    }
     lb.innerHTML=html;
   }
   var gapEl=document.getElementById('sp-gap');
@@ -4365,6 +4583,7 @@ function renderStats(){
 
   // ── Graphique 7 jours ──
   (function(){
+    try{
     var canvas=document.getElementById('sp-chart7');
     var daysEl=document.getElementById('sp-chart-days');
     if(!canvas) return;
@@ -4435,14 +4654,61 @@ function renderStats(){
         daysEl.appendChild(span);
       });
     }
+    }catch(e){console.warn('[chart7]',e);}
   })();
 
-  // ── Lot de la semaine ──
+  // ── Lots à gagner (encart) ──
+  var lotsOn=typeof window.LOTS_ON!=='undefined'&&window.LOTS_ON;
+  var lotsCache=typeof window.LOTS_DB_CACHE!=='undefined'?window.LOTS_DB_CACHE:[];
+  var lotsEncart=document.getElementById('sp-lots-encart');
+  var lotsList=document.getElementById('sp-lots-list');
   var lotCard=document.getElementById('sp-lot-card');
+  var activeLots=lotsCache.filter(function(l){return l.actif!==false;});
+
+  if(lotsEncart && lotsList){
+    if(lotsOn && activeLots.length){
+      lotsEncart.style.display='block';
+      // Calcul des jours restants (fin de semaine = dimanche)
+      var now = new Date();
+      var sunday = new Date(now);
+      sunday.setDate(now.getDate() + (7 - now.getDay()) % 7 || 7);
+      sunday.setHours(23,59,59,0);
+      var joursRestants = Math.ceil((sunday - now) / 86400000);
+
+      lotsList.innerHTML = activeLots.map(function(l) {
+        var dispo = (typeof window.LOTS_STOCK_CACHE!=='undefined'?window.LOTS_STOCK_CACHE:[]).filter(function(s){return s.lot_id===l.id&&s.statut==='disponible';}).length;
+        var condMap = {'gold_semaine':'🥇 Être en Ligue Or 7 jours','top1_semaine':'🏆 Rester Top 1 cette semaine'};
+        var condLbl = condMap[l.cond] || l.condLbl || l.cond || '';
+        // Message stimulation selon position
+        var stimMsg;
+        if(myIdx===0) stimMsg = 'Tu es en tête ! Continue et remporte le lot 🔥';
+        else if(myIdx===1) stimMsg = 'Tu es 2ème — '+( sorted[0].pts - myPts)+' pts pour prendre la 1ère place !';
+        else stimMsg = 'Améliore ton score et grimpe dans le classement pour remporter ce lot !';
+
+        return '<div class="sp3-lot-stimuli">'
+          +'<div style="display:flex;align-items:flex-start;gap:12px">'
+            +'<div class="sp3-lot-emoji-xl">'+(l.emoji||'🎁')+'</div>'
+            +'<div style="flex:1">'
+              +'<div class="sp3-lot-stimuli-titre">'+(l.titre||l.nom||'Lot')+'</div>'
+              +'<div class="sp3-lot-stimuli-msg">'+stimMsg+'</div>'
+              +'<div class="sp3-lot-countdown">'
+                +'<div><div class="sp3-lot-countdown-n">'+joursRestants+'</div><div class="sp3-lot-countdown-l">jours restants</div></div>'
+                +'<div style="width:1px;height:30px;background:rgba(255,255,255,.1)"></div>'
+                +'<div><div class="sp3-lot-countdown-n">'+dispo+'</div><div class="sp3-lot-countdown-l">lots dispos</div></div>'
+              +'</div>'
+              +'<div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px">'+condLbl+'</div>'
+            +'</div>'
+          +'</div>'
+          +'<button class="sp3-lot-cta-btn" onclick="switchMode(\'app\')">⚡ Jouer maintenant</button>'
+          +'</div>';
+      }).join('');
+    } else {
+      lotsEncart.style.display='none';
+    }
+  }
+  // Aussi mettre à jour l'ancienne carte lot (compatibilité)
   if(lotCard){
-    var lotsOn=typeof window.LOTS_ON!=='undefined'&&window.LOTS_ON;
-    var lotsCache=typeof window.LOTS_DB_CACHE!=='undefined'?window.LOTS_DB_CACHE:[];
-    var activeLot=lotsCache.find(function(l){return l.actif!==false;});
+    var activeLot=activeLots.length?activeLots[0]:null;
     if(lotsOn&&activeLot){
       lotCard.style.display='flex';
       var lotEmoji=document.getElementById('sp-lot-emoji'); if(lotEmoji) lotEmoji.textContent=activeLot.emoji||'🎁';
@@ -4471,6 +4737,7 @@ function renderStats(){
   } else if(gainsEl){
     gainsEl.style.display='none';
   }
+  }catch(e){console.error('[renderStats]',e);}
 }
 
 // ── Progression : filtre matière + rendu fiches ──
@@ -4515,6 +4782,45 @@ function sp3RenderThemes(f){
 function openFicheFromStats(themeId){
   switchMode('app');
   setTimeout(function(){ openFiche(themeId); }, 80);
+}
+
+// Affiche les joueurs d'une autre ligue
+function sp3ShowLigue(ligueKey) {
+  var tabs = document.querySelectorAll('.sp3-lg-tab');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  var LIGUE_TABS = ['bronze','silver','gold','diamond','legend'];
+  var idx = LIGUE_TABS.indexOf(ligueKey);
+  if(tabs[idx]) tabs[idx].classList.add('active');
+  // Filtrer les joueurs par ligue
+  var LIGUE_DATA = {
+    bronze:{min:0,max:499},silver:{min:500,max:1499},
+    gold:{min:1500,max:2999},diamond:{min:3000,max:4999},legend:{min:5000,max:99999}
+  };
+  var range = LIGUE_DATA[ligueKey];
+  var lb = document.getElementById('sp-lb');
+  if(!lb||!range) return;
+  var sorted = [].concat(PLAYERS).sort(function(a,b){return b.pts-a.pts;});
+  var filtered = sorted.filter(function(p){return p.pts>=range.min&&p.pts<=range.max;});
+  var maxP = filtered.length ? filtered[0].pts||1 : 1;
+  if(!filtered.length) {
+    lb.innerHTML = '<div style="text-align:center;padding:16px;font-size:12px;color:rgba(255,255,255,.4)">Aucun joueur dans cette ligue</div>';
+    return;
+  }
+  lb.innerHTML = filtered.map(function(p,i){
+    var isMe=!!p.me, isTop1=i===0;
+    var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    var posText=medal||('#'+(i+1));
+    var barPct=Math.max(4,Math.round(p.pts/maxP*100));
+    return '<div class="sp3-lb-row'+(isMe?' me':'')+(isTop1?' top1':'')+'">'
+      +'<div class="sp3-lb-pos">'+posText+'</div>'
+      +'<div class="sp3-lb-ava'+(isMe?' me-ava':'')+'">'+(p.emoji||'😊')+'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div class="sp3-lb-name">'+p.name+(isMe?'<span class="sp3-lb-you">TOI</span>':'')+'</div>'
+        +'<div class="sp3-lb-minibar"><div class="sp3-lb-minibar-fill" style="width:'+barPct+'%"></div></div>'
+      +'</div>'
+      +'<div class="sp3-lb-pts">'+p.pts.toLocaleString('fr')+'</div>'
+      +'</div>';
+  }).join('');
 }
 
 function launchTheme(themeId){
@@ -4959,7 +5265,7 @@ function closeDefis(){
 
 // ── ONGLETS ──
 function dfTab(name){
-  const screens = {lobby:'dfScreenLobby', create:'dfScreenCreate', waiting:'dfScreenWaiting', end:'dfScreenEnd'};
+  const screens = {lobby:'dfScreenLobby', create:'dfScreenCreate', billet:'dfScreenBillet', waiting:'dfScreenWaiting', invite:'dfScreenInvite', end:'dfScreenEnd'};
   Object.values(screens).forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('hidden'); });
   const target = screens[name] || 'dfScreenLobby';
   const el = document.getElementById(target); if(el) el.classList.remove('hidden');
@@ -5066,67 +5372,6 @@ function dfChallengePlayer(btn) {
 
 // ── PARTAGE D'INVITATION ──
 let DF_CURRENT_ROOM_ID = null;
-let DF_IS_PRIVATE = false;
-
-function dfTogglePrivate(){
-  DF_IS_PRIVATE = !DF_IS_PRIVATE;
-  var toggle = document.getElementById('dfPrivateToggle');
-  var knob = document.getElementById('dfPrivateKnob');
-  if(DF_IS_PRIVATE){
-    toggle.style.background = '#B06CE4';
-    knob.style.left = '25px';
-  } else {
-    toggle.style.background = '#ccc';
-    knob.style.left = '3px';
-  }
-}
-
-function dfGetInviteLink(roomId) {
-  const base = window.location.href.split('?')[0];
-  return base + '?room=' + encodeURIComponent(roomId || DF_CURRENT_ROOM_ID || '');
-}
-
-function dfShareWhatsApp() {
-  const myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
-  const link = dfGetInviteLink();
-  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! Rejoins ma room : ' + link);
-  window.open('https://wa.me/?text=' + msg, '_blank');
-}
-
-function dfShareSMS() {
-  const myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
-  const link = dfGetInviteLink();
-  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! ' + link);
-  window.open('sms:?body=' + msg, '_blank');
-}
-
-function dfCopyLink() {
-  const link = dfGetInviteLink();
-  if(navigator.clipboard) {
-    navigator.clipboard.writeText(link).then(() => {
-      const btn = document.getElementById('dfCopyBtn');
-      if(btn) { btn.textContent = '✅ Copié !'; setTimeout(() => { btn.textContent = '🔗 Copier le lien'; }, 2000); }
-    });
-  } else {
-    // Fallback
-    const ta = document.createElement('textarea');
-    ta.value = link;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    const btn = document.getElementById('dfCopyBtn');
-    if(btn) { btn.textContent = '✅ Copié !'; setTimeout(() => { btn.textContent = '🔗 Copier le lien'; }, 2000); }
-  }
-}
-
-function dfShowInviteBlock(roomId) {
-  DF_CURRENT_ROOM_ID = roomId;
-  const block = document.getElementById('dfInviteBlock');
-  if(block) block.style.display = 'block';
-}
-
-// ── LOBBY ──
 function dfRenderLobby(myOnly){
   const list = document.getElementById('dfRoomsList');
   if(!list) return;
@@ -5310,6 +5555,12 @@ function dfRenderWaiting(){
   var link = dfGetInviteLink(room.id);
   var qrImg = document.getElementById('dfQRimg');
   if(qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(link);
+  // Remplir le billet
+  var bn = document.getElementById('dfBilletNom'); if(bn) bn.textContent = room.name || 'Défi Flowin';
+  var bm = document.getElementById('dfBilletMise'); if(bm) bm.textContent = room.mise + ' pts';
+  var bt = document.getElementById('dfBilletTheme'); if(bt) bt.textContent = DF_THEME_LABELS[room.theme] || room.theme;
+  var bj = document.getElementById('dfBilletJoueurs'); if(bj) bj.textContent = room.cap + ' max';
+  var bl = document.getElementById('dfBilletLien'); if(bl) bl.textContent = link;
   document.getElementById('dfWaitMise').textContent = room.mise;
   document.getElementById('dfWaitCagnotte').textContent = (room.mise * room.players.length).toLocaleString('fr');
 
@@ -5379,57 +5630,278 @@ function dfCancelRoom(){
   dfTab('lobby');
 }
 
-function dfJoinRoom(roomId){
-  const room = DF_ROOMS.find(r => r.id === roomId);
-  if(!room) return;
-  if(room.players.length >= room.cap){ alert('Room complète'); return; }
-  if(room.isMine){ DF_CURRENT = room; dfTab('waiting'); return; }
-  // Vérification code PIN pour rooms privées
-  if(room.isPrivate && room.pin){
-    const entered = prompt('🔒 Room privée — Entre le code PIN pour rejoindre :');
-    if(!entered || entered.trim() !== room.pin){
-      alert('❌ Code incorrect. Demande le code au créateur de la room.');
-      return;
-    }
-  }
-  const bal = dfGetBalance();
-  if(room.mise > bal){
-    alert('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + room.mise + ' pour rejoindre.');
-    return;
-  }
-  if(!confirm('Rejoindre la room de ' + room.host.name + ' ?\n\nMise : ' + room.mise + ' pts\nThème : ' + DF_THEME_LABELS[room.theme] + '\n\nTes ' + room.mise + ' pts seront mis en jeu.')) return;
-  dfSetBalance(bal - room.mise);
-  const myName = (userProfile.pseudo || userProfile.prenom || 'Toi');
-  const myAva = ((userProfile.prenom||'O').charAt(0) + (userProfile.nom||'').charAt(0)).toUpperCase() || 'OL';
-  room.players.push({name:myName, ava:myAva, color:'#7B4FBF', isMe:true});
-  // Note : le host reste le bot, mais on peut quand même afficher la salle d'attente
-  room.iJoined = true;
-  DF_CURRENT = room;
-  // Ajouter a mes defis comme participant
-  dfAddToMyDefis({id:room.id, name:room.name||('Defi '+room.host.name), role:'participant', mise:room.mise, theme:room.theme, status:'en_cours', ts:new Date().toISOString(), resultat:null});
-  dfTab('waiting');
-
-  // Le bot host est "patient" : il lance le défi après 4-6s,
-  // ou plus tôt si la room est déjà presque pleine
-  const delay = room.players.length >= room.cap ? 1500 : (3500 + Math.random()*2500);
-  setTimeout(() => {
-    if(!DF_CURRENT || DF_CURRENT.id !== room.id || room.inGame) return;
-    // Si pas pleine, on peut encore ajouter quelques bots avant lancement
-    while(room.players.length < Math.min(room.cap, room.players.length + 1) && Math.random() > 0.3){
-      const taken = new Set(room.players.map(p => p.name));
-      const free = DF_BOTS.filter(b => !taken.has(b.name));
-      if(free.length === 0) break;
-      const bot = free[Math.floor(Math.random()*free.length)];
-      room.players.push({name:bot.name, ava:bot.ava, color:bot.color, isBot:true, skill:bot.skill});
-    }
-    dfRenderWaiting();
-    setTimeout(() => {
-      if(!DF_CURRENT || DF_CURRENT.id !== room.id || room.inGame) return;
-      dfStartGame();
-    }, 1500);
-  }, delay);
+// ── BILLET CRÉATEUR ──
+function dfShowBilletCreateur(room) {
+  var el = function(id){ return document.getElementById(id); };
+  var link = dfGetInviteLink(room.id);
+  if(el('dbNom'))      el('dbNom').textContent      = room.name;
+  if(el('dbCreateur')) el('dbCreateur').textContent  = room.host.name;
+  if(el('dbMise'))     el('dbMise').textContent      = room.mise + ' pts';
+  if(el('dbTheme'))    el('dbTheme').textContent     = DF_THEME_LABELS[room.theme] || room.theme;
+  if(el('dbJoueurs'))  el('dbJoueurs').textContent   = room.cap + ' joueurs max';
+  if(el('dbCagnotte')) el('dbCagnotte').textContent  = (room.mise * room.cap) + ' pts';
+  if(el('dbLien'))     el('dbLien').textContent      = link;
+  var qr = el('dbQR');
+  if(qr) qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent(link);
+  dfTab('billet');
 }
 
+function dbShareWhatsApp() {
+  var room = DF_CURRENT;
+  if(!room) return;
+  var link = dfGetInviteLink(room.id);
+  var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
+  var cagnotte = room.mise * room.cap;
+  var theme = DF_THEME_LABELS[room.theme] || room.theme;
+  var msg = 'Defi Flowin de ' + myName + ' ! Theme : ' + theme + ' | Mise : ' + room.mise + ' pts | Cagnotte : ' + cagnotte + ' pts. Rejoins : ' + link;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function dbShareSMS() {
+  var room = DF_CURRENT;
+  if(!room) return;
+  var link = dfGetInviteLink(room.id);
+  var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
+  var msg = '⚔️ ' + myName + ' te défie sur Flowin ! Mise : ' + room.mise + ' pts. Rejoins : ' + link;
+  window.open('sms:?body=' + encodeURIComponent(msg), '_blank');
+}
+
+function dbCopyLink() {
+  var room = DF_CURRENT;
+  if(!room) return;
+  var link = dfGetInviteLink(room.id);
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(link);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = link; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  var b = document.getElementById('dbCopyBtn');
+  if(b) { b.textContent = '✅ Copié !'; setTimeout(function(){ b.textContent = '🔗 Copier'; }, 2000); }
+}
+
+function dbGoToWaiting() {
+  dfTab('waiting');
+  dfStartPollingParticipants(DF_CURRENT.id);
+}
+
+// ── LIEN INVITATION ──
+function dfGetInviteLink(roomId) {
+  return window.location.href.split('?')[0] + '?room=' + encodeURIComponent(roomId || (DF_CURRENT && DF_CURRENT.id) || '');
+}
+
+function dfShareWhatsApp() {
+  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
+  var link = dfGetInviteLink();
+  var room = DF_CURRENT;
+  var msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! Rejoins ma room : ' + link);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+function dfShareSMS() {
+  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
+  var link = dfGetInviteLink();
+  var msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! ' + link);
+  window.open('sms:?body=' + msg, '_blank');
+}
+function dfCopyLinkWait() {
+  var link = dfGetInviteLink();
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(link);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = link;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  var b = document.getElementById('dfCopyBtn2');
+  if(b) { b.textContent = '✅ Copié !'; setTimeout(function(){ b.textContent = '🔗 Copier'; }, 2000); }
+}
+
+// ── CRÉER ROOM ──
+function dfCreateRoom() {
+  var bal = dfGetBalance();
+  if(DF_FORM.mise > bal) {
+    alert('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + DF_FORM.mise + '.');
+    return;
+  }
+  dfSetBalance(bal - DF_FORM.mise);
+  var roomNameInput = document.getElementById('dfRoomName');
+  var roomName = (roomNameInput && roomNameInput.value.trim()) || ('Défi de ' + (userProfile.pseudo || userProfile.prenom || 'Toi'));
+  var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
+  var myAva = ((userProfile.prenom || 'T').charAt(0) + (userProfile.nom || '').charAt(0)).toUpperCase() || 'TO';
+  var roomId = 'room_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+  var room = {
+    id: roomId, name: roomName,
+    host: {name: myName, ava: myAva, color: '#7B4FBF', isMe: true},
+    mise: DF_FORM.mise, theme: DF_FORM.theme, cap: DF_FORM.cap,
+    players: [{name: myName, ava: myAva, color: '#7B4FBF', isMe: true, isHost: true}],
+    isMine: true, status: 'waiting', ts: new Date().toISOString()
+  };
+  DF_ROOMS.unshift(room);
+  DF_CURRENT = room;
+  supabaseInsert('defis', {
+    id: roomId, ts: room.ts, nom: roomName,
+    createur: myName, mise: room.mise, theme: room.theme,
+    nb_joueurs: room.cap, status: 'waiting', ecole: userProfile.ecole || ''
+  });
+  dfAddToMyDefis({id: roomId, name: roomName, role: 'createur', mise: room.mise, theme: room.theme, status: 'waiting', ts: room.ts, resultat: null});
+  dfShowBilletCreateur(room);
+}
+
+// ── REJOINDRE VIA LIEN (invité) ──
+async function dfLoadRoomFromSupabase(roomId) {
+  try {
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=*', {headers: hdrs});
+    if(!r.ok) return null;
+    var rows = await r.json();
+    if(!Array.isArray(rows) || rows.length === 0) return null;
+    var d = rows[0];
+    return {
+      id: d.id,
+      name: d.nom || ('Défi de ' + (d.createur || '?')),
+      host: {name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false},
+      mise: d.mise || 0, theme: d.theme || 'roulette', cap: d.nb_joueurs || 4,
+      players: [{name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false, isHost: true}],
+      isMine: false, status: d.status || 'waiting', ts: d.ts || new Date().toISOString()
+    };
+  } catch(e) { return null; }
+}
+
+async function dfLoadThenJoin(roomId) {
+  var existing = DF_ROOMS.find(function(r){ return r.id === roomId; });
+  if(existing) { dfJoinRoom(roomId); return; }
+  var room = await dfLoadRoomFromSupabase(roomId);
+  if(!room) { alert('❌ Room introuvable ou expirée.'); return; }
+  DF_ROOMS.unshift(room);
+  dfJoinRoom(roomId);
+}
+
+function dfJoinRoom(roomId) {
+  var room = DF_ROOMS.find(function(r){ return r.id === roomId; });
+  if(!room) return;
+  if(room.isMine) { DF_CURRENT = room; dfTab('waiting'); dfStartPollingParticipants(roomId); return; }
+  // Invité : afficher le billet de la room
+  dfShowBilletInvite(room);
+}
+
+function dfShowBilletInvite(room) {
+  // Remplir le billet invité
+  var el = function(id){ return document.getElementById(id); };
+  if(el('diBilletNom')) el('diBilletNom').textContent = room.name || ('Défi de ' + room.host.name);
+  if(el('diBilletHost')) el('diBilletHost').textContent = room.host.name;
+  if(el('diBilletMise')) el('diBilletMise').textContent = room.mise + ' pts';
+  if(el('diBilletTheme')) el('diBilletTheme').textContent = DF_THEME_LABELS[room.theme] || room.theme;
+  if(el('diBilletJoueurs')) el('diBilletJoueurs').textContent = room.players.length + '/' + room.cap;
+  if(el('diBilletCagnotte')) el('diBilletCagnotte').textContent = (room.mise * room.cap) + ' pts max';
+  // Solde
+  var bal = dfGetBalance();
+  var soldeOk = room.mise <= bal;
+  if(el('diBilletWarn')) el('diBilletWarn').style.display = soldeOk ? 'none' : 'block';
+  if(el('diBilletWarnTxt')) el('diBilletWarnTxt').textContent = 'Solde insuffisant — tu as ' + bal + ' pts, il en faut ' + room.mise;
+  var btn = el('diBilletBtn');
+  if(btn) { btn.disabled = !soldeOk; btn.style.opacity = soldeOk ? '1' : '.4'; }
+  // Stocker la room
+  window._diRoom = room;
+  dfTab('invite');
+}
+
+function diConfirmJoin() {
+  var room = window._diRoom;
+  if(!room) return;
+  var bal = dfGetBalance();
+  if(room.mise > bal) return;
+  dfSetBalance(bal - room.mise);
+  var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
+  var myAva = ((userProfile.prenom || 'T').charAt(0) + (userProfile.nom || '').charAt(0)).toUpperCase() || 'TO';
+  room.players.push({name: myName, ava: myAva, color: '#22C9A0', isMe: true});
+  room.iJoined = true;
+  DF_CURRENT = room;
+  supabaseInsert('defis_participants', {defi_id: room.id, pseudo: myName, mise: room.mise});
+  dfAddToMyDefis({id: room.id, name: room.name, role: 'participant', mise: room.mise, theme: room.theme, status: 'en_cours', ts: new Date().toISOString(), resultat: null});
+  dfTab('waiting');
+  dfPollForGameStart(room.id);
+}
+
+// ── POLLING CRÉATEUR : voir les participants arriver ──
+var DF_PARTICIPANTS_POLL = null;
+function dfStartPollingParticipants(roomId) {
+  if(DF_PARTICIPANTS_POLL) clearInterval(DF_PARTICIPANTS_POLL);
+  DF_PARTICIPANTS_POLL = setInterval(async function() {
+    if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_PARTICIPANTS_POLL); return; }
+    try {
+      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      var r = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo,ts&order=ts.asc', {headers: hdrs});
+      if(!r.ok) return;
+      var rows = await r.json();
+      if(!Array.isArray(rows)) return;
+      var creatorName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
+      var players = [{name: creatorName, ava: creatorName.charAt(0).toUpperCase(), color: '#7B4FBF', isMe: true, isHost: true}];
+      rows.forEach(function(p) {
+        if(p.pseudo && p.pseudo !== creatorName) {
+          players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: '#22C9A0', isMe: false});
+        }
+      });
+      DF_CURRENT.players = players;
+      dfRenderWaiting();
+      var syncBadge = document.getElementById('dfSyncBadge');
+      if(syncBadge) syncBadge.style.display = 'inline-flex';
+    } catch(e){}
+  }, 3000);
+  setTimeout(function(){ clearInterval(DF_PARTICIPANTS_POLL); }, 600000);
+}
+
+// ── POLLING INVITÉ : attendre le lancement ──
+var DF_GAME_START_POLL = null;
+function dfPollForGameStart(roomId) {
+  if(DF_GAME_START_POLL) clearInterval(DF_GAME_START_POLL);
+  DF_GAME_START_POLL = setInterval(async function() {
+    if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_GAME_START_POLL); return; }
+    try {
+      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=status', {headers: hdrs});
+      if(!r.ok) return;
+      var rows = await r.json();
+      if(!Array.isArray(rows) || rows.length === 0) return;
+      // Mettre à jour la liste joueurs
+      var r2 = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo&order=ts.asc', {headers: hdrs});
+      if(r2.ok) {
+        var pts = await r2.json();
+        if(Array.isArray(pts)) {
+          var hostName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
+          var myName = userProfile.pseudo || userProfile.prenom || '';
+          var players = [{name: hostName, ava: hostName.charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false, isHost: true}];
+          pts.forEach(function(p) {
+            players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: p.pseudo === myName ? '#F4A83A' : '#22C9A0', isMe: p.pseudo === myName});
+          });
+          DF_CURRENT.players = players;
+          dfRenderWaiting();
+        }
+      }
+      if(rows[0].status === 'en_cours') {
+        clearInterval(DF_GAME_START_POLL);
+        dfStartGame();
+      }
+    } catch(e){}
+  }, 3000);
+  setTimeout(function(){ clearInterval(DF_GAME_START_POLL); }, 600000);
+}
+
+// ── RESET ROOM ──
+function dfResetRoom() {
+  if(!DF_CURRENT || !DF_CURRENT.isMine) return;
+  if(!confirm('Remettre la room à 0 joueur ?')) return;
+  var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
+  var myAva = ((userProfile.prenom || 'T').charAt(0) + (userProfile.nom || '').charAt(0)).toUpperCase() || 'TO';
+  DF_CURRENT.players = [{name: myName, ava: myAva, color: '#7B4FBF', isMe: true, isHost: true}];
+  // Supprimer les participants dans Supabase
+  var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+  fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(DF_CURRENT.id), {
+    method: 'DELETE', headers: hdrs
+  }).catch(function(){});
+  dfRenderWaiting();
+}
+
+// ── LANCEMENT DU DÉFI ──
 // ── LANCEMENT DU DÉFI ──
 function dfConfirmStart(){
   if(!DF_CURRENT) return;
@@ -5444,6 +5916,15 @@ function dfConfirmStart(){
 }
 
 function dfStartGame(){
+  // Signaler le lancement dans Supabase (l'ami poll ce champ)
+  if(DF_CURRENT && DF_CURRENT.isMine) {
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates'};
+    fetch(SUPABASE_URL + '/rest/v1/defis', {
+      method: 'POST', headers: hdrs,
+      body: JSON.stringify({id: DF_CURRENT.id, status: 'en_cours'})
+    }).catch(function(){});
+    clearInterval(DF_PARTICIPANTS_POLL);
+  }
   if(!DF_CURRENT) return;
   const room = DF_CURRENT;
   if(room.players.length < 2) return;
@@ -5961,6 +6442,26 @@ function saveSessionToSheets(qs, profile) {
     ref:          (() => { try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
   });
 
+  // ── Mettre à jour pts_total dans joueurs (pour le classement live) ──
+  if(SB_ENABLED) {
+    const pseudo = profile.pseudo || profile.prenom || 'Anonyme';
+    const hdrs = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates'
+    };
+    fetch(SUPABASE_URL + '/rest/v1/joueurs', {
+      method: 'POST',
+      headers: hdrs,
+      body: JSON.stringify({
+        pseudo: pseudo,
+        pts_total: realTotalPts,
+        streak: qs.dailyStreak || qs.streak || 0,
+        updated_at: new Date().toISOString()
+      })
+    }).catch(function(){});
+  }
 
   // Recharger les stats après sauvegarde
   setTimeout(() => {
@@ -5975,7 +6476,7 @@ function saveSessionToSheets(qs, profile) {
 // ════════════════════════
 window.LOTS_ON = false; // false par défaut, activé uniquement si Supabase confirme
 window.MY_GAINS = [];
-window.LOTS_DB_CACHE = [{actif:true, emoji:'🍔', titre:'40% sur le 2e menu McDo'}];
+window.LOTS_DB_CACHE = [];  // vide par défaut - chargé depuis Supabase
 
 async function loadLotsConfig() {
   try {
@@ -6148,7 +6649,7 @@ function dfSetMode(mode) {
       <div class="df-form-block" style="margin-bottom:12px">
         <div class="df-form-lbl">🏷️ Nom de la room</div>
         <input id="dfRoomName" placeholder="Ex: Révision Guerre Froide, Défi EMC…" maxlength="40"
-          style="width:100%;background:#fff;border:2px solid rgba(123,79,191,.2);border-radius:14px;padding:12px 16px;font-size:15px;font-family:inherit;color:#1e1046;outline:none;box-sizing:border-box"
+          style="width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(176,108,228,.3);border-radius:14px;padding:12px 16px;font-size:15px;font-family:inherit;color:#fff;outline:none;box-sizing:border-box"
           onfocus="this.style.borderColor='#7B4FBF'" onblur="this.style.borderColor='rgba(123,79,191,.2)'">
         <div style="font-size:12px;color:rgba(123,79,191,.6);margin-top:5px;padding-left:4px">Visible par les autres joueurs dans le lobby</div>
       </div>
@@ -6186,29 +6687,15 @@ function dfSetMode(mode) {
         </div>
       </div>
 
-      <div class="df-form-block" style="background:linear-gradient(135deg,#F0EEFF,#E8E2FF);border:none">
+      <div class="df-form-block" style="background:rgba(176,108,228,.15);border:1.5px solid rgba(176,108,228,.3)">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div>
-            <div style="font-size:12px;color:#7A7AAA;font-weight:700;text-transform:uppercase;letter-spacing:.4px">Cagnotte max</div>
-            <div style="font-size:24px;font-weight:800;color:#7B4FBF;font-family:'Calibri','Trebuchet MS',Arial,sans-serif"><span id="dfCagnottePreview">400</span> pts</div>
+            <div style="font-size:12px;color:rgba(176,108,228,.7);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Cagnotte max</div>
+            <div style="font-size:24px;font-weight:800;color:#D4AAFF;font-family:'Calibri','Trebuchet MS',Arial,sans-serif"><span id="dfCagnottePreview">400</span> pts</div>
           </div>
           <div style="font-size:32px">🏆</div>
         </div>
         <div style="font-size:12px;color:#7A7AAA;font-weight:600;margin-top:6px">Le gagnant remporte tout · 10 questions</div>
-      </div>
-
-      <!-- MODE PRIVÉ -->
-      <div class="df-form-block" style="margin-top:4px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div class="df-form-lbl" style="margin-bottom:2px">🔒 Room privée</div>
-            <div style="font-size:12px;color:#7A7AAA;font-weight:600">Seuls ceux qui ont ton lien/QR peuvent rejoindre — pas de bots, pas d'inconnus</div>
-          </div>
-          <div onclick="dfTogglePrivate()" id="dfPrivateToggle"
-            style="width:48px;height:26px;border-radius:13px;background:#ccc;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;margin-left:12px">
-            <div id="dfPrivateKnob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)"></div>
-          </div>
-        </div>
       </div>
 
       <button class="df-form-submit" id="dfCreateBtn" onclick="dfCreateRoom()">
@@ -6216,42 +6703,175 @@ function dfSetMode(mode) {
       </button>
     </div>
 
-    <!-- ÉCRAN SALLE D'ATTENTE -->
-    <div class="df-screen hidden" id="dfScreenWaiting">
-      <div class="df-waiting">
-        <div class="df-wait-hdr">
-          <div class="df-wait-emoji" id="dfWaitEmoji">⏳</div>
-          <div class="df-wait-ttl" id="dfWaitTtl">En attente de joueurs…</div>
-          <div class="df-wait-sub" id="dfWaitSub">0/2 joueurs</div>
-          <div id="dfPrivateBadge" style="display:none;margin-top:8px;background:rgba(176,108,228,.2);border:1.5px solid rgba(176,108,228,.5);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:800;color:#B06CE4">🔒 Room privée · Code : <span id="dfPinDisplay" style="font-size:16px;letter-spacing:3px;color:#fff;background:rgba(176,108,228,.4);padding:2px 10px;border-radius:8px">—</span></div>
+    <!-- BILLET CRÉATEUR -->
+    <div class="df-screen hidden" id="dfScreenBillet">
+      <div style="padding:4px 0 60px">
+
+        <div style="text-align:center;padding:24px 0 16px">
+          <div style="font-size:52px;margin-bottom:12px">⚔️</div>
+          <div style="font-size:20px;font-weight:800;color:#fff" id="dbNom">Défi</div>
+          <div style="font-size:13px;color:#9A8FBF;margin-top:5px">par <span id="dbCreateur" style="color:#D4AAFF;font-weight:600"></span></div>
         </div>
-        <div class="df-cagnotte-big">
-          <div class="df-cagnotte-big-val">🏆 <span id="dfWaitCagnotte">200</span> pts</div>
-          <div class="df-cagnotte-big-lbl">Cagnotte · Mise : <span id="dfWaitMise">100</span> pts/joueur</div>
-        </div>
-        <div style="font-size:12px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">👥 Joueurs dans la room</div>
-        <div class="df-players-list" id="dfWaitPlayers"></div>
-        <!-- INVITATION -->
-        <div style="background:linear-gradient(135deg,#1a0533,#2d1060);border-radius:18px;padding:16px;margin:14px 0">
-          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:4px">📲 Inviter des joueurs</div>
-          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:12px">Partage le lien ou fais scanner le QR code</div>
-          <div style="display:flex;gap:8px;margin-bottom:12px">
-            <button onclick="dfShareWhatsApp()" style="flex:1;background:#25D366;color:#fff;border:none;border-radius:12px;padding:10px 4px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">💬 WhatsApp</button>
-            <button onclick="dfShareSMS()" style="flex:1;background:#5856D6;color:#fff;border:none;border-radius:12px;padding:10px 4px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">📱 SMS</button>
-            <button onclick="dfCopyLinkWait()" id="dfCopyBtn2" style="flex:1;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:12px;padding:10px 4px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">🔗 Copier</button>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+          <div style="background:rgba(244,168,58,.1);border:1px solid rgba(244,168,58,.3);border-radius:12px;padding:14px 10px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#F4A83A" id="dbMise">—</div>
+            <div style="font-size:9px;font-weight:700;color:rgba(244,168,58,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Mise</div>
           </div>
-          <div style="text-align:center">
-            <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">QR Code</div>
-            <div style="background:#fff;border-radius:12px;padding:8px;display:inline-block">
-              <img id="dfQRimg" src="" alt="QR" style="width:90px;height:90px;display:block">
+          <div style="background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.3);border-radius:12px;padding:14px 10px;text-align:center">
+            <div style="font-size:13px;font-weight:800;color:#B06CE4;line-height:1.2" id="dbTheme">—</div>
+            <div style="font-size:9px;font-weight:700;color:rgba(176,108,228,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Thème</div>
+          </div>
+          <div style="background:rgba(34,201,160,.1);border:1px solid rgba(34,201,160,.3);border-radius:12px;padding:14px 10px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#22C9A0" id="dbCagnotte">—</div>
+            <div style="font-size:9px;font-weight:700;color:rgba(34,201,160,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Cagnotte</div>
+          </div>
+        </div>
+
+        <div style="background:#1a0a30;border:1.5px solid rgba(176,108,228,.3);border-radius:16px;overflow:hidden;margin-bottom:16px">
+          <div style="padding:12px 16px;border-bottom:1px solid rgba(176,108,228,.15)">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Places</div>
+            <div style="font-size:13px;color:#fff;font-weight:600" id="dbJoueurs">—</div>
+          </div>
+          <div style="padding:12px 16px;border-bottom:1px solid rgba(176,108,228,.15)">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Lien d'accès direct</div>
+            <div id="dbLien" style="font-size:10px;color:#D4AAFF;word-break:break-all;line-height:1.5"></div>
+          </div>
+          <div style="padding:12px 16px;text-align:center">
+            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">QR Code</div>
+            <div style="background:#fff;border-radius:10px;padding:6px;display:inline-block">
+              <img id="dbQR" src="" alt="QR" style="width:100px;height:100px;display:block">
             </div>
           </div>
         </div>
-        <button class="df-form-submit" id="dfStartBtn" onclick="dfConfirmStart()" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);box-shadow:0 4px 18px rgba(176,108,228,.4)">
-          🎮 Lancer le défi maintenant
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+          <button onclick="dbShareWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">💬 WhatsApp</button>
+          <button onclick="dbShareSMS()" style="background:#5856D6;color:#fff;border:none;border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">📱 SMS</button>
+          <button onclick="dbCopyLink()" id="dbCopyBtn" style="background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">🔗 Copier</button>
+        </div>
+
+        <button onclick="dbGoToWaiting()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px">
+          ⏳ Voir la salle d'attente
         </button>
-        <div style="text-align:center;font-size:12px;color:#7A7AAA;margin-top:8px;font-weight:600" id="dfWaitHint">Il faut au moins 2 joueurs</div>
-        <button onclick="dfCancelRoom()" style="width:100%;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:700;padding:10px;margin-top:6px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
+        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
+          Retour au lobby
+        </button>
+
+      </div>
+    </div>
+
+    <!-- ÉCRAN SALLE D'ATTENTE CRÉATEUR -->
+    <div class="df-screen hidden" id="dfScreenWaiting">
+      <div style="padding:4px 0 60px">
+        <div style="text-align:center;padding:18px 0 12px">
+          <div style="font-size:40px;margin-bottom:10px" id="dfWaitEmoji">⏳</div>
+          <div style="font-size:19px;font-weight:800;color:#fff" id="dfWaitTtl">En attente de joueurs…</div>
+          <div style="font-size:13px;color:#9A8FBF;margin-top:5px" id="dfWaitSub">0/4 joueurs</div>
+        </div>
+
+        <div style="background:#F4A83A;border-radius:14px;padding:12px 16px;text-align:center;margin-bottom:14px">
+          <div style="font-size:24px;font-weight:800;color:#fff">🏆 <span id="dfWaitCagnotte">0</span> pts</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;margin-top:3px">Cagnotte · Mise : <span id="dfWaitMise">100</span> pts/joueur</div>
+        </div>
+        <div style="font-size:11px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          👥 Joueurs dans la room
+          <span id="dfSyncBadge" style="display:none;background:#0a1e15;border:1px solid #1D9E75;border-radius:20px;padding:2px 8px;font-size:9px;color:#22C9A0;font-weight:700">● live</span>
+        </div>
+        <div id="dfWaitPlayers" style="margin-bottom:14px"></div>
+        <!-- BILLET D'INVITATION -->
+        <div style="background:#1a0a30;border:1.5px solid rgba(176,108,228,.5);border-radius:18px;overflow:hidden;margin-bottom:14px">
+          <!-- En-tête billet -->
+          <div style="background:linear-gradient(135deg,#2d1060,#1a0535);padding:14px 16px;border-bottom:1px dashed rgba(176,108,228,.3)">
+            <div style="font-size:10px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">🎟️ Billet d'invitation</div>
+            <div style="font-size:18px;font-weight:800;color:#fff" id="dfBilletNom">Défi Flowin</div>
+          </div>
+          <!-- Infos billet -->
+          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-bottom:1px dashed rgba(176,108,228,.3)">
+            <div style="text-align:center">
+              <div style="font-size:16px;font-weight:800;color:#F4A83A" id="dfBilletMise">—</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Mise</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:13px;font-weight:800;color:#B06CE4" id="dfBilletTheme">—</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Thème</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:16px;font-weight:800;color:#22C9A0" id="dfBilletJoueurs">—</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Places</div>
+            </div>
+          </div>
+          <!-- Lien -->
+          <div style="padding:12px 16px;border-bottom:1px dashed rgba(176,108,228,.3)">
+            <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Lien d'accès</div>
+            <div id="dfBilletLien" style="font-size:10px;color:#D4AAFF;word-break:break-all;line-height:1.4"></div>
+          </div>
+          <!-- QR code -->
+          <div style="padding:12px 16px;text-align:center;border-bottom:1px dashed rgba(176,108,228,.3)">
+            <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">QR Code</div>
+            <div style="background:#fff;border-radius:10px;padding:6px;display:inline-block">
+              <img id="dfQRimg" src="" alt="QR" style="width:90px;height:90px;display:block">
+            </div>
+          </div>
+          <!-- Boutons envoi -->
+          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <button onclick="dfShareWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:12px;padding:13px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">💬 WhatsApp</button>
+            <button onclick="dfShareSMS()" style="background:#5856D6;color:#fff;border:none;border-radius:12px;padding:13px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">📱 SMS</button>
+            <button onclick="dfCopyLinkWait()" id="dfCopyBtn2" style="background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">🔗 Copier</button>
+          </div>
+        </div>
+        <button class="df-form-submit" id="dfStartBtn" onclick="dfConfirmStart()" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF)">🎮 Lancer le défi maintenant</button>
+        <div style="text-align:center;font-size:12px;color:#7A7AAA;margin-top:8px;font-weight:600" id="dfWaitHint">Il faut au moins 2 joueurs pour lancer</div>
+        <button onclick="dfResetRoom()" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:700;padding:8px;margin-top:2px;cursor:pointer">🔄 Remettre à 0 joueur</button>
+        <button onclick="dfCancelRoom()" style="width:100%;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:700;padding:8px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
+      </div>
+    </div>
+
+    <!-- ÉCRAN BILLET INVITÉ -->
+    <div class="df-screen hidden" id="dfScreenInvite">
+      <div style="padding:4px 0 60px">
+
+        <div style="text-align:center;padding:16px 0 12px">
+          <div style="font-size:11px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🎟️ Invitation reçue</div>
+          <div style="font-size:20px;font-weight:800;color:#fff" id="diBilletNom">Défi</div>
+          <div style="font-size:13px;color:#9A8FBF;margin-top:4px">Créé par <span id="diBilletHost" style="color:#D4AAFF;font-weight:600"></span></div>
+        </div>
+
+        <!-- BILLET -->
+        <div style="background:#1a0a30;border:1.5px solid rgba(176,108,228,.5);border-radius:18px;overflow:hidden;margin-bottom:16px">
+          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-bottom:1px dashed rgba(176,108,228,.3)">
+            <div style="text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#F4A83A" id="diBilletMise">—</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Mise</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:13px;font-weight:800;color:#B06CE4;line-height:1.2" id="diBilletTheme">—</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Thème</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#22C9A0" id="diBilletJoueurs">—</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Joueurs</div>
+            </div>
+          </div>
+          <div style="padding:12px 16px;text-align:center">
+            <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Cagnotte potentielle</div>
+            <div style="font-size:22px;font-weight:800;color:#F4A83A" id="diBilletCagnotte">—</div>
+          </div>
+        </div>
+
+        <!-- ALERTE SOLDE -->
+        <div id="diBilletWarn" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#F87171;font-weight:600;text-align:center" id="diBilletWarnTxt">
+          <span id="diBilletWarnTxt">Solde insuffisant</span>
+        </div>
+
+        <!-- BOUTON REJOINDRE -->
+        <button id="diBilletBtn" onclick="diConfirmJoin()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:17px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">
+          ⚔️ Rejoindre le défi !
+        </button>
+        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
+          Annuler
+        </button>
+
       </div>
     </div>
 
@@ -6302,7 +6922,7 @@ function dfSetMode(mode) {
 .sp3-kpi-l{font-size:10px;color:rgba(255,255,255,.45);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
 
 /* ── Body (fond blanc) ── */
-.sp3-body{background:#F8F6FF;padding:14px;display:flex;flex-direction:column;gap:12px}
+.sp3-body{background:#F8F6FF;padding:14px 14px 60px;display:flex;flex-direction:column;gap:12px;min-height:calc(100vh - 200px)}
 
 /* ── Streak card ── */
 .sp3-streak{background:linear-gradient(135deg,#F4A83A,#d4740a);border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px}
@@ -6334,6 +6954,47 @@ function dfSetMode(mode) {
 .sp3-lb-you{background:rgba(176,108,228,.6);color:#fff;font-size:9px;font-weight:800;border-radius:6px;padding:1px 5px;margin-left:5px;text-transform:uppercase;letter-spacing:.4px;vertical-align:middle}
 .sp3-lb-pts{font-size:13px;font-weight:800;color:#F4A83A}
 .sp3-gap{background:rgba(176,108,228,.15);border:1px solid rgba(176,108,228,.3);border-radius:14px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,.8);text-align:center;font-weight:700;margin-top:6px}
+/* ── Classement Duolingo ── */
+.sp3-lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);margin-bottom:5px}
+.sp3-lb-row.me{background:rgba(176,108,228,.28);border:2px solid rgba(176,108,228,.6)}
+.sp3-lb-row.top1{background:linear-gradient(135deg,rgba(244,168,58,.2),rgba(244,168,58,.04));border-color:rgba(244,168,58,.4)}
+.sp3-lb-pos{font-size:15px;font-weight:800;color:rgba(255,255,255,.6);min-width:28px;text-align:center}
+.sp3-lb-ava{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sp3-lb-ava.me-ava{background:rgba(176,108,228,.4);border:2px solid #B06CE4}
+.sp3-lb-name{flex:1;font-size:13px;font-weight:700;color:#fff;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp3-lb-you{background:#B06CE4;color:#fff;font-size:9px;font-weight:800;border-radius:6px;padding:1px 6px;margin-left:5px;text-transform:uppercase;letter-spacing:.3px;vertical-align:middle}
+.sp3-lb-pts{font-size:12px;font-weight:800;color:#F4A83A;flex-shrink:0}
+.sp3-lb-minibars{width:50px;flex-shrink:0}
+.sp3-lb-minibar{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin-top:3px}
+.sp3-lb-minibar-fill{height:100%;background:linear-gradient(90deg,#B06CE4,#F4A83A);border-radius:2px}
+/* ── Encart lots ── */
+.sp3-lot-item{background:#fff;border:1.5px solid #EDE9FE;border-radius:18px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(45,27,107,.06)}
+.sp3-lot-emoji-big{font-size:34px;flex-shrink:0;line-height:1}
+.sp3-lot-titre{font-size:14px;font-weight:800;color:#1E1048}
+.sp3-lot-cond{font-size:11px;color:#7B4FBF;font-weight:600;background:#F0ECFF;padding:3px 8px;border-radius:8px;display:inline-block;margin-top:5px}
+.sp3-lot-dispo{flex-shrink:0;text-align:center;background:#F0ECFF;border-radius:12px;padding:8px 12px;min-width:52px}
+.sp3-lot-dispo-n{font-size:20px;font-weight:800;color:#7B4FBF;line-height:1}
+.sp3-lot-dispo-l{font-size:9px;color:#9B7ED4;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+/* ── Onglets ligues ── */
+.sp3-lg-tabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:12px;margin-bottom:4px}
+.sp3-lg-tabs::-webkit-scrollbar{display:none}
+.sp3-lg-tab{flex-shrink:0;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:rgba(255,255,255,.5);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
+.sp3-lg-tab.active{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.sp3-lg-tab.mine{border-color:#F4A83A;color:#F4A83A}
+.sp3-lg-tab.mine.active{background:rgba(244,168,58,.2);border-color:#F4A83A;color:#F4A83A}
+/* ── Pulse live ── */
+@keyframes sp3pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+/* ── Lots stimuli ── */
+.sp3-lot-stimuli{background:linear-gradient(135deg,#1E1048,#2D1B6B);border-radius:20px;padding:16px;margin-bottom:10px;overflow:hidden;position:relative}
+.sp3-lot-stimuli::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(176,108,228,.15)}
+.sp3-lot-emoji-xl{font-size:44px;line-height:1;margin-bottom:8px}
+.sp3-lot-stimuli-titre{font-size:17px;font-weight:800;color:#fff;margin-bottom:4px}
+.sp3-lot-stimuli-msg{font-size:12px;color:rgba(255,255,255,.65);font-weight:600;margin-bottom:12px;line-height:1.4}
+.sp3-lot-countdown{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sp3-lot-countdown-n{font-size:22px;font-weight:800;color:#F4A83A;line-height:1}
+.sp3-lot-countdown-l{font-size:10px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase}
+.sp3-lot-cta-btn{background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:none;color:#fff;border-radius:14px;padding:10px 20px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;width:100%;transition:opacity .15s}
+.sp3-lot-cta-btn:hover{opacity:.85}
 
 /* ── Graphique 7 jours ── */
 .sp3-chart-card{background:#fff;border:1px solid #EDE9FE;border-radius:22px;padding:16px;box-shadow:0 2px 12px rgba(45,27,107,.06)}
@@ -6410,8 +7071,13 @@ function dfSetMode(mode) {
       <div class="sp3-streak-pill" id="sp-streak-pill">x0</div>
     </div>
 
-    <!-- Ligue + barre + classement -->
+    <!-- LIGUE DUOLINGO STYLE -->
     <div class="sp3-league">
+
+      <!-- Onglets ligues -->
+      <div class="sp3-lg-tabs" id="sp-lg-tabs"></div>
+
+      <!-- Header ligue active -->
       <div class="sp3-lg-head">
         <div class="sp3-lg-icon" id="sp-lg-icon">🥉</div>
         <div style="flex:1">
@@ -6423,13 +7089,32 @@ function dfSetMode(mode) {
           <div class="sp3-lg-rank-l">position</div>
         </div>
       </div>
-      <div class="sp3-bar-labels">
+
+      <!-- Info ligne joueurs live -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div id="sp-lg-joueurs-count" style="font-size:11px;color:rgba(255,255,255,.45);font-weight:600"></div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="width:7px;height:7px;border-radius:50%;background:#4ADE80;animation:sp3pulse 2s ease-in-out infinite"></div>
+          <span style="font-size:10px;color:rgba(255,255,255,.4);font-weight:600">Live</span>
+        </div>
+      </div>
+
+      <!-- Classement joueurs -->
+      <div id="sp-lb"></div>
+      <div id="sp-gap" style="display:none" class="sp3-gap"></div>
+
+      <!-- Barre progression -->
+      <div class="sp3-bar-labels" style="margin-top:12px">
         <span id="sp-bar-l">0 pts</span><span id="sp-bar-r">Prochain palier</span>
       </div>
       <div class="sp3-bar-track"><div class="sp3-bar-fill" id="sp-bar" style="width:0%"></div></div>
-      <!-- Classement -->
-      <div id="sp-lb"></div>
-      <div id="sp-gap" style="display:none" class="sp3-gap"></div>
+
+    </div>
+
+    <!-- LOTS À GAGNER + STIMULI -->
+    <div id="sp-lots-encart" style="display:none">
+      <div class="sp3-themes-title">🎁 Lots à gagner</div>
+      <div id="sp-lots-list"></div>
     </div>
 
     <!-- Graphique 7 jours -->
@@ -6584,3 +7269,220 @@ function dfSetMode(mode) {
     </div>
     <button class="pwa-dismiss" style="margin-top:10px;font-size:15px" onclick="document.getElementById('pwaOverlay').classList.remove('show')">Pas maintenant</button>
   </div>
+
+<!-- ═══ ROULETTE iOS — BACKDROP + OVERLAYS ═══ -->
+<div class="ios-drum-backdrop" id="iosDrumBackdrop" onclick="iosPickerClose()"></div>
+<div class="ios-drum-overlay" id="iosDrumOverlay">
+  <div class="ios-drum-header">
+    <span class="ios-drum-title" id="iosDrumTitle">Sélectionner</span>
+    <span class="ios-drum-done" onclick="iosPickerConfirm()">OK</span>
+  </div>
+  <div class="ios-drum-cols" id="iosDrumCols"></div>
+</div>
+
+<script>
+// ═══ ROULETTE iOS ═══
+var IOS_PICKER_TYPE = null;
+var IOS_PICKER_VALS = {}; // {col0: idx, col1: idx, ...}
+var IOS_DRUM_DRAG = {};
+
+// Listes
+var PICKER_ECOLES = ['Lycée Professionnel', 'LP Jacques Cœur', 'LP Simone Veil', 'LP Albert Camus', 'LP Clémenceau', 'LP Jean Jaurès', 'LP Victor Hugo', 'LP Molière', 'LP Pasteur', 'LP Jules Ferry', 'LP Zola', 'LP Pierre Mendès France', 'LP Marcel Pagnol', 'LP Louise Michel', 'LP Rosa Parks', 'LP Nelson Mandela', 'LP Antoine de Saint-Exupéry', 'LP Marie Curie', 'Autre lycée'];
+var PICKER_CLASSES = ['2nde Bac Pro', '1ère Bac Pro', 'Terminale Bac Pro', 'CAP 1ère année', 'CAP 2ème année', 'BTS 1ère année', 'BTS 2ème année'];
+var PICKER_JOURS = [];
+var PICKER_MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+var PICKER_ANNEES = [];
+(function() {
+  for(var i=1;i<=31;i++) PICKER_JOURS.push(String(i).padStart(2,'0'));
+  var yr = new Date().getFullYear();
+  for(var y=yr-13;y>=yr-25;y--) PICKER_ANNEES.push(String(y));
+})();
+
+function iosPicker(type) {
+  IOS_PICKER_TYPE = type;
+  var overlay = document.getElementById('iosDrumOverlay');
+  var back = document.getElementById('iosDrumBackdrop');
+  var colsEl = document.getElementById('iosDrumCols');
+  var titleEl = document.getElementById('iosDrumTitle');
+  colsEl.innerHTML = '';
+  IOS_DRUM_DRAG = {};
+  IOS_PICKER_VALS = {};
+
+  if(type === 'ecole') {
+    titleEl.textContent = 'Mon école';
+    var cur = document.getElementById('finscEcole').value;
+    var idx = PICKER_ECOLES.indexOf(cur); if(idx<0) idx=0;
+    IOS_PICKER_VALS[0] = idx;
+    iosBuildCol(colsEl, 0, PICKER_ECOLES, idx);
+  } else if(type === 'classe') {
+    titleEl.textContent = 'Ma classe';
+    var cur = document.getElementById('finscClasse').value;
+    var idx = PICKER_CLASSES.indexOf(cur); if(idx<0) idx=0;
+    IOS_PICKER_VALS[0] = idx;
+    iosBuildCol(colsEl, 0, PICKER_CLASSES, idx);
+  } else if(type === 'ddn') {
+    titleEl.textContent = 'Date de naissance';
+    var saved = document.getElementById('finscDdn').value;
+    var parts = saved ? saved.split('/') : [];
+    var ji = parts[0] ? PICKER_JOURS.indexOf(parts[0]) : 0; if(ji<0) ji=0;
+    var mi = parts[1] ? parseInt(parts[1])-1 : 0; if(mi<0) mi=0;
+    var ai = parts[2] ? PICKER_ANNEES.indexOf(parts[2]) : 0; if(ai<0) ai=0;
+    IOS_PICKER_VALS[0]=ji; IOS_PICKER_VALS[1]=mi; IOS_PICKER_VALS[2]=ai;
+    iosBuildCol(colsEl, 0, PICKER_JOURS, ji);
+    iosBuildCol(colsEl, 1, PICKER_MOIS, mi);
+    iosBuildCol(colsEl, 2, PICKER_ANNEES, ai);
+  }
+
+  back.classList.add('open');
+  overlay.classList.add('open');
+  // Scroll initial
+  setTimeout(function() {
+    [0,1,2].forEach(function(ci) {
+      var list = document.querySelector('.ios-drum-list[data-col="'+ci+'"]');
+      if(list) iosScrollTo(list, IOS_PICKER_VALS[ci]||0, false);
+    });
+  }, 50);
+}
+
+function iosBuildCol(container, colIdx, items, selIdx) {
+  var col = document.createElement('div');
+  col.className = 'ios-drum-col';
+  col.setAttribute('data-col', colIdx);
+
+  var selLine = document.createElement('div');
+  selLine.className = 'ios-drum-sel-line';
+  col.appendChild(selLine);
+
+  var list = document.createElement('div');
+  list.className = 'ios-drum-list';
+  list.setAttribute('data-col', colIdx);
+
+  // Padding items top/bottom (2 items vides)
+  for(var p=0;p<2;p++) {
+    var pad = document.createElement('div');
+    pad.className = 'ios-drum-item';
+    list.appendChild(pad);
+  }
+  items.forEach(function(item, i) {
+    var el = document.createElement('div');
+    el.className = 'ios-drum-item' + (i===selIdx?' sel':'');
+    el.textContent = item;
+    list.appendChild(el);
+  });
+  for(var p=0;p<2;p++) {
+    var pad = document.createElement('div');
+    pad.className = 'ios-drum-item';
+    list.appendChild(pad);
+  }
+
+  col.appendChild(list);
+
+  // Touch/Mouse events
+  var startY = 0, startScroll = 0, curTranslate = 0, animFrame = null;
+  var ITEM_H = 44;
+
+  function getTranslate(el) {
+    var st = el.style.transform;
+    if(!st) return 0;
+    var m = st.match(/translateY\((-?[\d.]+)/);
+    return m ? parseFloat(m[1]) : 0;
+  }
+  function applyTranslate(el, y) {
+    el.style.transform = 'translateY('+y+'px)';
+  }
+  function snapToIndex(el, items, immediate) {
+    var t = getTranslate(el);
+    var idx = Math.round(-t / ITEM_H);
+    idx = Math.max(0, Math.min(items.length-1, idx));
+    IOS_PICKER_VALS[colIdx] = idx;
+    iosScrollTo(el, idx, !immediate);
+    iosHighlightCol(el, idx);
+  }
+
+  function onStart(e) {
+    startY = e.touches ? e.touches[0].clientY : e.clientY;
+    startScroll = getTranslate(list);
+    list.style.transition = 'none';
+    if(animFrame) cancelAnimationFrame(animFrame);
+  }
+  function onMove(e) {
+    e.preventDefault();
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    var dy = y - startY;
+    var newT = startScroll + dy;
+    var max = 0;
+    var min = -(items.length-1)*ITEM_H;
+    newT = Math.max(min - ITEM_H, Math.min(ITEM_H, newT));
+    applyTranslate(list, newT);
+    // Highlight en temps réel
+    var idx = Math.round(-newT/ITEM_H);
+    idx = Math.max(0,Math.min(items.length-1,idx));
+    iosHighlightCol(list, idx);
+  }
+  function onEnd(e) {
+    snapToIndex(list, items, false);
+  }
+
+  list.addEventListener('touchstart', onStart, {passive:true});
+  list.addEventListener('touchmove', onMove, {passive:false});
+  list.addEventListener('touchend', onEnd);
+  list.addEventListener('mousedown', onStart);
+  list.addEventListener('mousemove', function(e){if(e.buttons) onMove(e);});
+  list.addEventListener('mouseup', onEnd);
+
+  container.appendChild(col);
+}
+
+function iosScrollTo(listEl, idx, animate) {
+  var ITEM_H = 44;
+  var y = -idx * ITEM_H;
+  if(animate) {
+    listEl.style.transition = 'transform .25s cubic-bezier(.32,.72,0,1)';
+  } else {
+    listEl.style.transition = 'none';
+  }
+  listEl.style.transform = 'translateY('+y+'px)';
+  setTimeout(function() { listEl.style.transition = ''; }, 300);
+  iosHighlightCol(listEl, idx);
+}
+
+function iosHighlightCol(listEl, idx) {
+  var items = listEl.querySelectorAll('.ios-drum-item');
+  items.forEach(function(el, i) {
+    el.classList.toggle('sel', i === idx+2); // +2 pour les pads
+  });
+}
+
+function iosPickerClose() {
+  document.getElementById('iosDrumOverlay').classList.remove('open');
+  document.getElementById('iosDrumBackdrop').classList.remove('open');
+  IOS_PICKER_TYPE = null;
+}
+
+function iosPickerConfirm() {
+  var type = IOS_PICKER_TYPE;
+  if(type === 'ecole') {
+    var val = PICKER_ECOLES[IOS_PICKER_VALS[0]||0] || '';
+    document.getElementById('finscEcole').value = val;
+    var lbl = document.getElementById('pickerEcoleLabel');
+    lbl.textContent = val || 'Sélectionner…';
+    lbl.classList.toggle('ios-placeholder', !val);
+  } else if(type === 'classe') {
+    var val = PICKER_CLASSES[IOS_PICKER_VALS[0]||0] || '';
+    document.getElementById('finscClasse').value = val;
+    var lbl = document.getElementById('pickerClasseLabel');
+    lbl.textContent = val || 'Sélectionner…';
+    lbl.classList.toggle('ios-placeholder', !val);
+  } else if(type === 'ddn') {
+    var j = PICKER_JOURS[IOS_PICKER_VALS[0]||0] || '01';
+    var m = String((IOS_PICKER_VALS[1]||0)+1).padStart(2,'0');
+    var a = PICKER_ANNEES[IOS_PICKER_VALS[2]||0] || '2006';
+    var val = j+'/'+m+'/'+a;
+    document.getElementById('finscDdn').value = val;
+    var lbl = document.getElementById('pickerDdnLabel');
+    lbl.textContent = val;
+    lbl.classList.remove('ios-placeholder');
+  }
+  iosPickerClose();
+}
+</script>
