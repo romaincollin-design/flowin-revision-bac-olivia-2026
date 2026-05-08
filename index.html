@@ -5471,9 +5471,13 @@ function dfStartPollingParticipants(roomId){
       var rows=await r.json();
       if(!Array.isArray(rows))return;
       var creatorName=DF_CURRENT.host?DF_CURRENT.host.name:'';
+      // Le créateur est toujours en premier, marqué isMe=true car c'est lui qui est dans cette session
       var players=[{name:creatorName,ava:creatorName.charAt(0).toUpperCase(),color:'#7B4FBF',isMe:true,isHost:true}];
+      // Ajouter tous les participants SAUF si pseudo vide ou identique au créateur (évite doublons)
+      var seen=new Set([creatorName.toLowerCase()]);
       rows.forEach(function(p){
-        if(p.pseudo&&p.pseudo!==creatorName){
+        if(p.pseudo&&!seen.has(p.pseudo.toLowerCase())){
+          seen.add(p.pseudo.toLowerCase());
           players.push({name:p.pseudo,ava:p.pseudo.charAt(0).toUpperCase(),color:'#22C9A0',isMe:false});
         }
       });
@@ -5538,7 +5542,9 @@ function diConfirmJoin(){
   dfSetBalance(bal-room.mise);
   var myName=userProfile.pseudo||userProfile.prenom||'Toi';
   var myAva=((userProfile.prenom||'T').charAt(0)+(userProfile.nom||'').charAt(0)).toUpperCase()||'TO';
-  room.players.push({name:myName,ava:myAva,color:'#22C9A0',isMe:true});
+  // Éviter doublons si le joueur est déjà dans la liste locale
+  var alreadyIn=room.players.find(function(p){return p.name.toLowerCase()===myName.toLowerCase();});
+  if(!alreadyIn)room.players.push({name:myName,ava:myAva,color:'#22C9A0',isMe:true});
   room.iJoined=true;
   DF_CURRENT=room;
   supabaseInsert('defis_participants',{defi_id:room.id,pseudo:myName,mise:room.mise});
@@ -5566,8 +5572,15 @@ function dfPollForGameStart(roomId){
         if(Array.isArray(pts)){
           var hostName=DF_CURRENT.host?DF_CURRENT.host.name:'';
           var myName=userProfile.pseudo||userProfile.prenom||'';
-          var players=[{name:hostName,ava:hostName.charAt(0).toUpperCase(),color:'#7B4FBF',isMe:false,isHost:true}];
-          pts.forEach(function(p){players.push({name:p.pseudo,ava:p.pseudo.charAt(0).toUpperCase(),color:p.pseudo===myName?'#F4A83A':'#22C9A0',isMe:p.pseudo===myName});});
+          // Créateur en premier (pas dans defis_participants)
+          var players=[{name:hostName,ava:hostName.charAt(0).toUpperCase(),color:'#7B4FBF',isMe:hostName===myName,isHost:true}];
+          var seen=new Set([hostName.toLowerCase()]);
+          pts.forEach(function(p){
+            if(p.pseudo&&!seen.has(p.pseudo.toLowerCase())){
+              seen.add(p.pseudo.toLowerCase());
+              players.push({name:p.pseudo,ava:p.pseudo.charAt(0).toUpperCase(),color:p.pseudo===myName?'#F4A83A':'#22C9A0',isMe:p.pseudo===myName});
+            }
+          });
           DF_CURRENT.players=players;
           dfRenderWaiting();
         }
