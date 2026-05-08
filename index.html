@@ -4296,48 +4296,43 @@ function renderLeagueUI(league){
   var lotsOn = typeof window.LOTS_ON !== 'undefined' && window.LOTS_ON;
   var lotsCache = typeof window.LOTS_DB_CACHE !== 'undefined' ? window.LOTS_DB_CACHE : [];
   var activeLots = lotsCache.filter(function(l){ return l.actif !== false; });
-  if(lotBlock && lotInner && activeLots.length) {
+  if(lotBlock && lotInner && lotsOn && activeLots.length) {
     lotBlock.style.display = 'block';
     var now = new Date();
     var sunday = new Date(now);
     sunday.setDate(now.getDate() + ((7 - now.getDay()) % 7 || 7));
     sunday.setHours(23,59,59,0);
     var joursRestants = Math.ceil((sunday - now) / 86400000);
-    var lot = activeLots[0];
-    var dispo = (typeof window.LOTS_STOCK_CACHE!=='undefined'?window.LOTS_STOCK_CACHE:[]).filter(function(s){return s.lot_id===lot.id&&s.statut==='disponible';}).length;
     var stimMsg;
     if(myIdx===0) stimMsg = '🔥 Tu es en tête ! Continue et remporte le lot.';
     else { var diff=(PLAYERS[0]?PLAYERS[0].pts:0)-(PLAYERS[myIdx]?PLAYERS[myIdx].pts:0); stimMsg='Plus que <b>'+diff+' pts</b> pour être en tête et remporter le lot !'; }
     var condMap = {'gold_semaine':'🥇 Être en Ligue Or 7 jours','top1_semaine':'🏆 Rester Top 1 cette semaine'};
-    var condLbl = condMap[lot.cond] || lot.condLbl || '';
-    lotInner.innerHTML = '<div style="background:linear-gradient(135deg,#2D1B6B,#1E1048);border-radius:16px;padding:14px 16px;color:#fff">'
-      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'
-        +'<div style="font-size:36px;line-height:1">'+(lot.emoji||'🎁')+'</div>'
-        +'<div style="flex:1">'
-          +'<div style="font-size:15px;font-weight:800">'+(lot.titre||lot.nom||'Lot')+'</div>'
-          +'<div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">'+condLbl+'</div>'
+    lotInner.innerHTML = activeLots.map(function(lot) {
+      var dispo = (typeof window.LOTS_STOCK_CACHE!=='undefined'?window.LOTS_STOCK_CACHE:[]).filter(function(s){return s.lot_id===lot.id&&s.statut==='disponible';}).length;
+      var condLbl = condMap[lot.cond] || lot.condLbl || '';
+      return '<div style="background:linear-gradient(135deg,#2D1B6B,#1E1048);border-radius:16px;padding:14px 16px;color:#fff;margin-bottom:10px">'
+        +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'
+          +'<div style="font-size:36px;line-height:1">'+(lot.emoji||'🎁')+'</div>'
+          +'<div style="flex:1">'
+            +'<div style="font-size:15px;font-weight:800">'+(lot.titre||lot.nom||'Lot')+'</div>'
+            +'<div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">'+condLbl+'</div>'
+          +'</div>'
+          +'<div style="text-align:center;background:rgba(244,168,58,.15);border:1.5px solid rgba(244,168,58,.3);border-radius:10px;padding:8px 12px">'
+            +'<div style="font-size:18px;font-weight:800;color:#F4A83A;line-height:1">'+joursRestants+'j</div>'
+            +'<div style="font-size:9px;color:rgba(244,168,58,.7);text-transform:uppercase;font-weight:700;margin-top:2px">restants</div>'
+          +'</div>'
         +'</div>'
-        +'<div style="text-align:center;background:rgba(244,168,58,.15);border:1.5px solid rgba(244,168,58,.3);border-radius:10px;padding:8px 12px">'
-          +'<div style="font-size:18px;font-weight:800;color:#F4A83A;line-height:1">'+joursRestants+'j</div>'
-          +'<div style="font-size:9px;color:rgba(244,168,58,.7);text-transform:uppercase;font-weight:700;margin-top:2px">restants</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.5;margin-bottom:10px">'+stimMsg+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+          +'<div style="font-size:11px;color:rgba(255,255,255,.4)">'+dispo+' code'+(dispo>1?'s':'')+' dispo</div>'
+          +'<button onclick="qGo(\'spin\')" style="margin-left:auto;background:linear-gradient(135deg,#22C55E,#16A34A);border:none;color:#fff;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">⚡ Jouer maintenant</button>'
         +'</div>'
-      +'</div>'
-      +'<div style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.5;margin-bottom:10px">'+stimMsg+'</div>'
-      +'<div style="display:flex;align-items:center;gap:8px">'
-        +'<div style="font-size:11px;color:rgba(255,255,255,.4)">'+dispo+' code'+(dispo>1?'s':'')+' dispo</div>'
-        +'<button onclick="qGo(\'spin\')" style="margin-left:auto;background:linear-gradient(135deg,#22C55E,#16A34A);border:none;color:#fff;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">⚡ Jouer maintenant</button>'
-      +'</div>'
-    +'</div>';
+      +'</div>';
+    }).join('');
   } else if(lotBlock) {
     lotBlock.style.display = 'none';
   }
 }
-function switchLeague(l){ renderLeague(l); }
-
-// Init roulette au premier load
-setTimeout(()=>{ if(document.getElementById('spinCanvas')) drawSpin(0); }, 100);
-
-// ═══ ADMIN ═══
 function showAdmSection(id,btn){
   document.querySelectorAll('.adm-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('as-'+id).classList.add('active');
@@ -4611,8 +4606,7 @@ function renderStats(){
   var activeLots=lotsCache.filter(function(l){return l.actif!==false;});
 
   if(lotsEncart && lotsList){
-    // Afficher les lots même si LOTS_ON=false (mode teaser sans code)
-    if(activeLots.length){
+    if(lotsOn && activeLots.length){
       lotsEncart.style.display='block';
       // Calcul des jours restants (fin de semaine = dimanche)
       var now = new Date();
@@ -6247,7 +6241,7 @@ function saveSessionToSheets(qs, profile) {
 // ════════════════════════
 window.LOTS_ON = false; // false par défaut, activé uniquement si Supabase confirme
 window.MY_GAINS = [];
-window.LOTS_DB_CACHE = [{actif:true, emoji:'🍔', titre:'40% sur le 2e menu McDo'}];
+window.LOTS_DB_CACHE = [];  // vide par défaut - chargé depuis Supabase
 
 async function loadLotsConfig() {
   try {
