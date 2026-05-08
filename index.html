@@ -611,6 +611,28 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 }
 .flabel { font-size:13px !important; margin-bottom:5px; }
 
+/* ── ROULETTE iOS ── */
+.ios-picker-wrap{position:relative;border-radius:14px;border:2px solid var(--warm);background:var(--cream);overflow:hidden;min-height:52px;cursor:pointer}
+.ios-picker-display{display:flex;align-items:center;padding:14px;font-size:17px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;color:var(--ink);min-height:52px;gap:6px}
+.ios-picker-display .ios-placeholder{color:#9a9a9a}
+.ios-picker-display .ios-arrow{margin-left:auto;font-size:12px;color:#aaa;flex-shrink:0}
+.ios-drum-overlay{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.18);z-index:9999;padding:0 0 env(safe-area-inset-bottom,16px);transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1)}
+.ios-drum-overlay.open{transform:translateY(0)}
+.ios-drum-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 10px;border-bottom:1px solid #f0f0f0}
+.ios-drum-title{font-size:15px;font-weight:700;color:#333}
+.ios-drum-done{font-size:16px;font-weight:700;color:var(--pink);cursor:pointer;padding:4px 8px}
+.ios-drum-cols{display:flex;gap:0;position:relative}
+.ios-drum-col{flex:1;height:216px;overflow:hidden;position:relative;cursor:pointer}
+.ios-drum-col::before,.ios-drum-col::after{content:'';position:absolute;left:0;right:0;height:80px;pointer-events:none;z-index:2}
+.ios-drum-col::before{top:0;background:linear-gradient(to bottom,rgba(255,255,255,.95),rgba(255,255,255,0))}
+.ios-drum-col::after{bottom:0;background:linear-gradient(to top,rgba(255,255,255,.95),rgba(255,255,255,0))}
+.ios-drum-sel-line{position:absolute;top:50%;left:8px;right:8px;height:44px;margin-top:-22px;background:rgba(176,108,228,.1);border-radius:10px;border:1.5px solid rgba(176,108,228,.25);pointer-events:none;z-index:1}
+.ios-drum-list{display:flex;flex-direction:column;transition:none;will-change:transform;user-select:none;-webkit-user-select:none}
+.ios-drum-item{height:44px;display:flex;align-items:center;justify-content:center;font-size:17px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;color:#777;flex-shrink:0;transition:color .15s,font-weight .15s}
+.ios-drum-item.sel{color:#111;font-weight:700;font-size:18px}
+.ios-drum-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9998;display:none}
+.ios-drum-backdrop.open{display:block}
+
 /* Inscription modal — full screen on mobile */
 .insc-view { padding:0 !important; align-items:stretch !important; }
 .insc-modal {
@@ -1257,8 +1279,20 @@ window.addEventListener('unhandledrejection', function(e){
         <input class="finput" id="finscPseudo" placeholder="Ex : SuperRévise06…" maxlength="20" autocomplete="off" style="border-color:var(--pink);background:rgba(176,108,228,.06)">
       </div>
       <div class="form-row2">
-        <div><div class="flabel">Mon école *</div><input class="finput" id="finscEcole" placeholder=""></div>
-        <div id="insc-classe-row"><div class="flabel">Ma classe *</div><input class="finput" id="finscClasse" placeholder=""></div>
+        <div>
+          <div class="flabel">Mon école *</div>
+          <div class="ios-picker-wrap" id="pickerEcoleWrap" onclick="iosPicker('ecole')">
+            <div class="ios-picker-display" id="pickerEcoleDisplay"><span class="ios-placeholder" id="pickerEcoleLabel">Sélectionner…</span><span class="ios-arrow">▼</span></div>
+          </div>
+          <input type="hidden" id="finscEcole" value="">
+        </div>
+        <div id="insc-classe-row">
+          <div class="flabel">Ma classe *</div>
+          <div class="ios-picker-wrap" id="pickerClasseWrap" onclick="iosPicker('classe')">
+            <div class="ios-picker-display" id="pickerClasseDisplay"><span class="ios-placeholder" id="pickerClasseLabel">Sélectionner…</span><span class="ios-arrow">▼</span></div>
+          </div>
+          <input type="hidden" id="finscClasse" value="">
+        </div>
       </div>
       <div class="form-row2">
         <div><div class="flabel">Prénom *</div><input class="finput" id="finscPrenom" placeholder=""></div>
@@ -1274,7 +1308,13 @@ window.addEventListener('unhandledrejection', function(e){
       <div class="form-full2"><div class="flabel">Email *</div><input class="finput" id="finscEmail" inputmode="email" autocomplete="email" placeholder=""></div>
       <div class="form-row2">
         <div><div class="flabel">Code postal *</div><input class="finput" id="finscCP" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder=""></div>
-        <div id="insc-ddn-row"><div class="flabel">Date de naissance</div><input type="date" class="finput" id="finscDdn" style="font-size:15px;min-height:52px;color:var(--ink)"></div>
+        <div id="insc-ddn-row">
+          <div class="flabel">Date de naissance</div>
+          <div class="ios-picker-wrap" id="pickerDdnWrap" onclick="iosPicker('ddn')">
+            <div class="ios-picker-display" id="pickerDdnDisplay"><span class="ios-placeholder" id="pickerDdnLabel">Jour / Mois / Année</span><span class="ios-arrow">▼</span></div>
+          </div>
+          <input type="hidden" id="finscDdn" value="">
+        </div>
       </div>
       <div class="rgpd-row">
         <input type="checkbox" id="rgpd" checked>
@@ -2883,7 +2923,16 @@ function submitFlowinSignup(){
   // → Google Sheets (inscription)
   saveProfileToSheets(userProfile);
 
-  switchMode('app');
+  // Si l'ami a cliqué un lien d'invitation avant de s'inscrire
+  var pendingRoom = null;
+  try { pendingRoom = localStorage.getItem('flowin_pending_room'); } catch(e){}
+  if(pendingRoom) {
+    try { localStorage.removeItem('flowin_pending_room'); } catch(e){}
+    switchMode('defis');
+    setTimeout(function(){ dfLoadThenJoin(pendingRoom); }, 600);
+  } else {
+    switchMode('app');
+  }
 }
 
 // ═══ PWA ═══
@@ -3100,14 +3149,12 @@ function setSpinMode(mode){
     const params = new URLSearchParams(window.location.search);
     const roomId = params.get('room');
     if(roomId) {
-      // Stocker pour rejoindre après inscription
       localStorage.setItem('flowin_pending_room', roomId);
-      // Si déjà inscrit → rejoindre directement
       const saved = localStorage.getItem('flowin_profile');
       if(saved) {
         setTimeout(function() {
           switchMode('defis');
-          dfJoinRoom(roomId);
+          dfLoadThenJoin(roomId);
         }, 800);
       }
     }
@@ -5335,14 +5382,18 @@ function dfGetInviteLink(roomId) {
 function dfShareWhatsApp() {
   const myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
   const link = dfGetInviteLink();
-  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! Rejoins ma room : ' + link);
+  const room = DF_CURRENT || DF_ROOMS.find(r => r.id === DF_CURRENT_ROOM_ID);
+  const pinPart = (room && room.isPrivate && room.pin) ? ' 🔒 Code PIN : ' + room.pin : '';
+  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin !' + pinPart + ' Rejoins ma room : ' + link);
   window.open('https://wa.me/?text=' + msg, '_blank');
 }
 
 function dfShareSMS() {
   const myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
   const link = dfGetInviteLink();
-  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! ' + link);
+  const room = DF_CURRENT || DF_ROOMS.find(r => r.id === DF_CURRENT_ROOM_ID);
+  const pinPart = (room && room.isPrivate && room.pin) ? ' Code PIN : ' + room.pin + ' -' : '';
+  const msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin !' + pinPart + ' ' + link);
   window.open('sms:?body=' + msg, '_blank');
 }
 
@@ -5505,7 +5556,9 @@ function dfCreateRoom(playerName){
   supabaseInsert('defis', {
     id: roomId, ts: room.ts, nom: roomName,
     createur: myName, mise: room.mise, theme: room.theme,
-    nb_joueurs: room.cap, status: 'waiting', ecole: userProfile.ecole||''
+    nb_joueurs: room.cap, status: 'waiting', ecole: userProfile.ecole||'',
+    is_private: room.isPrivate || false,
+    pin: room.pin || null
   });
 
   // Ajouter a mes defis
@@ -5623,6 +5676,44 @@ function dfCancelRoom(){
     DF_CURRENT = null;
   }
   dfTab('lobby');
+}
+
+// ── CHARGER ROOM DEPUIS SUPABASE (pour lien d'invitation) ──
+async function dfLoadRoomFromSupabase(roomId) {
+  try {
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=*', {headers: hdrs});
+    if(!r.ok) return null;
+    var rows = await r.json();
+    if(!Array.isArray(rows) || rows.length === 0) return null;
+    var d = rows[0];
+    return {
+      id: d.id,
+      name: d.nom || ('Défi de ' + (d.createur||'?')),
+      host: {name: d.createur||'?', ava: (d.createur||'?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false},
+      mise: d.mise || 0,
+      theme: d.theme || 'roulette',
+      cap: d.nb_joueurs || 4,
+      players: [{name: d.createur||'?', ava: (d.createur||'?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false, isHost: true}],
+      isMine: false,
+      isPrivate: d.is_private || false,
+      pin: d.pin || null,
+      status: d.status || 'waiting',
+      ts: d.ts || new Date().toISOString()
+    };
+  } catch(e) { return null; }
+}
+
+async function dfLoadThenJoin(roomId) {
+  var existing = DF_ROOMS.find(function(r){ return r.id === roomId; });
+  if(existing) { dfJoinRoom(roomId); return; }
+  var room = await dfLoadRoomFromSupabase(roomId);
+  if(!room) {
+    alert('❌ Room introuvable ou expirée. Demande un nouveau lien.');
+    return;
+  }
+  DF_ROOMS.unshift(room);
+  dfJoinRoom(roomId);
 }
 
 function dfJoinRoom(roomId){
@@ -6915,3 +7006,220 @@ function dfSetMode(mode) {
     </div>
     <button class="pwa-dismiss" style="margin-top:10px;font-size:15px" onclick="document.getElementById('pwaOverlay').classList.remove('show')">Pas maintenant</button>
   </div>
+
+<!-- ═══ ROULETTE iOS — BACKDROP + OVERLAYS ═══ -->
+<div class="ios-drum-backdrop" id="iosDrumBackdrop" onclick="iosPickerClose()"></div>
+<div class="ios-drum-overlay" id="iosDrumOverlay">
+  <div class="ios-drum-header">
+    <span class="ios-drum-title" id="iosDrumTitle">Sélectionner</span>
+    <span class="ios-drum-done" onclick="iosPickerConfirm()">OK</span>
+  </div>
+  <div class="ios-drum-cols" id="iosDrumCols"></div>
+</div>
+
+<script>
+// ═══ ROULETTE iOS ═══
+var IOS_PICKER_TYPE = null;
+var IOS_PICKER_VALS = {}; // {col0: idx, col1: idx, ...}
+var IOS_DRUM_DRAG = {};
+
+// Listes
+var PICKER_ECOLES = ['Lycée Professionnel', 'LP Jacques Cœur', 'LP Simone Veil', 'LP Albert Camus', 'LP Clémenceau', 'LP Jean Jaurès', 'LP Victor Hugo', 'LP Molière', 'LP Pasteur', 'LP Jules Ferry', 'LP Zola', 'LP Pierre Mendès France', 'LP Marcel Pagnol', 'LP Louise Michel', 'LP Rosa Parks', 'LP Nelson Mandela', 'LP Antoine de Saint-Exupéry', 'LP Marie Curie', 'Autre lycée'];
+var PICKER_CLASSES = ['2nde Bac Pro', '1ère Bac Pro', 'Terminale Bac Pro', 'CAP 1ère année', 'CAP 2ème année', 'BTS 1ère année', 'BTS 2ème année'];
+var PICKER_JOURS = [];
+var PICKER_MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+var PICKER_ANNEES = [];
+(function() {
+  for(var i=1;i<=31;i++) PICKER_JOURS.push(String(i).padStart(2,'0'));
+  var yr = new Date().getFullYear();
+  for(var y=yr-13;y>=yr-25;y--) PICKER_ANNEES.push(String(y));
+})();
+
+function iosPicker(type) {
+  IOS_PICKER_TYPE = type;
+  var overlay = document.getElementById('iosDrumOverlay');
+  var back = document.getElementById('iosDrumBackdrop');
+  var colsEl = document.getElementById('iosDrumCols');
+  var titleEl = document.getElementById('iosDrumTitle');
+  colsEl.innerHTML = '';
+  IOS_DRUM_DRAG = {};
+  IOS_PICKER_VALS = {};
+
+  if(type === 'ecole') {
+    titleEl.textContent = 'Mon école';
+    var cur = document.getElementById('finscEcole').value;
+    var idx = PICKER_ECOLES.indexOf(cur); if(idx<0) idx=0;
+    IOS_PICKER_VALS[0] = idx;
+    iosBuildCol(colsEl, 0, PICKER_ECOLES, idx);
+  } else if(type === 'classe') {
+    titleEl.textContent = 'Ma classe';
+    var cur = document.getElementById('finscClasse').value;
+    var idx = PICKER_CLASSES.indexOf(cur); if(idx<0) idx=0;
+    IOS_PICKER_VALS[0] = idx;
+    iosBuildCol(colsEl, 0, PICKER_CLASSES, idx);
+  } else if(type === 'ddn') {
+    titleEl.textContent = 'Date de naissance';
+    var saved = document.getElementById('finscDdn').value;
+    var parts = saved ? saved.split('/') : [];
+    var ji = parts[0] ? PICKER_JOURS.indexOf(parts[0]) : 0; if(ji<0) ji=0;
+    var mi = parts[1] ? parseInt(parts[1])-1 : 0; if(mi<0) mi=0;
+    var ai = parts[2] ? PICKER_ANNEES.indexOf(parts[2]) : 0; if(ai<0) ai=0;
+    IOS_PICKER_VALS[0]=ji; IOS_PICKER_VALS[1]=mi; IOS_PICKER_VALS[2]=ai;
+    iosBuildCol(colsEl, 0, PICKER_JOURS, ji);
+    iosBuildCol(colsEl, 1, PICKER_MOIS, mi);
+    iosBuildCol(colsEl, 2, PICKER_ANNEES, ai);
+  }
+
+  back.classList.add('open');
+  overlay.classList.add('open');
+  // Scroll initial
+  setTimeout(function() {
+    [0,1,2].forEach(function(ci) {
+      var list = document.querySelector('.ios-drum-list[data-col="'+ci+'"]');
+      if(list) iosScrollTo(list, IOS_PICKER_VALS[ci]||0, false);
+    });
+  }, 50);
+}
+
+function iosBuildCol(container, colIdx, items, selIdx) {
+  var col = document.createElement('div');
+  col.className = 'ios-drum-col';
+  col.setAttribute('data-col', colIdx);
+
+  var selLine = document.createElement('div');
+  selLine.className = 'ios-drum-sel-line';
+  col.appendChild(selLine);
+
+  var list = document.createElement('div');
+  list.className = 'ios-drum-list';
+  list.setAttribute('data-col', colIdx);
+
+  // Padding items top/bottom (2 items vides)
+  for(var p=0;p<2;p++) {
+    var pad = document.createElement('div');
+    pad.className = 'ios-drum-item';
+    list.appendChild(pad);
+  }
+  items.forEach(function(item, i) {
+    var el = document.createElement('div');
+    el.className = 'ios-drum-item' + (i===selIdx?' sel':'');
+    el.textContent = item;
+    list.appendChild(el);
+  });
+  for(var p=0;p<2;p++) {
+    var pad = document.createElement('div');
+    pad.className = 'ios-drum-item';
+    list.appendChild(pad);
+  }
+
+  col.appendChild(list);
+
+  // Touch/Mouse events
+  var startY = 0, startScroll = 0, curTranslate = 0, animFrame = null;
+  var ITEM_H = 44;
+
+  function getTranslate(el) {
+    var st = el.style.transform;
+    if(!st) return 0;
+    var m = st.match(/translateY\((-?[\d.]+)/);
+    return m ? parseFloat(m[1]) : 0;
+  }
+  function applyTranslate(el, y) {
+    el.style.transform = 'translateY('+y+'px)';
+  }
+  function snapToIndex(el, items, immediate) {
+    var t = getTranslate(el);
+    var idx = Math.round(-t / ITEM_H);
+    idx = Math.max(0, Math.min(items.length-1, idx));
+    IOS_PICKER_VALS[colIdx] = idx;
+    iosScrollTo(el, idx, !immediate);
+    iosHighlightCol(el, idx);
+  }
+
+  function onStart(e) {
+    startY = e.touches ? e.touches[0].clientY : e.clientY;
+    startScroll = getTranslate(list);
+    list.style.transition = 'none';
+    if(animFrame) cancelAnimationFrame(animFrame);
+  }
+  function onMove(e) {
+    e.preventDefault();
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    var dy = y - startY;
+    var newT = startScroll + dy;
+    var max = 0;
+    var min = -(items.length-1)*ITEM_H;
+    newT = Math.max(min - ITEM_H, Math.min(ITEM_H, newT));
+    applyTranslate(list, newT);
+    // Highlight en temps réel
+    var idx = Math.round(-newT/ITEM_H);
+    idx = Math.max(0,Math.min(items.length-1,idx));
+    iosHighlightCol(list, idx);
+  }
+  function onEnd(e) {
+    snapToIndex(list, items, false);
+  }
+
+  list.addEventListener('touchstart', onStart, {passive:true});
+  list.addEventListener('touchmove', onMove, {passive:false});
+  list.addEventListener('touchend', onEnd);
+  list.addEventListener('mousedown', onStart);
+  list.addEventListener('mousemove', function(e){if(e.buttons) onMove(e);});
+  list.addEventListener('mouseup', onEnd);
+
+  container.appendChild(col);
+}
+
+function iosScrollTo(listEl, idx, animate) {
+  var ITEM_H = 44;
+  var y = -idx * ITEM_H;
+  if(animate) {
+    listEl.style.transition = 'transform .25s cubic-bezier(.32,.72,0,1)';
+  } else {
+    listEl.style.transition = 'none';
+  }
+  listEl.style.transform = 'translateY('+y+'px)';
+  setTimeout(function() { listEl.style.transition = ''; }, 300);
+  iosHighlightCol(listEl, idx);
+}
+
+function iosHighlightCol(listEl, idx) {
+  var items = listEl.querySelectorAll('.ios-drum-item');
+  items.forEach(function(el, i) {
+    el.classList.toggle('sel', i === idx+2); // +2 pour les pads
+  });
+}
+
+function iosPickerClose() {
+  document.getElementById('iosDrumOverlay').classList.remove('open');
+  document.getElementById('iosDrumBackdrop').classList.remove('open');
+  IOS_PICKER_TYPE = null;
+}
+
+function iosPickerConfirm() {
+  var type = IOS_PICKER_TYPE;
+  if(type === 'ecole') {
+    var val = PICKER_ECOLES[IOS_PICKER_VALS[0]||0] || '';
+    document.getElementById('finscEcole').value = val;
+    var lbl = document.getElementById('pickerEcoleLabel');
+    lbl.textContent = val || 'Sélectionner…';
+    lbl.classList.toggle('ios-placeholder', !val);
+  } else if(type === 'classe') {
+    var val = PICKER_CLASSES[IOS_PICKER_VALS[0]||0] || '';
+    document.getElementById('finscClasse').value = val;
+    var lbl = document.getElementById('pickerClasseLabel');
+    lbl.textContent = val || 'Sélectionner…';
+    lbl.classList.toggle('ios-placeholder', !val);
+  } else if(type === 'ddn') {
+    var j = PICKER_JOURS[IOS_PICKER_VALS[0]||0] || '01';
+    var m = String((IOS_PICKER_VALS[1]||0)+1).padStart(2,'0');
+    var a = PICKER_ANNEES[IOS_PICKER_VALS[2]||0] || '2006';
+    var val = j+'/'+m+'/'+a;
+    document.getElementById('finscDdn').value = val;
+    var lbl = document.getElementById('pickerDdnLabel');
+    lbl.textContent = val;
+    lbl.classList.remove('ios-placeholder');
+  }
+  iosPickerClose();
+}
+</script>
