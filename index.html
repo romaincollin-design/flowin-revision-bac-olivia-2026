@@ -5567,8 +5567,12 @@ function dfCreateRoom(playerName){
   // Afficher bloc invitation avec l'ID de la room créée
   dfShowInviteBlock(room.id);
   dfTab('waiting');
-  // Bots seulement si room publique
-  if(!DF_IS_PRIVATE) dfSimulateBotJoins();
+  // Polling temps réel des participants (rooms privées)
+  if(DF_IS_PRIVATE) {
+    dfStartPollingParticipants(room.id);
+  } else {
+    dfSimulateBotJoins();
+  }
 }
 
 function dfSimulateBotJoins(){
@@ -5716,55 +5720,149 @@ async function dfLoadThenJoin(roomId) {
   dfJoinRoom(roomId);
 }
 
-function dfJoinRoom(roomId){
-  const room = DF_ROOMS.find(r => r.id === roomId);
+// ── MODAL DE CONFIRMATION REJOINDRE ROOM ──
+function dfShowJoinModal(room) {
+  var existing = document.getElementById('dfJoinModal');
+  if(existing) existing.remove();
+  var m = document.createElement('div');
+  m.id = 'dfJoinModal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box';
+  var pinBlock = room.isPrivate
+    ? '<div style="margin:14px 0 4px"><div style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Code PIN de la room</div><input id="dfPinInput" type="tel" maxlength="4" placeholder="_ _ _ _" autocomplete="off" style="width:100%;padding:14px;border-radius:12px;border:2px solid #B06CE4;background:#0E0A1F;color:#fff;font-size:24px;font-weight:800;letter-spacing:8px;text-align:center;font-family:inherit;box-sizing:border-box;outline:none"></div>'
+    : '';
+  var bal = dfGetBalance();
+  var soldeOk = room.mise <= bal;
+  m.innerHTML = '<div style="background:#1A1035;border-radius:20px;padding:24px;max-width:340px;width:100%;text-align:center;border:1.5px solid rgba(176,108,228,.3)">'
+    + '<div style="font-size:36px;margin-bottom:10px">⚔️</div>'
+    + '<div style="font-weight:800;font-size:18px;color:#fff;margin-bottom:6px">' + (room.name || ('Défi de ' + room.host.name)) + '</div>'
+    + '<div style="font-size:13px;color:#9A8FBF;margin-bottom:4px">Créé par <b style="color:#D4AAFF">' + room.host.name + '</b></div>'
+    + '<div style="display:flex;justify-content:center;gap:16px;margin:14px 0;flex-wrap:wrap">'
+    + '<div style="background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.3);border-radius:10px;padding:8px 14px"><div style="font-size:18px;font-weight:800;color:#F4A83A">' + room.mise + ' pts</div><div style="font-size:10px;color:rgba(244,168,58,.7);text-transform:uppercase;letter-spacing:.05em">Mise</div></div>'
+    + '<div style="background:rgba(176,108,228,.12);border:1px solid rgba(176,108,228,.3);border-radius:10px;padding:8px 14px"><div style="font-size:18px;font-weight:800;color:#B06CE4">' + (DF_THEME_LABELS[room.theme] || room.theme) + '</div><div style="font-size:10px;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.05em">Thème</div></div>'
+    + '</div>'
+    + (soldeOk ? '' : '<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#F87171">⚠️ Solde insuffisant — Tu as ' + bal + ' pts, il en faut ' + room.mise + '</div>')
+    + pinBlock
+    + '<div style="display:flex;gap:10px;margin-top:16px">'
+    + '<button onclick="document.getElementById(\'dfJoinModal\').remove()" style="flex:1;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">Annuler</button>'
+    + (soldeOk ? '<button id="dfJoinConfirmBtn" data-rid="' + room.id + '" onclick="dfConfirmJoin(this.dataset.rid)" style="flex:2;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">Rejoindre !</button>' : '')
+    + '</div>'
+    + '</div>';
+  document.body.appendChild(m);
+  if(room.isPrivate) setTimeout(function(){ var i = document.getElementById('dfPinInput'); if(i) i.focus(); }, 100);
+}
+
+async function dfConfirmJoin(roomId) {
+  var room = DF_ROOMS.find(function(r){ return r.id === roomId; });
   if(!room) return;
-  if(room.players.length >= room.cap){ alert('Room complète'); return; }
-  if(room.isMine){ DF_CURRENT = room; dfTab('waiting'); return; }
-  // Vérification code PIN pour rooms privées
-  if(room.isPrivate && room.pin){
-    const entered = prompt('🔒 Room privée — Entre le code PIN pour rejoindre :');
-    if(!entered || entered.trim() !== room.pin){
-      alert('❌ Code incorrect. Demande le code au créateur de la room.');
+  // Vérif PIN
+  if(room.isPrivate && room.pin) {
+    var pinEl = document.getElementById('dfPinInput');
+    var entered = pinEl ? pinEl.value.trim() : '';
+    if(entered !== room.pin) {
+      if(pinEl) { pinEl.style.borderColor = '#EF4444'; pinEl.value = ''; pinEl.placeholder = 'Code incorrect…'; }
       return;
     }
   }
-  const bal = dfGetBalance();
-  if(room.mise > bal){
-    alert('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + room.mise + ' pour rejoindre.');
-    return;
-  }
-  if(!confirm('Rejoindre la room de ' + room.host.name + ' ?\n\nMise : ' + room.mise + ' pts\nThème : ' + DF_THEME_LABELS[room.theme] + '\n\nTes ' + room.mise + ' pts seront mis en jeu.')) return;
+  var btn = document.getElementById('dfJoinConfirmBtn');
+  if(btn) { btn.textContent = 'Connexion…'; btn.disabled = true; }
+  // Solde
+  var bal = dfGetBalance();
   dfSetBalance(bal - room.mise);
-  const myName = (userProfile.pseudo || userProfile.prenom || 'Toi');
-  const myAva = ((userProfile.prenom||'O').charAt(0) + (userProfile.nom||'').charAt(0)).toUpperCase() || 'OL';
-  room.players.push({name:myName, ava:myAva, color:'#7B4FBF', isMe:true});
-  // Note : le host reste le bot, mais on peut quand même afficher la salle d'attente
+  var myName = (userProfile.pseudo || userProfile.prenom || 'Toi');
+  var myAva = ((userProfile.prenom||'T').charAt(0) + (userProfile.nom||'').charAt(0)).toUpperCase() || 'TO';
+  room.players.push({name:myName, ava:myAva, color:'#22C9A0', isMe:true});
   room.iJoined = true;
   DF_CURRENT = room;
-  // Ajouter a mes defis comme participant
+  // Insert dans defis_participants (visible par le créateur)
+  if(SB_ENABLED) {
+    supabaseInsert('defis_participants', {defi_id: roomId, pseudo: myName, mise: room.mise});
+    // Fermer modal
+    var m = document.getElementById('dfJoinModal');
+    if(m) m.remove();
+  } else {
+    var m = document.getElementById('dfJoinModal');
+    if(m) m.remove();
+  }
   dfAddToMyDefis({id:room.id, name:room.name||('Defi '+room.host.name), role:'participant', mise:room.mise, theme:room.theme, status:'en_cours', ts:new Date().toISOString(), resultat:null});
   dfTab('waiting');
+  // Poll pour le lancement du game par le créateur
+  dfPollForGameStart(roomId);
+}
 
-  // Le bot host est "patient" : il lance le défi après 4-6s,
-  // ou plus tôt si la room est déjà presque pleine
-  const delay = room.players.length >= room.cap ? 1500 : (3500 + Math.random()*2500);
-  setTimeout(() => {
-    if(!DF_CURRENT || DF_CURRENT.id !== room.id || room.inGame) return;
-    // Si pas pleine, on peut encore ajouter quelques bots avant lancement
-    while(room.players.length < Math.min(room.cap, room.players.length + 1) && Math.random() > 0.3){
-      const taken = new Set(room.players.map(p => p.name));
-      const free = DF_BOTS.filter(b => !taken.has(b.name));
-      if(free.length === 0) break;
-      const bot = free[Math.floor(Math.random()*free.length)];
-      room.players.push({name:bot.name, ava:bot.ava, color:bot.color, isBot:true, skill:bot.skill});
-    }
-    dfRenderWaiting();
-    setTimeout(() => {
-      if(!DF_CURRENT || DF_CURRENT.id !== room.id || room.inGame) return;
-      dfStartGame();
-    }, 1500);
-  }, delay);
+function dfJoinRoom(roomId){
+  var room = DF_ROOMS.find(function(r){ return r.id === roomId; });
+  if(!room) return;
+  if(room.isMine){ DF_CURRENT = room; dfTab('waiting'); dfStartPollingParticipants(roomId); return; }
+  dfShowJoinModal(room);
+}
+
+// ── POLLING CRÉATEUR : voir les participants entrer ──
+var DF_PARTICIPANTS_POLL = null;
+function dfStartPollingParticipants(roomId) {
+  if(!SB_ENABLED) return;
+  if(DF_PARTICIPANTS_POLL) clearInterval(DF_PARTICIPANTS_POLL);
+  DF_PARTICIPANTS_POLL = setInterval(async function() {
+    if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_PARTICIPANTS_POLL); return; }
+    try {
+      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      var r = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo,ts,mise&order=ts.asc', {headers: hdrs});
+      if(!r.ok) return;
+      var rows = await r.json();
+      if(!Array.isArray(rows)) return;
+      var creatorName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
+      // Reconstruire players : créateur + vrais participants
+      var players = [{name: creatorName, ava: creatorName.charAt(0).toUpperCase(), color:'#7B4FBF', isMe:true, isHost:true}];
+      rows.forEach(function(p) {
+        if(p.pseudo && p.pseudo !== creatorName) {
+          var av = p.pseudo.charAt(0).toUpperCase();
+          players.push({name: p.pseudo, ava: av, color:'#22C9A0', isMe:false});
+        }
+      });
+      DF_CURRENT.players = players;
+      dfRenderWaiting();
+    } catch(e){}
+  }, 3000);
+  // Arrêt sécurité après 10min
+  setTimeout(function(){ clearInterval(DF_PARTICIPANTS_POLL); }, 600000);
+}
+
+// ── POLLING AMI : attendre le lancement du créateur ──
+var DF_GAME_START_POLL = null;
+function dfPollForGameStart(roomId) {
+  if(!SB_ENABLED) return;
+  if(DF_GAME_START_POLL) clearInterval(DF_GAME_START_POLL);
+  DF_GAME_START_POLL = setInterval(async function() {
+    if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_GAME_START_POLL); return; }
+    try {
+      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=status,nb_joueurs_actuels', {headers: hdrs});
+      if(!r.ok) return;
+      var rows = await r.json();
+      if(!Array.isArray(rows) || rows.length === 0) return;
+      var d = rows[0];
+      // Aussi mettre à jour la liste des joueurs
+      var r2 = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo&order=ts.asc', {headers: hdrs});
+      if(r2.ok) {
+        var pts = await r2.json();
+        if(Array.isArray(pts)) {
+          var hostName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
+          var players = [{name: hostName, ava: hostName.charAt(0).toUpperCase(), color:'#7B4FBF', isMe:false, isHost:true}];
+          pts.forEach(function(p) {
+            var myName = (userProfile.pseudo || userProfile.prenom || '');
+            var isMe = p.pseudo === myName;
+            players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: isMe ? '#F4A83A' : '#22C9A0', isMe: isMe});
+          });
+          DF_CURRENT.players = players;
+          dfRenderWaiting();
+        }
+      }
+      if(d.status === 'en_cours') {
+        clearInterval(DF_GAME_START_POLL);
+        dfStartGame();
+      }
+    } catch(e){}
+  }, 3000);
+  setTimeout(function(){ clearInterval(DF_GAME_START_POLL); }, 600000);
 }
 
 // ── LANCEMENT DU DÉFI ──
@@ -5781,6 +5879,15 @@ function dfConfirmStart(){
 }
 
 function dfStartGame(){
+  // Signaler le lancement dans Supabase (l'ami poll ce champ)
+  if(SB_ENABLED && DF_CURRENT && DF_CURRENT.isMine) {
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates'};
+    fetch(SUPABASE_URL + '/rest/v1/defis', {
+      method: 'POST', headers: hdrs,
+      body: JSON.stringify({id: DF_CURRENT.id, status: 'en_cours'})
+    }).catch(function(){});
+    clearInterval(DF_PARTICIPANTS_POLL);
+  }
   if(!DF_CURRENT) return;
   const room = DF_CURRENT;
   if(room.players.length < 2) return;
