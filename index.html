@@ -2888,6 +2888,13 @@ function switchMode(m){
     Promise.all([p1, p2]).then(function(){ try{ renderStats(); }catch(e){ console.error('[stats async]',e); } }).catch(function(e){ console.error('[stats load]',e); try{ renderStats(); }catch(e2){ console.error('[stats catch]',e2); } });
   }
   if(m==='admin' && document.getElementById('v-admin')) initAdminCharts();
+  if(m==='defis'){
+    // Afficher la balance sans la modifier (dfGetBalance init si nécessaire)
+    var _bal = dfGetBalance();
+    var _balEl = document.getElementById('dfBalance');
+    if(_balEl) _balEl.textContent = _bal.toLocaleString('fr');
+    dfFetchRooms();
+  }
   // Pour le quiz, la navigation interne (qGo) gère ses propres sous-écrans
   window.scrollTo(0,0);
 }
@@ -5197,6 +5204,10 @@ function dfRenderMyDefis(){
     return html;
   }).join('');
 }
+function dfReplayById(btn) {
+  var id = btn.dataset.id, mise = parseInt(btn.dataset.mise)||100, theme = btn.dataset.theme||'roulette';
+  dfReplaySetup(id, mise, theme);
+}
 function dfReplaySetup(id,mise,theme){
   dfSelMise(mise);
   dfSelTheme(theme);
@@ -5207,12 +5218,23 @@ function dfReplaySetup(id,mise,theme){
 }
 
 function dfGetBalance(){
-  try { var b = localStorage.getItem('flowin_balance'); return b !== null ? parseInt(b) : (QS && QS.totalScore > 0 ? QS.totalScore : 1240); }
-  catch(e){ return 1240; }
+  try {
+    var b = localStorage.getItem('flowin_balance');
+    if(b !== null && b !== 'undefined' && b !== 'NaN') return Math.max(0, parseInt(b));
+    // Première fois : copier QS.totalScore (lecture seule — les deux compteurs restent indépendants)
+    var init = (QS && QS.totalScore > 0) ? QS.totalScore : 0;
+    localStorage.setItem('flowin_balance', String(init));
+    return init;
+  } catch(e){ return 0; }
 }
 function dfSetBalance(v){
-  try { localStorage.setItem('flowin_balance', String(Math.max(0, v))); } catch(e){}
-  var el = document.getElementById('dfBalance'); if(el) el.textContent = dfGetBalance().toLocaleString('fr');
+  var val = Math.max(0, Math.round(v));
+  try { localStorage.setItem('flowin_balance', String(val)); } catch(e){}
+  // NE PAS toucher QS.totalScore — les deux compteurs sont indépendants
+  // QS.totalScore = score quiz, géré uniquement par le quiz
+  // flowin_balance = wallet défis, géré uniquement ici
+  var el = document.getElementById('dfBalance');
+  if(el) el.textContent = val.toLocaleString('fr');
 }
 
 // Pool de faux joueurs IA pour peupler le lobby
@@ -5260,6 +5282,7 @@ function dfGenerateRooms(){
 let DF_CURRENT = null;
 // Choix dans l'écran de création
 let DF_FORM = { mise: 100, theme: 'roulette', cap: 4 };
+var DF_IS_PRIVATE = false;
 
 const DF_THEME_LABELS = {
   roulette: '🎡 Roulette',
@@ -5271,9 +5294,7 @@ const DF_THEME_LABELS = {
 
 // ── ENTRÉE / SORTIE de la vue défis ──
 function openDefis(){
-  switchMode('defis');
-  dfSetBalance(dfGetBalance());
-  dfFetchRooms();
+  switchMode('defis'); // switchMode gère balance + dfFetchRooms pour 'defis'
 }
 
 var DF_LOBBY_POLL=null;
@@ -5291,43 +5312,63 @@ function dfGetBotRooms(){
 }
 
 async function dfFetchRooms(){
-  var list=document.getElementById('dfRoomsPublicList');
-  if(list)list.innerHTML='<div style="text-align:center;padding:24px 16px;color:rgba(255,255,255,.3);font-size:13px">Chargement…</div>';
-  dfScreen('dfScrLobby');
+  var list = document.getElementById('dfRoomsList');
+  if(list) list.innerHTML = '<div style="text-align:center;padding:24px 16px;color:rgba(255,255,255,.3);font-size:13px">Chargement…</div>';
   try{
-    var hdrs={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
-    var cutoff=new Date(Date.now()-7200000).toISOString();
-    var r=await fetch(SUPABASE_URL+'/rest/v1/defis?status=eq.waiting&is_private=eq.false&ts=gte.'+encodeURIComponent(cutoff)+'&select=id,nom,createur,mise,theme,nb_joueurs,ts&order=ts.desc&limit=20',{headers:hdrs});
-    if(!r.ok){dfRenderLobby();return;}
-    var rows=await r.json();
-    if(!Array.isArray(rows)){dfRenderLobby();return;}
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    var cutoff = new Date(Date.now() - 7200000).toISOString();
+    var r = await fetch(SUPABASE_URL + '/rest/v1/defis?status=eq.waiting&is_private=eq.false&ts=gte.' + encodeURIComponent(cutoff) + '&select=id,nom,createur,mise,theme,nb_joueurs,ts&order=ts.desc&limit=20', {headers: hdrs});
+    if(!r.ok){ dfRenderLobby(); return; }
+    var rows = await r.json();
+    if(!Array.isArray(rows)){ dfRenderLobby(); return; }
     // 1 seule requête pour tous les participants
-    var allParts=[];
-    if(rows.length>0){
-      var ids=rows.map(function(d){return d.id;});
-      var r2=await fetch(SUPABASE_URL+'/rest/v1/defis_participants?select=defi_id,pseudo&defi_id=in.('+ids.join(',')+')',{headers:hdrs});
-      if(r2.ok){var pp=await r2.json();if(Array.isArray(pp))allParts=pp;}
+    var allParts = [];
+    if(rows.length > 0){
+      var ids = rows.map(function(d){ return d.id; });
+      var r2 = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?select=defi_id,pseudo&defi_id=in.(' + ids.join(',') + ')', {headers: hdrs});
+      if(r2.ok){ var pp = await r2.json(); if(Array.isArray(pp)) allParts = pp; }
     }
-    var colors=['#7B4FBF','#22C9A0','#F4A83A','#E040A0','#4FC3F7','#FF7043'];
-    var myName=userProfile.pseudo||userProfile.prenom||'';
-    var rooms=rows.map(function(d){
-      var parts=allParts.filter(function(p){return p.defi_id===d.id;});
-      var players=[{name:d.createur||'?',ava:(d.createur||'?').charAt(0).toUpperCase(),color:'#7B4FBF',isHost:true}];
-      parts.forEach(function(p,pi){if(p.pseudo&&p.pseudo!==d.createur)players.push({name:p.pseudo,ava:p.pseudo.charAt(0).toUpperCase(),color:colors[(pi+1)%colors.length]});});
-      return {id:d.id,name:d.nom||('Défi de '+(d.createur||'?')),host:{name:d.createur||'?',ava:(d.createur||'?').charAt(0).toUpperCase(),color:'#7B4FBF'},mise:d.mise||0,theme:d.theme||'roulette',cap:d.nb_joueurs||4,players:players,status:'waiting',ts:d.ts||'',isMine:!!(myName&&d.createur===myName)};
+    var colors = ['#7B4FBF','#22C9A0','#F4A83A','#E040A0','#4FC3F7','#FF7043'];
+    var myName = userProfile.pseudo || userProfile.prenom || '';
+    var supaRooms = rows.map(function(d){
+      var parts = allParts.filter(function(p){ return p.defi_id === d.id; });
+      var players = [{name: d.createur||'?', ava: (d.createur||'?').charAt(0).toUpperCase(), color: '#7B4FBF', isHost: true}];
+      parts.forEach(function(p, pi){
+        if(p.pseudo && p.pseudo !== d.createur)
+          players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: colors[(pi+1)%colors.length]});
+      });
+      return {
+        id: d.id, name: d.nom || ('Défi de ' + (d.createur||'?')),
+        host: {name: d.createur||'?', ava: (d.createur||'?').charAt(0).toUpperCase(), color: '#7B4FBF'},
+        mise: d.mise||0, theme: d.theme||'roulette', cap: d.nb_joueurs||4,
+        players: players, status: 'waiting', ts: d.ts||'',
+        isPrivate: false, is_private: false,
+        isMine: !!(myName && d.createur === myName)
+      };
     });
-    var myLocal=DF_ROOMS_PUBLIC.filter(function(r){return r.isMine&&!rooms.find(function(rb){return rb.id===r.id;});});
-    var bots=dfGetBotRooms();
-    DF_ROOMS_PUBLIC=myLocal.concat(rooms).concat(rooms.length<2?bots:[]);
-    DF_ROOMS=DF_ROOMS_PUBLIC; // sync V9
+    // Garder mes rooms locales non encore en base
+    var myLocalRooms = DF_ROOMS.filter(function(r){ return r.isMine && !supaRooms.find(function(rb){ return rb.id === r.id; }); });
+    // Ajouter bot rooms si peu de vraies rooms
+    var bots = dfGetBotRooms();
+    var allRooms = myLocalRooms.concat(supaRooms);
+    if(supaRooms.length < 2) allRooms = allRooms.concat(bots);
+    DF_ROOMS = allRooms;
     dfRenderLobby();
-  }catch(e){console.error('[fetch]',e);dfRenderLobby();}
+  } catch(e){
+    console.error('[dfFetchRooms]', e);
+    // En cas d’erreur réseau : afficher au moins les bots
+    var bots = dfGetBotRooms();
+    var myLocalRooms = DF_ROOMS.filter(function(r){ return r.isMine; });
+    DF_ROOMS = myLocalRooms.concat(bots);
+    dfRenderLobby();
+  }
   clearInterval(DF_LOBBY_POLL);
-  DF_LOBBY_POLL=setInterval(function(){
-    var v=document.getElementById('v-defis'),scr=document.getElementById('dfScrLobby');
-    if(v&&v.classList.contains('active')&&scr&&!scr.classList.contains('hidden'))dfFetchRooms();
+  DF_LOBBY_POLL = setInterval(function(){
+    var v = document.getElementById('v-defis');
+    var scr = document.getElementById('dfScreenLobby');
+    if(v && v.classList.contains('active') && scr && !scr.classList.contains('hidden')) dfFetchRooms();
     else clearInterval(DF_LOBBY_POLL);
-  },8000);
+  }, 8000);
 }
 function closeDefis(){
   // Retour vers l'accueil (welcome si inscrit, landing sinon)
@@ -5449,7 +5490,7 @@ function dfRenderLobby(myOnly){
   let rooms = DF_ROOMS.slice();
   if(myOnly) rooms = rooms.filter(r => r.isMine);
   // Cacher les rooms privées du lobby public (sauf les miennes)
-  if(!myOnly) rooms = rooms.filter(r => !r.isPrivate || r.isMine);
+  if(!myOnly) rooms = rooms.filter(r => !(r.isPrivate || r.is_private) || r.isMine);
   // Afficher les joueurs en ligne seulement sur l'onglet lobby complet
   if(!myOnly) dfRenderPlayers();
   if(rooms.length === 0){
@@ -5487,7 +5528,29 @@ function dfRenderLobby(myOnly){
 }
 
 // ── CRÉATION ──
+function dfTogglePrivate(){
+  DF_IS_PRIVATE = !DF_IS_PRIVATE;
+  // Animer le switch
+  var btn = document.getElementById('dfPrivSwitchBtn');
+  var knob = document.getElementById('dfPrivSwitchKnob');
+  if(btn) btn.style.background = DF_IS_PRIVATE ? '#F4A83A' : 'rgba(255,255,255,.15)';
+  if(knob) knob.style.left = DF_IS_PRIVATE ? '21px' : '3px';
+  // Mettre à jour le libellé du bouton créer
+  var createBtn = document.getElementById('dfCreateBtn');
+  if(createBtn) createBtn.textContent = DF_IS_PRIVATE ? '🔒 Créer la room privée' : '🚀 Lancer ma room';
+  // Note dans le sous-titre nom room
+  var note = document.querySelector('#dfScreenCreate .df-form-block div[style*="Visible"]');
+  if(note) note.textContent = DF_IS_PRIVATE ? 'Room invisible dans le lobby · partage le lien uniquement' : 'Visible par les autres joueurs dans le lobby';
+}
 function dfShowCreate(){
+  // Reset du toggle privé
+  DF_IS_PRIVATE = false;
+  var btn = document.getElementById('dfPrivSwitchBtn');
+  var knob = document.getElementById('dfPrivSwitchKnob');
+  if(btn) btn.style.background = 'rgba(255,255,255,.15)';
+  if(knob) knob.style.left = '3px';
+  var createBtn = document.getElementById('dfCreateBtn');
+  if(createBtn) createBtn.textContent = '🚀 Lancer ma room';
   const bal = dfGetBalance();
   // Désactiver les mises trop chères pour le solde actuel
   document.querySelectorAll('#dfMisePills .df-pill').forEach(p => {
@@ -5756,9 +5819,10 @@ function dfCreateRoom() {
     host: {name: myName, ava: myAva, color: '#7B4FBF', isMe: true},
     mise: DF_FORM.mise, theme: DF_FORM.theme, cap: DF_FORM.cap,
     players: [{name: myName, ava: myAva, color: '#7B4FBF', isMe: true, isHost: true}],
-    isMine: true, status: 'waiting', ts: new Date().toISOString()
+    isMine: true, isPrivate: DF_IS_PRIVATE, is_private: DF_IS_PRIVATE, status: 'waiting', ts: new Date().toISOString()
   };
-  DF_ROOMS.unshift(room);
+  if(!DF_IS_PRIVATE) DF_ROOMS.unshift(room);
+  // DF_ROOMS_PUBLIC supprimé — tout passe par DF_ROOMS
   DF_CURRENT = room;
   supabaseInsert('defis', {
     id: roomId, ts: room.ts, nom: roomName,
@@ -5766,7 +5830,14 @@ function dfCreateRoom() {
     nb_joueurs: room.cap, status: 'waiting', is_private: DF_IS_PRIVATE ? true : false, ecole: userProfile.ecole || ''
   });
   dfAddToMyDefis({id: roomId, name: roomName, role: 'createur', mise: room.mise, theme: room.theme, status: 'waiting', ts: room.ts, resultat: null});
-  dfShowBilletCreateur(room);
+  if(DF_IS_PRIVATE){
+    // Room privée → billet d'invitation avec lien/QR
+    dfShowBilletCreateur(room);
+  } else {
+    // Room publique → salle d'attente directement
+    dfTab('waiting');
+    dfStartPollingParticipants(room.id);
+  }
 }
 
 // ── REJOINDRE VIA LIEN (invité) ──
@@ -5962,6 +6033,9 @@ function dfConfirmStart(){
   document.body.appendChild(m);
 }
 
+// Alias pour compatibilité bot rooms
+function dfStartCountdown(){ dfStartGame(); }
+
 function dfStartGame(){
   // Signaler le lancement dans Supabase (l'ami poll ce champ)
   if(DF_CURRENT && DF_CURRENT.isMine) {
@@ -5974,7 +6048,7 @@ function dfStartGame(){
   }
   if(!DF_CURRENT) return;
   const room = DF_CURRENT;
-  if(room.players.length < 2) return;
+  if(!room.isBot && room.players.length < 2) return;
 
   // Si le thème est "roulette", on tire au sort un thème avant de lancer
   if(room.theme === 'roulette'){
@@ -6327,7 +6401,8 @@ function dfEndGame(){
   const myName = room.players.find(p => p.isMe).name;
   const myScore = room.scores[myName] || 0;
   const topScore = room.scores[winner.name] || 0;
-  const cagnotte = room.mise * room.players.length;
+  // Cagnotte = mise × nb joueurs réels (cap), pas longueur array avec bots
+  const cagnotte = room.mise * (room.isBot ? room.cap : room.players.length);
 
   // Égalité ? (mort subite simplifiée : on ajoute +50 pts random au gagnant pour départager visuellement)
   const tied = sorted.filter(p => (room.scores[p.name]||0) === topScore);
@@ -6345,12 +6420,8 @@ function dfEndGame(){
   const gain = meWon ? cagnotte : 0;
   if(meWon){
     dfSetBalance(dfGetBalance() + cagnotte);
-    // Ajouter les points gagnés au total Supabase
-    QS.totalScore += cagnotte;
-    QS.totalPts   += cagnotte;
-    // Mettre à jour PLAYERS[me]
-    var meP = PLAYERS.find(function(p){return p.me;});
-    if(meP) meP.pts = QS.totalScore;
+    // NB : dfSetBalance gère flowin_balance uniquement
+    // QS.totalScore reste intact (score quiz indépendant)
   }
 
   // Enregistrer dans mes défis
@@ -6372,13 +6443,13 @@ function dfEndGame(){
     matiere:     room.theme === 'hist' ? 'Histoire' : room.theme === 'geo' ? 'Geographie' : room.theme === 'emc' ? 'EMC' : 'Roulette',
     score_pct:   room.players.length > 0 ? Math.round(myScore / Math.max(topScore,1) * 100) : 0,
     pts_round:   meWon ? cagnotte : -room.mise,
-    pts_total:   QS.totalScore,
+    pts_total:   dfGetBalance(), // balance défis = score réel après le défi
     streak:      QS.dailyStreak || 0,
     nb_questions: 10,
     ref:         'defi'
   });
 
-  // Aussi mettre à jour la table defis
+  // Mettre à jour la table defis
   supabaseUpsert('defis', {
     id:         room.id,
     status:     'termine',
@@ -6386,6 +6457,26 @@ function dfEndGame(){
     score_moi:  myScore,
     score_max:  topScore
   });
+
+  // PATCH joueurs.pts_total avec la nouvelle balance défis
+  // (la balance défis reflète les gains/pertes accumulés)
+  var pseudo = userProfile.pseudo || userProfile.prenom || '';
+  if(pseudo && SB_ENABLED){
+    var newBal = dfGetBalance();
+    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        pts_total: newBal,
+        updated_at: new Date().toISOString()
+      })
+    }).catch(function(){});
+  }
 
   // Affichage écran fin
   document.getElementById('dfEndEmoji').textContent = meWon ? '🏆' : '😅';
@@ -6587,6 +6678,7 @@ function renderGainsSection() {
 }
 
 function dfSetMode(mode) {
+  DF_IS_PRIVATE = (mode === 'priv');  // Synchroniser la variable globale
   var ba = document.getElementById('dfModeAll');
   var bp = document.getElementById('dfModePriv');
   var msg = document.getElementById('dfPrivMsg');
@@ -6740,6 +6832,17 @@ function dfSetMode(mode) {
           <div style="font-size:32px">🏆</div>
         </div>
         <div style="font-size:12px;color:#7A7AAA;font-weight:600;margin-top:6px">Le gagnant remporte tout · 10 questions</div>
+      </div>
+
+      <!-- TOGGLE PRIVÉ -->
+      <div onclick="dfTogglePrivate()" id="dfPrivToggleRow" style="display:flex;align-items:center;justify-content:space-between;background:rgba(244,168,58,.08);border:1.5px solid rgba(244,168,58,.2);border-radius:16px;padding:14px 16px;margin-bottom:14px;cursor:pointer">
+        <div>
+          <div style="font-size:14px;font-weight:800;color:#F4A83A">🔒 Room privée</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:3px">Invisible dans le lobby · lien d'invitation uniquement</div>
+        </div>
+        <div id="dfPrivSwitchBtn" style="width:44px;height:26px;border-radius:13px;background:rgba(255,255,255,.15);position:relative;transition:background .2s;flex-shrink:0">
+          <div id="dfPrivSwitchKnob" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>
+        </div>
       </div>
 
       <button class="df-form-submit" id="dfCreateBtn" onclick="dfCreateRoom()">
