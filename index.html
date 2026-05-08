@@ -3151,25 +3151,29 @@ function setSpinMode(mode){
     var roomId = params.get('room');
     if(!roomId) return;
     localStorage.setItem('flowin_pending_room', roomId);
-    var saved = localStorage.getItem('flowin_profile');
-    if(saved) {
-      // Inscrit : attendre que tout soit chargé puis afficher le modal
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          switchMode('defis');
-          setTimeout(function() { dfLoadThenJoin(roomId); }, 400);
-        }, 600);
-      });
-    } else {
-      // Pas inscrit : afficher un banner sur la landing pour l'inciter à s'inscrire
-      window.addEventListener('load', function() {
+    // Lancer après que tout soit chargé
+    function goToRoom() {
+      var saved = localStorage.getItem('flowin_profile');
+      if(saved) {
+        // Inscrit : aller directement dans les défis
+        switchMode('defis');
+        setTimeout(function() { dfLoadThenJoin(roomId); }, 500);
+      } else {
+        // Pas inscrit : banner visible sur la landing
+        var existing = document.getElementById('roomInviteBanner');
+        if(existing) return;
         var banner = document.createElement('div');
         banner.id = 'roomInviteBanner';
-        banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1A1035;border-top:2px solid #B06CE4;padding:14px 18px;z-index:9999;display:flex;align-items:center;gap:12px;box-sizing:border-box';
-        banner.innerHTML = '<div style="flex:1"><div style="color:#fff;font-size:14px;font-weight:700">Invitation reçue !</div><div style="color:#9A8FBF;font-size:12px">Crée ton profil pour rejoindre le défi</div></div>'
-          + '<button onclick="switchMode(\'inscription\')" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap">S\'inscrire</button>';
+        banner.style.cssText = 'position:fixed;bottom:80px;left:12px;right:12px;background:#1A1035;border:2px solid #B06CE4;border-radius:16px;padding:14px 16px;z-index:99999;display:flex;align-items:center;gap:12px;box-sizing:border-box';
+        banner.innerHTML = '<div style="flex:1"><div style="color:#fff;font-size:14px;font-weight:800">Invitation reçue !</div><div style="color:#9A8FBF;font-size:12px;margin-top:2px">Inscris-toi pour rejoindre le défi</div></div>'
+          + '<button onclick="switchMode(\'inscription\')" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0">Rejoindre</button>';
         document.body.appendChild(banner);
-      });
+      }
+    }
+    if(document.readyState === 'complete') {
+      setTimeout(goToRoom, 800);
+    } else {
+      window.addEventListener('load', function() { setTimeout(goToRoom, 800); });
     }
   } catch(e) {}
 })();
@@ -5700,7 +5704,8 @@ function dbGoToWaiting() {
 
 // ── LIEN INVITATION ──
 function dfGetInviteLink(roomId) {
-  return window.location.href.split('?')[0] + '?room=' + encodeURIComponent(roomId || (DF_CURRENT && DF_CURRENT.id) || '');
+  var base = 'https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026/';
+  return base + '?room=' + encodeURIComponent(roomId || (DF_CURRENT && DF_CURRENT.id) || '');
 }
 
 function dfShareWhatsApp() {
