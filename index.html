@@ -3475,6 +3475,21 @@ async function loadPlayerStatsFromSupabase(pseudo) {
     } catch(e){}
 
     console.log('[Flowin] Stats Supabase:', { totalPts, nbSessions, dailyStreak, league: lg.k });
+
+    // Sync flowin_balance avec pts Supabase
+    // Règle : on prend le MAX entre la balance locale et les pts Supabase
+    // (si le joueur a gagné des défis hors-ligne, on ne les écrase pas)
+    try {
+      var localBal = localStorage.getItem('flowin_balance');
+      var localVal = localBal !== null && localBal !== 'undefined' ? parseInt(localBal) : -1;
+      if(localVal < totalPts) {
+        // Supabase a plus de pts → mettre à jour la balance locale
+        localStorage.setItem('flowin_balance', String(totalPts));
+        var balEl = document.getElementById('dfBalance');
+        if(balEl) balEl.textContent = totalPts.toLocaleString('fr');
+      }
+    } catch(e) {}
+
     // Re-render la page progression si elle est ouverte
     var statsView = document.getElementById('v-stats');
     if(statsView && statsView.classList.contains('active')) renderStats();
@@ -5220,11 +5235,14 @@ function dfReplaySetup(id,mise,theme){
 function dfGetBalance(){
   try {
     var b = localStorage.getItem('flowin_balance');
-    if(b !== null && b !== 'undefined' && b !== 'NaN') return Math.max(0, parseInt(b));
-    // Première fois : copier QS.totalScore (lecture seule — les deux compteurs restent indépendants)
-    var init = (QS && QS.totalScore > 0) ? QS.totalScore : 0;
-    localStorage.setItem('flowin_balance', String(init));
-    return init;
+    var parsed = (b !== null && b !== 'undefined' && b !== 'NaN') ? parseInt(b) : NaN;
+    // Si balance absente ou 0 mais QS a des pts → prendre QS (premier accès ou reset)
+    if(isNaN(parsed) || parsed === 0) {
+      var init = (QS && QS.totalScore > 0) ? QS.totalScore : 0;
+      if(init > 0) localStorage.setItem('flowin_balance', String(init));
+      return init;
+    }
+    return Math.max(0, parsed);
   } catch(e){ return 0; }
 }
 function dfSetBalance(v){
