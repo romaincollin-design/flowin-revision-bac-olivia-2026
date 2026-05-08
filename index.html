@@ -1104,7 +1104,7 @@ window.addEventListener('unhandledrejection', function(e){
     <!-- NAV -->
     <nav>
       <div class="lnav-logo">Flowin</div>
-      <button class="lnav-cta" onclick="switchMode('pwa')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:13px">📲 Installer l'app</button>
+      <button class="lnav-cta" onclick="showPWAModal()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:13px">📲 Installer l'app</button>
     </nav>
 
     <!-- HERO -->
@@ -1243,8 +1243,8 @@ window.addEventListener('unhandledrejection', function(e){
       <div style="font-weight:800;font-size:18px;color:#fff;margin-bottom:6px">Installe l'app sur ton téléphone</div>
       <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:18px;line-height:1.5">Accès direct depuis ton écran · Sans téléchargement</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button onclick="switchMode('pwa')" style="background:rgba(0,122,255,.15);color:#4da6ff;border:1.5px solid rgba(0,122,255,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🍎 iOS — 3 taps</button>
-        <button onclick="switchMode('pwa')" style="background:rgba(52,168,83,.15);color:#5cd98a;border:1.5px solid rgba(52,168,83,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🤖 Android — 1 clic</button>
+        <button onclick="switchPWATab('ios');showPWAModal();" style="background:rgba(0,122,255,.15);color:#4da6ff;border:1.5px solid rgba(0,122,255,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🍎 iOS — 3 taps</button>
+        <button onclick="switchPWATab('and');showPWAModal();" style="background:rgba(52,168,83,.15);color:#5cd98a;border:1.5px solid rgba(52,168,83,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🤖 Android — 1 clic</button>
       </div>
     </div>
 
@@ -5484,55 +5484,6 @@ function dfUpdateCagnottePreview(){
   const total = DF_FORM.mise * DF_FORM.cap;
   const el = document.getElementById('dfCagnottePreview');
   if(el) el.textContent = total.toLocaleString('fr');
-}
-
-function dfCreateRoom(playerName){
-  const bal = dfGetBalance();
-  if(DF_FORM.mise > bal){
-    alert('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + DF_FORM.mise + '.');
-    return;
-  }
-  // Débite la mise du solde
-  dfSetBalance(bal - DF_FORM.mise);
-
-  // Crée la room avec moi comme hôte
-  const roomNameInput = document.getElementById('dfRoomName');
-  const roomName = (roomNameInput && roomNameInput.value.trim()) || ('Defi de ' + (userProfile.pseudo||userProfile.prenom||'Toi'));
-  const myName = (userProfile.pseudo || userProfile.prenom || 'Toi');
-  const myAva = ((userProfile.prenom||'O').charAt(0) + (userProfile.nom||'').charAt(0)).toUpperCase() || 'OL';
-  const roomId = 'room_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
-  const room = {
-    id: roomId,
-    name: roomName,
-    host: {name:myName, ava:myAva, color:'#7B4FBF', isMe:true},
-    mise: DF_FORM.mise,
-    theme: DF_FORM.theme,
-    cap: DF_FORM.cap,
-    players: [{name:myName, ava:myAva, color:'#7B4FBF', isMe:true, isHost:true}],
-    isMine: true,
-    isPrivate: DF_IS_PRIVATE,
-    pin: DF_IS_PRIVATE ? ('' + Math.floor(1000 + Math.random()*9000)) : null,
-    status: 'waiting',
-    ts: new Date().toISOString()
-  };
-  DF_ROOMS.unshift(room);
-  DF_CURRENT = room;
-
-  // Sauvegarder dans Supabase table defis
-  supabaseInsert('defis', {
-    id: roomId, ts: room.ts, nom: roomName,
-    createur: myName, mise: room.mise, theme: room.theme,
-    nb_joueurs: room.cap, status: 'waiting', ecole: userProfile.ecole||''
-  });
-
-  // Ajouter a mes defis
-  dfAddToMyDefis({id:roomId, name:roomName, role:'createur', mise:room.mise, theme:room.theme, status:'waiting', ts:room.ts, resultat:null});
-
-  // Afficher bloc invitation avec l'ID de la room créée
-  dfShowInviteBlock(room.id);
-  dfTab('waiting');
-  // Bots seulement si room publique
-  if(!DF_IS_PRIVATE) dfSimulateBotJoins();
 }
 
 function dfSimulateBotJoins(){
