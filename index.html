@@ -1001,6 +1001,7 @@ window.addEventListener('unhandledrejection', function(e){
           <button onclick="switchMode('app');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>
           <button onclick="switchMode('stats');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>
           <button onclick="openShare();document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>
+          <button onclick="switchMode('profil');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">👤 Mon profil</button>
           <div style="height:1px;background:rgba(255,255,255,.08);margin:4px 0"></div>
           <button onclick="logoutUser()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🚪 Déconnexion</button>
         </div>
@@ -1021,7 +1022,7 @@ window.addEventListener('unhandledrejection', function(e){
       <div style="background:rgba(255,255,255,.04);border:1px solid rgba(176,108,228,.18);border-radius:22px;padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px">
         <div style="text-align:center">
           <div style="font-size:30px;margin-bottom:6px">⚡</div>
-          <div style="font-size:24px;font-weight:800;color:#fff;font-family:'Calibri','Trebuchet MS',Arial,sans-serif" id="welcomePts">1 240</div>
+          <div style="font-size:24px;font-weight:800;color:#fff;font-family:'Calibri','Trebuchet MS',Arial,sans-serif" id="welcomePts">0</div>
           <div style="font-size:11px;color:rgba(255,255,255,.55);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-top:2px">Points</div>
         </div>
         <div style="text-align:center;border-left:1px solid rgba(255,255,255,.08);border-right:1px solid rgba(255,255,255,.08)">
@@ -1696,6 +1697,19 @@ window.addEventListener('unhandledrejection', function(e){
         </div>
 
         <div class="q-round-actions">
+          <!-- Lot de la semaine (affiché si actif) -->
+          <div id="lotSemaineCard" style="display:none;background:linear-gradient(135deg,#7B4FBF,#B06CE4);border-radius:18px;padding:14px 16px;margin-bottom:10px;color:#fff">
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;opacity:.8;margin-bottom:8px">🎁 Lot à gagner</div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="font-size:32px" id="lotEmoji">🎁</div>
+              <div style="flex:1"><div style="font-size:14px;font-weight:800" id="lotNom">Récompense</div></div>
+            </div>
+          </div>
+          <!-- Gains de l'élève (affiché si gains) -->
+          <div id="gainsSection" style="display:none;background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.25);border-radius:18px;padding:14px 16px;margin-bottom:10px">
+            <div style="font-size:11px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🏅 Mes lots remportés</div>
+            <div id="gainsList"></div>
+          </div>
           <button class="q-btn-replay" onclick="qGo('spin')">🎲 Rejouer — autre thème !</button>
           <button class="q-btn-see-league" onclick="qGo('league')">🏆 Voir le classement complet</button>
           <!-- Bouton Défis -->
@@ -2897,6 +2911,9 @@ function switchMode(m){
     dfTab('lobby');
     dfFetchRooms();
   }
+  if(m==='profil') {
+    renderProfil();
+  }
   // Pour le quiz, la navigation interne (qGo) gère ses propres sous-écrans
   window.scrollTo(0,0);
 }
@@ -3222,6 +3239,7 @@ let userInscribed = false;
 let userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
 const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
+const SB_ENABLED = true; // ← mettre false pour mode démo/offline
 
 // ── LOG CONNEXION ──
 let _lastLogTs = 0;
@@ -3333,7 +3351,7 @@ async function loadConfigFromSupabase() {
     if (!r.ok) return;
     const rows = await r.json();
     rows.forEach(row => {
-      if (row.key === 'bareme' && row.value) BAREME_CONFIG = {...BAREME_CONFIG, ...row.value};
+      if (row.key === 'bareme' && row.value) { BAREME_CONFIG = {...BAREME_CONFIG, ...row.value}; if(BAREME_CONFIG.pts_parrainage) SHARE_PTS = BAREME_CONFIG.pts_parrainage; }
       if (row.key === 'ligues_seuils' && Array.isArray(row.value)) LIGUES_CONFIG = row.value;
       if (row.key === 'form_config' && row.value) {
         Object.assign(FORM_CONFIG_APP, row.value);
@@ -3392,7 +3410,20 @@ async function loadPlayerStatsFromSupabase(pseudo) {
 
     // Stocker globalement pour la courbe 7 jours par thème
     USER_SESSIONS = sessions;
-    const totalPts   = Math.max(...sessions.map(s => s.pts_total||0), 0);
+    // BUG-POINTS-02 fix : lire aussi joueurs.pts_total (modifiable par admin)
+    // On prend MAX(sessions, joueurs) pour que le PATCH admin soit visible côté élève
+    const ptsFromSessions = Math.max(...sessions.map(s => s.pts_total||0), 0);
+    let totalPts = ptsFromSessions;
+    try {
+      const jHdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      const jRes = await fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo) + '&select=pts_total', {headers: jHdrs});
+      if(jRes.ok) {
+        const jRows = await jRes.json();
+        if(Array.isArray(jRows) && jRows.length > 0 && jRows[0].pts_total) {
+          totalPts = Math.max(ptsFromSessions, jRows[0].pts_total);
+        }
+      }
+    } catch(e) {}
     const nbSessions = sessions.length;
     const maxStreak  = Math.max(...sessions.map(s => s.streak||0), 0);
 
@@ -3716,6 +3747,14 @@ async function loadLeaderboardFromSupabase() {
       if(Array.isArray(rows) && rows.length > 0) {
         rows.forEach(function(r) {
           var isMe = r.pseudo === myPseudo;
+          if(isMe && r.pts_total > 0) {
+            // Synchroniser le wallet défis depuis Supabase (permet à l'admin de modifier les pts)
+            var localBal = dfGetBalance();
+            if(r.pts_total !== localBal) {
+              dfSetBalance(r.pts_total);
+              console.log('[Flowin] Wallet sync Supabase:', r.pts_total, 'pts');
+            }
+          }
           if(!isMe) {
             PLAYERS.push({ name: r.pseudo, emoji:'🎓', pts: r.pts_total||0, streak: r.streak||0, rounds: 0, me: false });
           }
@@ -3776,7 +3815,12 @@ function qGo(id){
   if(el) el.classList.add('act');
   if(id==='spin') initSpin();
   if(id==='crm') initCRM();
-  if(id==='round') renderRound();
+  if(id==='round') {
+    renderRound();
+    // Rafraîchir lot de la semaine et gains à chaque affichage écran round
+    if(typeof renderLotSemaine === 'function') renderLotSemaine();
+    if(typeof renderGainsSection === 'function') renderGainsSection();
+  }
   if(id==='league') {
     renderLeague(QS.league);
     // Recharger classement + lots en live
@@ -4338,6 +4382,7 @@ function renderMiniLeague(myIdx){
 }
 
 // ── LEAGUE ──
+function switchLeague(league){ renderLeague(league); }
 function renderLeague(league){
   QS.league = league;
   // Charger le classement réel depuis Supabase à chaque affichage
@@ -4778,8 +4823,8 @@ function renderStats(){
     gainsEl.style.display='block';
     gainsList.innerHTML=window.MY_GAINS.map(function(g){
       return '<div class="sp3-gain-row">'+
-        '<div class="sp3-gain-emoji">'+(g.emoji||'🎁')+'</div>'+
-        '<div style="flex:1"><div class="sp3-gain-nom">'+g.nom+'</div><div class="sp3-gain-date">'+(g.date||'')+'</div></div>'+
+        '<div class="sp3-gain-emoji">'+(g.lot_emoji||g.emoji||'🎁')+'</div>'+
+        '<div style="flex:1"><div class="sp3-gain-nom">'+(g.lot_nom||g.nom||'Récompense')+'</div><div class="sp3-gain-date">'+(g.created_at?new Date(g.created_at).toLocaleDateString('fr'):g.date||'')+'</div></div>'+
         '<div class="sp3-gain-code">'+(g.code||'—')+'</div>'+
         '</div>';
     }).join('');
@@ -5005,7 +5050,8 @@ endRound = function() {
 
 // ═══ SHARE & QR ═══
 // ═══ SHARE TRACKING — points par partage ═══
-const SHARE_PTS = 100;
+// INC-01 fix: SHARE_PTS lié à BAREME_CONFIG pour respecter le barème admin
+var SHARE_PTS = (BAREME_CONFIG && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
 function getShareLog(){
   try { return JSON.parse(localStorage.getItem('flowin_share_log')||'[]'); }
   catch(e){ return []; }
@@ -5532,7 +5578,7 @@ function dfRenderLobby(myOnly){
   list.innerHTML = rooms.map(r => {
     const cur = r.players.length;
     const full = cur >= r.cap;
-    const cagnotte = r.mise * cur;
+    const cagnotte = r.mise * 2;
     const themeLbl = DF_THEME_LABELS[r.theme] || r.theme;
     return '<div class="df-room' + (full?' full':'') + '" onclick="dfJoinRoom(\'' + r.id + '\')">'
       + '<div class="df-room-top">'
@@ -5569,7 +5615,7 @@ function dfTogglePrivate(){
   var createBtn = document.getElementById('dfCreateBtn');
   if(createBtn) createBtn.textContent = DF_IS_PRIVATE ? '🔒 Créer la room privée' : '🚀 Lancer ma room';
   // Note dans le sous-titre nom room
-  var note = document.querySelector('#dfScreenCreate .df-form-block div[style*="Visible"]');
+  var note = document.getElementById('dfVisibilityNote');
   if(note) note.textContent = DF_IS_PRIVATE ? 'Room invisible dans le lobby · partage le lien uniquement' : 'Visible par les autres joueurs dans le lobby';
 }
 function dfShowCreate(){
@@ -5581,6 +5627,8 @@ function dfShowCreate(){
   if(knob) knob.style.left = '3px';
   var createBtn = document.getElementById('dfCreateBtn');
   if(createBtn) createBtn.textContent = '🚀 Lancer ma room';
+  var noteReset = document.getElementById('dfVisibilityNote');
+  if(noteReset) noteReset.textContent = 'Visible par les autres joueurs dans le lobby';
   const bal = dfGetBalance();
   // Désactiver les mises trop chères pour le solde actuel
   document.querySelectorAll('#dfMisePills .df-pill').forEach(p => {
@@ -5595,6 +5643,9 @@ function dfShowCreate(){
       const best = pillsOk[pillsOk.length-1];
       dfSelMise(parseInt(best.dataset.mise));
     }
+  } else {
+    // S'assurer qu'une pill est sélectionnée visuellement
+    dfSelMise(DF_FORM.mise);
   }
   dfUpdateCagnottePreview();
   dfTab('create');
@@ -5677,7 +5728,7 @@ function dfRenderWaiting(){
   var bj = document.getElementById('dfBilletJoueurs'); if(bj) bj.textContent = room.cap + ' max';
   var bl = document.getElementById('dfBilletLien'); if(bl) bl.textContent = link;
   var _mise=document.getElementById('dfWaitMise'); if(_mise) _mise.textContent = room.mise;
-  var _cag=document.getElementById('dfWaitCagnotte'); if(_cag) _cag.textContent = (room.mise * room.players.length).toLocaleString('fr');
+  var _cag=document.getElementById('dfWaitCagnotte'); if(_cag) _cag.textContent = (room.mise * 2).toLocaleString('fr');
 
   // Badge privé + PIN
   var badge = document.getElementById('dfPrivateBadge');
@@ -5694,11 +5745,16 @@ function dfRenderWaiting(){
   var _list = document.getElementById('dfWaitPlayers');
   if(_list) {
     var rows = '';
-    (room.players||[]).forEach(function(p){
+    // Récupérer pings pour badges
+    var pingCreateur = dfGetPresenceBadge(room.last_ping_createur || null);
+    var pingInvite = dfGetPresenceBadge(room.last_ping_invite || null);
+    (room.players||[]).forEach(function(p, idx){
+      var badge = p.isHost ? pingCreateur : pingInvite;
       rows += '<div style="display:flex;align-items:center;gap:10px;background:' + (p.isMe?'rgba(176,108,228,.18)':'rgba(255,255,255,.04)') + ';border:1px solid ' + (p.isMe?'rgba(176,108,228,.4)':'rgba(255,255,255,.08)') + ';border-radius:12px;padding:10px 12px;margin-bottom:6px">'
         + '<div style="width:32px;height:32px;border-radius:50%;background:' + (p.color||'#7B4FBF') + ';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">' + (p.ava||'?') + '</div>'
         + '<div style="flex:1;font-size:14px;font-weight:700;color:#fff">' + p.name + (p.isMe?' <span style="background:#B06CE4;color:#fff;font-size:9px;padding:1px 6px;border-radius:6px;margin-left:4px;font-weight:800">TOI</span>':'') + '</div>'
         + (p.isHost?'<span style="background:#F4A83A;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px">HOST</span>':'<span style="font-size:12px;color:#22C9A0;font-weight:700">✓</span>')
+        + '<span style="font-size:14px;margin-left:6px;title:Présence">' + badge.emoji + '</span>'
         + '</div>';
     });
     for(var _e=(room.players||[]).length; _e<room.cap; _e++){
@@ -5710,7 +5766,23 @@ function dfRenderWaiting(){
     _list.innerHTML = rows;
   }
 
-  // Bouton lancer : actif dès 2 joueurs ET seulement si je suis le host
+  // Message si adversaire absent (room privée avec invité connu mais ping absent)
+  var absentMsg = document.getElementById('dfAbsentMsg');
+  if(absentMsg) {
+    if(room.isPrivate && room.invite && room.last_ping_invite) {
+      var pInv = dfGetPresenceBadge(room.last_ping_invite);
+      if(pInv.emoji !== '🟢') {
+        absentMsg.style.display = 'block';
+        absentMsg.textContent = '⚡ ' + room.invite + ' n\'est pas encore là — tu peux jouer maintenant, résultats comparés plus tard !';
+      } else {
+        absentMsg.style.display = 'none';
+      }
+    } else {
+      absentMsg.style.display = 'none';
+    }
+  }
+
+  // Bouton lancer : actif dès 2 joueurs (public) ou toujours en privée (asynchrone)
   var btn = document.getElementById('dfStartBtn');
   var hint = document.getElementById('dfWaitHint');
   var meIsHost = room.players.find(function(p){ return p.isMe && p.isHost; });
@@ -5719,6 +5791,13 @@ function dfRenderWaiting(){
       btn.style.display = 'none';
       hint.textContent = '⏳ ' + (room.host ? room.host.name : 'Le créateur') + ' va lancer le défi…';
       hint.style.color = '#7B4FBF';
+    } else if(room.isPrivate) {
+      // Room privée : toujours actif (mode asynchrone possible)
+      btn.style.display = '';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      hint.textContent = room.players.length >= 2 ? '✅ Les 2 joueurs sont là — c\'est parti !' : '⚡ Tu peux jouer maintenant, ton adversaire jouera plus tard';
+      hint.style.color = room.players.length >= 2 ? '#22C9A0' : '#F4A83A';
     } else if(room.players.length >= 2){
       btn.style.display = '';
       btn.disabled = false;
@@ -5756,7 +5835,7 @@ function dfShowBilletCreateur(room) {
   if(el('dbMise'))     el('dbMise').textContent      = room.mise + ' pts';
   if(el('dbTheme'))    el('dbTheme').textContent     = DF_THEME_LABELS[room.theme] || room.theme;
   if(el('dbJoueurs'))  el('dbJoueurs').textContent   = room.cap + ' joueurs max';
-  if(el('dbCagnotte')) el('dbCagnotte').textContent  = (room.mise * room.cap) + ' pts';
+  if(el('dbCagnotte')) el('dbCagnotte').textContent  = (room.mise * 2) + ' pts';
   if(el('dbLien'))     el('dbLien').textContent      = link;
   var qr = el('dbQR');
   if(qr) { qr.src = qrUrl; qr.style.display='block'; }
@@ -5781,7 +5860,7 @@ function dbShareWhatsApp() {
   if(!room) return;
   var link = dfGetInviteLink(room.id);
   var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
-  var cagnotte = room.mise * room.cap;
+  var cagnotte = room.mise * 2;
   var theme = DF_THEME_LABELS[room.theme] || room.theme;
   var msg = 'Defi Flowin de ' + myName + ' ! Theme : ' + theme + ' | Mise : ' + room.mise + ' pts | Cagnotte : ' + cagnotte + ' pts. Rejoins : ' + link;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
@@ -5874,9 +5953,11 @@ function dfCreateRoom() {
   supabaseInsert('defis', {
     id: roomId, ts: room.ts, nom: roomName,
     createur: myName, mise: room.mise, theme: room.theme,
-    nb_joueurs: room.cap, status: 'waiting', is_private: DF_IS_PRIVATE ? true : false, ecole: userProfile.ecole || ''
+    nb_joueurs: room.cap, status: 'waiting', is_private: DF_IS_PRIVATE ? true : false, ecole: userProfile.ecole || '',
+    participants: [myName], invite: null
   });
   dfAddToMyDefis({id: roomId, name: roomName, role: 'createur', mise: room.mise, theme: room.theme, status: 'waiting', ts: room.ts, resultat: null});
+  dfStartPresencePing(roomId, true);
   dfShowBilletCreateur(room); // gère le routage privée/publique
 }
 
@@ -5895,7 +5976,14 @@ async function dfLoadRoomFromSupabase(roomId) {
       host: {name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false},
       mise: d.mise || 0, theme: d.theme || 'roulette', cap: d.nb_joueurs || 4,
       players: [{name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF', isMe: false, isHost: true}],
-      isMine: false, status: d.status || 'waiting', ts: d.ts || new Date().toISOString()
+      isMine: false, isPrivate: !!d.is_private, is_private: !!d.is_private,
+      invite: d.invite || null, participants: d.participants || [],
+      score_createur: d.score_createur !== undefined ? d.score_createur : null,
+      score_invite: d.score_invite !== undefined ? d.score_invite : null,
+      last_ping_createur: d.last_ping_createur || null,
+      last_ping_invite: d.last_ping_invite || null,
+      countdown_start: d.countdown_start || null,
+      status: d.status || 'waiting', ts: d.ts || new Date().toISOString()
     };
   } catch(e) { return null; }
 }
@@ -5961,7 +6049,7 @@ function dfShowBilletInvite(room) {
   if(el('diBilletMise')) el('diBilletMise').textContent = room.mise + ' pts';
   if(el('diBilletTheme')) el('diBilletTheme').textContent = DF_THEME_LABELS[room.theme] || room.theme;
   if(el('diBilletJoueurs')) el('diBilletJoueurs').textContent = room.players.length + '/' + room.cap;
-  if(el('diBilletCagnotte')) el('diBilletCagnotte').textContent = (room.mise * room.cap) + ' pts max';
+  if(el('diBilletCagnotte')) el('diBilletCagnotte').textContent = (room.mise * 2) + ' pts';
   // Solde
   var bal = dfGetBalance();
   var soldeOk = room.mise <= bal;
@@ -5985,6 +6073,21 @@ function diConfirmJoin() {
   room.players.push({name: myName, ava: myAva, color: '#22C9A0', isMe: true});
   room.iJoined = true;
   DF_CURRENT = room;
+  // Mettre à jour participants + invite dans Supabase
+  if(SB_ENABLED) {
+    var hdrsP = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
+    // Lire participants actuels pour append
+    fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(room.id) + '&select=participants', {headers: {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows) {
+        var existing = (Array.isArray(rows) && rows.length > 0 && Array.isArray(rows[0].participants)) ? rows[0].participants : [];
+        if(existing.indexOf(myName) === -1) existing.push(myName);
+        fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(room.id), {
+          method:'PATCH', headers: hdrsP,
+          body: JSON.stringify({participants: existing, invite: myName})
+        }).catch(function(){});
+      }).catch(function(){});
+  }
   // Anti double inscription
   (function(rid, pname, pmise) {
     fetch(SUPABASE_URL+'/rest/v1/defis_participants?defi_id=eq.'+encodeURIComponent(rid)+'&pseudo=eq.'+encodeURIComponent(pname)+'&select=id&limit=1',
@@ -5994,18 +6097,97 @@ function diConfirmJoin() {
       .catch(function(){supabaseInsert('defis_participants',{defi_id:rid,pseudo:pname,mise:pmise});});
   })(room.id, myName, room.mise);
   dfAddToMyDefis({id: room.id, name: room.name, role: 'participant', mise: room.mise, theme: room.theme, status: 'en_cours', ts: new Date().toISOString(), resultat: null});
+  dfStartPresencePing(room.id, false);
   dfTab('waiting');
   dfPollForGameStart(room.id);
 }
 
-// ── POLLING CRÉATEUR : voir les participants arriver ──
+// ── PRÉSENCE TEMPS RÉEL : ping toutes les 15s ──
+var DF_PRESENCE_PING_INT = null;
+function dfStartPresencePing(roomId, isCreateur) {
+  if(DF_PRESENCE_PING_INT) clearInterval(DF_PRESENCE_PING_INT);
+  if(!SB_ENABLED) return;
+  var pingField = isCreateur ? 'last_ping_createur' : 'last_ping_invite';
+  function doPing() {
+    if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_PRESENCE_PING_INT); return; }
+    var hdrs = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
+    var body = {};
+    body[pingField] = new Date().toISOString();
+    fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId), {
+      method:'PATCH', headers:hdrs, body:JSON.stringify(body)
+    }).catch(function(){});
+  }
+  doPing();
+  DF_PRESENCE_PING_INT = setInterval(doPing, 15000);
+  setTimeout(function(){ clearInterval(DF_PRESENCE_PING_INT); }, 600000);
+}
+
+// Badge présence selon last_ping
+function dfGetPresenceBadge(lastPingIso) {
+  if(!lastPingIso) return {emoji:'⚫', label:'Déconnecté', color:'#555'};
+  var diff = (Date.now() - new Date(lastPingIso).getTime()) / 1000;
+  if(diff < 30) return {emoji:'🟢', label:'Actif', color:'#22C9A0'};
+  if(diff < 90) return {emoji:'🟡', label:'Absent', color:'#F4A83A'};
+  return {emoji:'⚫', label:'Déconnecté', color:'#555'};
+}
+
+
 var DF_PARTICIPANTS_POLL = null;
+var DF_COUNTDOWN_INT = null;
+function dfStartCountdown(targetTimestamp) {
+  // Sans argument (bot rooms) → démarrage immédiat
+  if(!targetTimestamp) { dfStartGame(); return; }
+  if(DF_COUNTDOWN_INT) clearInterval(DF_COUNTDOWN_INT);
+  var cdEl = document.getElementById('dfCountdownBlock');
+  if(cdEl) cdEl.style.display = 'block';
+  DF_COUNTDOWN_INT = setInterval(function() {
+    var left = Math.max(0, Math.round((targetTimestamp - Date.now()) / 1000));
+    var numEl = document.getElementById('dfCountdownNum');
+    if(numEl) numEl.textContent = left;
+    if(left <= 0) {
+      clearInterval(DF_COUNTDOWN_INT);
+      if(DF_CURRENT && !DF_CURRENT._gameStarted) {
+        DF_CURRENT._gameStarted = true;
+        clearInterval(DF_PARTICIPANTS_POLL);
+        dfStartGame();
+      }
+    }
+  }, 500);
+}
 function dfStartPollingParticipants(roomId) {
   if(DF_PARTICIPANTS_POLL) clearInterval(DF_PARTICIPANTS_POLL);
   DF_PARTICIPANTS_POLL = setInterval(async function() {
     if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_PARTICIPANTS_POLL); return; }
     try {
       var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      // Lire pings + countdown_start
+      var rDefi = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=last_ping_createur,last_ping_invite,countdown_start,invite', {headers: hdrs});
+      if(rDefi.ok) {
+        var dRows = await rDefi.json();
+        if(Array.isArray(dRows) && dRows.length > 0) {
+          var d = dRows[0];
+          DF_CURRENT.last_ping_createur = d.last_ping_createur;
+          DF_CURRENT.last_ping_invite = d.last_ping_invite;
+          DF_CURRENT.invite = d.invite;
+          // Si countdown_start → démarrer compte à rebours synchronisé
+          if(d.countdown_start && !DF_CURRENT._countdownStarted) {
+            DF_CURRENT._countdownStarted = true;
+            dfStartCountdown(new Date(d.countdown_start).getTime());
+          }
+          // Si 2 joueurs actifs + room privée → PATCH countdown_start si pas encore fait
+          if(DF_CURRENT.isPrivate && DF_CURRENT.players && DF_CURRENT.players.length >= 2 && !d.countdown_start) {
+            var pingCreateur = dfGetPresenceBadge(d.last_ping_createur);
+            var pingInvite = dfGetPresenceBadge(d.last_ping_invite);
+            if(pingCreateur.emoji === '🟢' && pingInvite.emoji === '🟢') {
+              var cs = new Date(Date.now() + 6000).toISOString();
+              var hdrs2 = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
+              fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId), {
+                method:'PATCH', headers:hdrs2, body:JSON.stringify({countdown_start:cs})
+              }).catch(function(){});
+            }
+          }
+        }
+      }
       var r = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo,ts&order=ts.asc', {headers: hdrs});
       if(!r.ok) return;
       var rows = await r.json();
@@ -6034,10 +6216,19 @@ function dfPollForGameStart(roomId) {
     if(!DF_CURRENT || DF_CURRENT.id !== roomId) { clearInterval(DF_GAME_START_POLL); return; }
     try {
       var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-      var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=status', {headers: hdrs});
+      var r = await fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=status,countdown_start,last_ping_createur,last_ping_invite', {headers: hdrs});
       if(!r.ok) return;
       var rows = await r.json();
       if(!Array.isArray(rows) || rows.length === 0) return;
+      var d = rows[0];
+      // Stocker pings dans DF_CURRENT pour dfRenderWaiting
+      if(d.last_ping_createur !== undefined) DF_CURRENT.last_ping_createur = d.last_ping_createur;
+      if(d.last_ping_invite !== undefined) DF_CURRENT.last_ping_invite = d.last_ping_invite;
+      // countdown_start → démarrer compte à rebours synchronisé côté invité
+      if(d.countdown_start && !DF_CURRENT._countdownStarted) {
+        DF_CURRENT._countdownStarted = true;
+        dfStartCountdown(new Date(d.countdown_start).getTime());
+      }
       // Mettre à jour la liste joueurs
       var r2 = await fetch(SUPABASE_URL + '/rest/v1/defis_participants?defi_id=eq.' + encodeURIComponent(roomId) + '&select=pseudo&order=ts.asc', {headers: hdrs});
       if(r2.ok) {
@@ -6053,7 +6244,8 @@ function dfPollForGameStart(roomId) {
           dfRenderWaiting();
         }
       }
-      if(rows[0].status === 'en_cours' && !DF_CURRENT._gameStarted) {
+      // Fix double-trigger : si countdown déjà lancé, laisser dfStartCountdown gérer
+      if(d.status === 'en_cours' && !DF_CURRENT._gameStarted && !DF_CURRENT._countdownStarted) {
         clearInterval(DF_GAME_START_POLL);
         DF_CURRENT._gameStarted = true;
         dfStartGame();
@@ -6083,8 +6275,7 @@ function dfResetRoom() {
 function dfConfirmStart(){
   if(!DF_CURRENT) return;
   var mise = DF_CURRENT.mise;
-  var nb = DF_CURRENT.players.length;
-  var cagnotte = mise * nb;
+  var cagnotte = mise * 2;
   var m = document.createElement('div');
   m.id = 'dfConfirmModal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
@@ -6092,8 +6283,7 @@ function dfConfirmStart(){
   document.body.appendChild(m);
 }
 
-// Alias pour compatibilité bot rooms
-function dfStartCountdown(){ dfStartGame(); }
+// Alias pour compatibilité bot rooms : dfStartCountdown() sans arg → démarre immédiatement
 
 function dfStartGame(){
   // Signaler le lancement dans Supabase (l'ami poll ce champ)
@@ -6107,10 +6297,9 @@ function dfStartGame(){
   }
   if(!DF_CURRENT) return;
   const room = DF_CURRENT;
-  // Room privée (2 joueurs humains) : on peut lancer dès que l'invité a rejoint (players.length >= 2)
-  // ou si c'est une bot room. On ne bloque plus les rooms privées à 1 joueur.
+  // Bot room ou room publique : minimum 2 joueurs requis
   if(!room.isBot && !room.isPrivate && room.players.length < 2) return;
-  if(!room.isBot && room.isPrivate && room.players.length < 2) return;
+  // Room privée : peut démarrer seul (mode asynchrone — adversaire joue plus tard)
 
   // Si le thème est "roulette", on tire au sort un thème avant de lancer
   if(room.theme === 'roulette'){
@@ -6388,21 +6577,13 @@ function dfShowQuestion(){
     if(left === 0 && !room.answered){ dfAnswerQ(-1); }
   }, 200);
 
-  // Bots jouent en arrière-plan : chacun "répond" après un délai aléatoire
+  // Bots : score calculé sur base 22s (pas simulé question par question)
+  // Humain gagne si son temps moyen < 22s par question
+  // On initialise le score bot si pas encore calculé (sera finalisé dans dfEndGame)
   room.players.forEach(p => {
-    if(p.isMe) return;
-    const skill = p.skill || 0.7;
-    const delay = 3000 + Math.random() * 14000;
-    setTimeout(() => {
-      if(!DF_CURRENT || DF_CURRENT.id !== room.id || room.questionIdx !== getCurrentIdxFor(room)) return;
-      const correct = Math.random() < skill;
-      // Score : 100 par bonne réponse + bonus rapidité (jusqu'à 50)
-      if(correct){
-        const speedBonus = Math.round(Math.max(0, 50 - delay/1000*2));
-        room.scores[p.name] = (room.scores[p.name] || 0) + 100 + speedBonus;
-      }
-      dfUpdateLiveScores();
-    }, delay);
+    if(p.isMe || !p.isBot) return;
+    // Marquer le bot pour calcul final en dfEndGame (ne pas accumuler ici)
+    if(!room._botScoreInit) room._botScoreInit = true;
   });
 }
 function getCurrentIdxFor(room){ return room.questionIdx; }
@@ -6459,7 +6640,7 @@ function dfEndGame(){
   var myPlayer = room.players.find(function(p){ return p.isMe; });
   var myName = myPlayer ? myPlayer.name : '';
   var myScore = room.scores[myName] || 0;
-  var cagnotte = room.mise * (room.isBot ? room.cap : room.players.length);
+  var cagnotte = room.mise * 2;
 
   // ROOM PRIVÉE : score asynchrone via Supabase
   if(room.isPrivate && !room.isBot) {
@@ -6493,15 +6674,28 @@ function dfEndGame(){
     if(wrAdvName) wrAdvName.textContent = adversaireName || '—';
     var wrMyName = document.getElementById('dfWaitResultMyName');
     if(wrMyName) wrMyName.textContent = myName;
-    var wrMyScoreBar = document.getElementById('dfWaitResultMyScoreBar');
-    if(wrMyScoreBar) wrMyScoreBar.textContent = myScore;
+    var wrMyScoreBar = document.getElementById('dfWaitResultMyScore');
+    if(wrMyScoreBar) wrMyScoreBar.textContent = myScore.toLocaleString('fr');
     dfPollAdversaireScore(room.id, myScore, cagnotte, myName, adversaireName, isCreateur);
     DF_ROOMS = DF_ROOMS.filter(function(r){ return r.id !== room.id; });
     DF_CURRENT = null;
     return;
   }
 
-  // BOT ROOM / ROOM PUBLIQUE : flux inchangé
+  // BOT ROOM / ROOM PUBLIQUE : calculer scores bots sur base 22s
+  // Score bot = 10 questions × (100 × skill + speedBonus22s)
+  // speedBonus22s = max(0, 50 - 22×2) = 6 pts par bonne réponse
+  room.players.forEach(function(p) {
+    if(p.isMe || !p.isBot) return;
+    if(!room.scores[p.name]) {
+      var skill = p.skill || 0.7;
+      var botScore = 0;
+      for(var qi = 0; qi < 10; qi++) {
+        if(Math.random() < skill) botScore += 100 + 6; // base 22s → speedBonus = 6
+      }
+      room.scores[p.name] = botScore;
+    }
+  });
   var sorted = room.players.slice().sort(function(a,b){ return (room.scores[b.name]||0) - (room.scores[a.name]||0); });
   var winner = sorted[0];
   var topScore = room.scores[winner.name] || 0;
@@ -6585,7 +6779,7 @@ function dfPollAdversaireScore(roomId, myScore, cagnotte, myName, adversaireName
     // Timeout : afficher résultats avec ce qu'on a
     if(Date.now() - startTime > TIMEOUT_MS) {
       clearInterval(DF_RESULT_POLL);
-      dfShowResultPrivee(myScore, null, cagnotte, myName, adversaireName, isCreateur);
+      dfShowResultPrivee(myScore, null, cagnotte, myName, adversaireName, isCreateur, roomId);
       return;
     }
     if(!SB_ENABLED) { clearInterval(DF_RESULT_POLL); return; }
@@ -6597,13 +6791,19 @@ function dfPollAdversaireScore(roomId, myScore, cagnotte, myName, adversaireName
         var adversaireScore = rows[0][adversaireField];
         if(adversaireScore !== null && adversaireScore !== undefined) {
           clearInterval(DF_RESULT_POLL);
-          dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur);
+          // Toast : résultats disponibles
+          var t = document.createElement('div');
+          t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;padding:12px 24px;border-radius:20px;font-weight:800;font-size:14px;z-index:99999;box-shadow:0 4px 24px rgba(176,108,228,.6);cursor:pointer';
+          t.textContent = '⚔️ Résultats disponibles ! Voir maintenant →';
+          t.onclick = function(){ if(t.parentNode) t.parentNode.removeChild(t); dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur, roomId); };
+          document.body.appendChild(t);
+          setTimeout(function(){ if(t.parentNode) { t.parentNode.removeChild(t); dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur, roomId); } }, 4000);
         }
       }).catch(function(){});
   }, 3000);
 }
 
-function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur) {
+function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur, roomId) {
   // Si timeout : on affiche avec score adversaire inconnu
   var advScore = (adversaireScore !== null && adversaireScore !== undefined) ? adversaireScore : -1;
   var meWon = advScore >= 0 ? myScore > advScore : true; // timeout = on gagne par défaut
@@ -6616,10 +6816,17 @@ function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversai
   if(meWon) {
     dfSetBalance(dfGetBalance() + cagnotte);
   }
+  // Mettre à jour localStorage défis
+  dfUpdateMyDefi(roomId, {
+    resultat: meWon ? 'gagne' : 'perdu',
+    gain: meWon ? cagnotte : 0,
+    status: 'termine',
+    score: myScore
+  });
 
   // PATCH Supabase : gagnant + status termine
   var hdrs = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
-  fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(isCreateur ? '' : ''), {method:'PATCH',headers:hdrs,body:JSON.stringify({status:'termine',gagnant:meWon?myName:adversaireName})}).catch(function(){});
+  fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId || ''), {method:'PATCH',headers:hdrs,body:JSON.stringify({status:'termine',gagnant:meWon?myName:adversaireName})}).catch(function(){});
 
   // Mettre à jour pts_total joueur
   var pseudo = userProfile.pseudo || userProfile.prenom || '';
@@ -6645,7 +6852,7 @@ function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversai
   if(cagEl) cagEl.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
   var cag2 = document.querySelector('#dfScreenEnd .df-end-cagnotte');
   if(cag2) cag2.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
-  document.getElementById('dfEndPts').textContent = (meWon ? '+' : '−') + (meWon ? cagnotte : cagnotte/2).toLocaleString('fr');
+  document.getElementById('dfEndPts').textContent = (meWon ? '+' : '−') + (meWon ? cagnotte : Math.round(cagnotte/2)).toLocaleString('fr');
   document.getElementById('dfEndPtsLbl').textContent = meWon ? 'points remportés (cagnotte de ' + cagnotte + ')' : 'mise perdue';
 
   // Podium avec vrais scores
@@ -6676,6 +6883,7 @@ function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversai
 }
 
 function supabaseUpsert(table, payload) {
+  if(!SB_ENABLED) return;
   try {
     if(table==='defis'&&payload.id){
       var rid=payload.id;
@@ -6687,6 +6895,7 @@ function supabaseUpsert(table, payload) {
   }catch(e){}
 }
 function supabaseInsert(table, payload) {
+  if(!SB_ENABLED) return;
   try {
     fetch(SUPABASE_URL + '/rest/v1/' + table, {
       method: 'POST',
@@ -6712,6 +6921,8 @@ function saveProfileToSheets(profile) {
     ecole:   profile.ecole   || '',
     classe:  profile.classe  || '',
     genre:   document.querySelector('.g-btn.sel')?.textContent?.trim() || '',
+    pts_total: 0,
+    streak: 0,
     ref:     (() => { try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
   });
 }
@@ -6865,7 +7076,7 @@ function dfSetMode(mode) {
     <div class="df-top">
       <button class="df-back" onclick="closeDefis()">← Retour</button>
       <div class="df-ttl" id="dfTitle">⚔️ Défis multi-joueurs</div>
-      <div class="df-balance">⚡ <span id="dfBalance">1240</span></div>
+      <div class="df-balance">⚡ <span id="dfBalance">0</span></div>
     </div>
 
     <div class="df-tabs" id="dfTabs">
@@ -6949,15 +7160,16 @@ function dfSetMode(mode) {
         <input id="dfRoomName" placeholder="Ex: Révision Guerre Froide, Défi EMC…" maxlength="40"
           style="width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(176,108,228,.3);border-radius:14px;padding:12px 16px;font-size:15px;font-family:inherit;color:#fff;outline:none;box-sizing:border-box"
           onfocus="this.style.borderColor='#7B4FBF'" onblur="this.style.borderColor='rgba(123,79,191,.2)'">
-        <div style="font-size:12px;color:rgba(123,79,191,.6);margin-top:5px;padding-left:4px">Visible par les autres joueurs dans le lobby</div>
+        <div id="dfVisibilityNote" style="font-size:12px;color:rgba(123,79,191,.6);margin-top:5px;padding-left:4px">Visible par les autres joueurs dans le lobby</div>
       </div>
       <div class="df-form-block">
         <div class="df-form-lbl">💰 Ta mise (par joueur)</div>
         <div class="df-pills" id="dfMisePills">
           <button class="df-pill" data-mise="25" onclick="dfSelMise(25)">25 pts</button>
-          <button class="df-pill sel" data-mise="100" onclick="dfSelMise(100)">100 pts</button>
-          <button class="df-pill" data-mise="250" onclick="dfSelMise(250)">250 pts</button>
-          <button class="df-pill" data-mise="500" onclick="dfSelMise(500)">500 pts</button>
+          <button class="df-pill sel" data-mise="35" onclick="dfSelMise(35)">35 pts</button>
+          <button class="df-pill" data-mise="45" onclick="dfSelMise(45)">45 pts</button>
+          <button class="df-pill" data-mise="55" onclick="dfSelMise(55)">55 pts</button>
+          <button class="df-pill" data-mise="75" onclick="dfSelMise(75)">75 pts</button>
         </div>
         <div id="dfMiseWarn" style="font-size:12px;color:#EF4444;font-weight:700;margin-top:8px;display:none">⚠️ Solde insuffisant pour cette mise</div>
       </div>
@@ -7077,11 +7289,15 @@ function dfSetMode(mode) {
           <div style="font-size:40px;margin-bottom:10px" id="dfWaitEmoji">⏳</div>
           <div style="font-size:19px;font-weight:800;color:#fff" id="dfWaitTtl">En attente de joueurs…</div>
           <div style="font-size:13px;color:#9A8FBF;margin-top:5px" id="dfWaitSub">0/4 joueurs</div>
+          <!-- Badge room privée + PIN -->
+          <div id="dfPrivateBadge" style="display:none;margin-top:8px;background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.3);border-radius:10px;padding:8px 14px;text-align:center">
+            <span style="font-size:11px;font-weight:800;color:#F4A83A">🔒 Room privée · PIN : <span id="dfPinDisplay" style="font-family:monospace;font-size:14px;letter-spacing:.1em">—</span></span>
+          </div>
         </div>
 
         <div style="background:#F4A83A;border-radius:14px;padding:12px 16px;text-align:center;margin-bottom:14px">
           <div style="font-size:24px;font-weight:800;color:#fff">🏆 <span id="dfWaitCagnotte">0</span> pts</div>
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;margin-top:3px">Cagnotte · Mise : <span id="dfWaitMise">100</span> pts/joueur</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;margin-top:3px">Cagnotte · Mise : <span id="dfWaitMise">0</span> pts/joueur</div>
         </div>
         <div style="font-size:11px;font-weight:800;color:#7A7AAA;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px">
           👥 Joueurs dans la room
@@ -7131,6 +7347,13 @@ function dfSetMode(mode) {
         </div>
         <button class="df-form-submit" id="dfStartBtn" onclick="dfConfirmStart()" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF)">🎮 Lancer le défi maintenant</button>
         <div style="text-align:center;font-size:12px;color:#7A7AAA;margin-top:8px;font-weight:600" id="dfWaitHint">Il faut au moins 2 joueurs pour lancer</div>
+        <!-- Compte à rebours synchronisé -->
+        <div id="dfCountdownBlock" style="display:none;text-align:center;background:rgba(34,201,160,.1);border:1px solid rgba(34,201,160,.3);border-radius:14px;padding:16px;margin-top:12px">
+          <div style="font-size:12px;font-weight:800;color:#22C9A0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">⚡ Démarrage dans</div>
+          <div style="font-size:48px;font-weight:800;color:#fff" id="dfCountdownNum">5</div>
+        </div>
+        <!-- Message adversaire absent -->
+        <div id="dfAbsentMsg" style="display:none;background:rgba(244,168,58,.08);border:1px solid rgba(244,168,58,.25);border-radius:12px;padding:12px;margin-top:10px;font-size:12px;font-weight:700;color:#F4A83A;text-align:center"></div>
         <button onclick="dfResetRoom()" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:700;padding:8px;margin-top:2px;cursor:pointer">🔄 Remettre à 0 joueur</button>
         <button onclick="dfCancelRoom()" style="width:100%;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:700;padding:8px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
       </div>
@@ -7201,9 +7424,6 @@ function dfSetMode(mode) {
           <div id="dfEndPodium"></div>
         </div>
 
-        <button class="df-form-submit" onclick="dfTab('lobby')" style="background:linear-gradient(135deg,#22C9A0,#0fa37e)">
-          🏛️ Retour au lobby
-        </button>
         <button onclick="dfShowCreate()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:16px;padding:14px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px">
           ➕ Nouvelle room
         </button>
@@ -7250,8 +7470,8 @@ function dfSetMode(mode) {
           <div style="font-size:12px;color:#22C9A0;font-weight:700">Les résultats s'afficheront automatiquement dès que <span id="dfWaitResultAdvName2">ton adversaire</span> aura terminé</div>
         </div>
 
-        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
-          Retour au lobby (abandon)
+        <button onclick="switchMode('app')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
+          🏠 Retour à l'accueil
         </button>
 
       </div>
@@ -7259,6 +7479,78 @@ function dfSetMode(mode) {
 
   </div>
 </div>
+<!-- ═══ VUE PROFIL ÉLÈVE ═══ -->
+<div class="view" id="v-profil" style="background:#0F0A1F;min-height:100vh;font-family:'Calibri','Trebuchet MS',Arial,sans-serif">
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#2D1B6B 0%,#1E1048 100%);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.08)">
+    <button onclick="goHome()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">← Retour</button>
+    <div style="flex:1;font-size:17px;font-weight:800;color:#fff">👤 Mon profil</div>
+  </div>
+
+  <div style="padding:16px 16px 80px">
+
+    <!-- Section Informations modifiables -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">📝 Mes informations</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">Prénom</label>
+          <input id="profilPrenom" type="text" placeholder="Ton prénom" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">Nom</label>
+          <input id="profilNom" type="text" placeholder="Ton nom" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">École</label>
+        <input id="profilEcole" type="text" placeholder="Ton école" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">Classe</label>
+        <input id="profilClasse" type="text" placeholder="Ta classe" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
+      </div>
+      <button onclick="profilSave()" style="width:100%;background:linear-gradient(135deg,#22C9A0,#0fa37e);color:#fff;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">💾 Enregistrer</button>
+    </div>
+
+    <!-- Section Points -->
+    <div style="background:rgba(244,168,58,.08);border:1px solid rgba(244,168,58,.2);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">💰 Mes points</div>
+      <div style="font-size:42px;font-weight:800;color:#F4A83A;text-align:center;margin-bottom:10px"><span id="profilBalance">0</span> pts</div>
+      <button onclick="switchMode('stats')" style="width:100%;background:transparent;border:1px solid rgba(244,168,58,.3);color:#F4A83A;border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📊 Voir ma progression →</button>
+    </div>
+
+    <!-- Section Mes défis (3 onglets) -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">⚔️ Mes défis</div>
+      <!-- Onglets -->
+      <div style="display:flex;gap:6px;margin-bottom:14px">
+        <button id="profTab_crees" onclick="renderProfilDefis('crees')" class="active" style="flex:1;padding:8px 4px;background:rgba(176,108,228,.2);border:1px solid rgba(176,108,228,.4);color:#fff;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Créés</button>
+        <button id="profTab_en_cours" onclick="renderProfilDefis('en_cours')" style="flex:1;padding:8px 4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#9A8FBF;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">En cours</button>
+        <button id="profTab_termines" onclick="renderProfilDefis('termines')" style="flex:1;padding:8px 4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#9A8FBF;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Terminés</button>
+      </div>
+      <div id="profilDefisContent"><div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">Chargement…</div></div>
+    </div>
+
+    <!-- Section Mes gains -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">🎁 Mes gains</div>
+      <div id="profilGains"><div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">Chargement…</div></div>
+    </div>
+
+    <!-- Section Mon QR code -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">📲 Mon QR de parrainage</div>
+      <div style="text-align:center;margin-bottom:12px">
+        <img id="profilQR" src="" alt="QR code" style="width:140px;height:140px;border-radius:12px;background:#fff;padding:6px">
+      </div>
+      <div id="profilLien" style="font-size:11px;color:#9A8FBF;word-break:break-all;text-align:center;margin-bottom:10px"></div>
+      <button id="profilCopyBtn" onclick="profilCopyLink()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🔗 Copier le lien</button>
+    </div>
+
+  </div>
+</div>
+
 <div class="view" id="v-stats" style="background:#F8F6FF!important;min-height:100vh!important">
 <style>
 #v-stats,#v-stats *{box-sizing:border-box}
@@ -7841,5 +8133,167 @@ function iosPickerConfirm() {
     lbl.classList.remove('ios-placeholder');
   }
   iosPickerClose();
+}
+
+// ═══════════════════════════════════════════════
+// VUE PROFIL ÉLÈVE — v-profil
+// ═══════════════════════════════════════════════
+
+function renderProfil() {
+  var p = userProfile || {};
+  var bal = dfGetBalance();
+  // Infos modifiables
+  var prenomEl = document.getElementById('profilPrenom');
+  var nomEl = document.getElementById('profilNom');
+  var ecoleEl = document.getElementById('profilEcole');
+  var classeEl = document.getElementById('profilClasse');
+  if(prenomEl) prenomEl.value = p.prenom || '';
+  if(nomEl) nomEl.value = p.nom || '';
+  if(ecoleEl) ecoleEl.value = p.ecole || '';
+  if(classeEl) classeEl.value = p.classe || '';
+  // Points
+  var balEl = document.getElementById('profilBalance');
+  if(balEl) balEl.textContent = bal.toLocaleString('fr');
+  // QR
+  var qrEl = document.getElementById('profilQR');
+  var lienEl = document.getElementById('profilLien');
+  var pseudo = p.pseudo || p.prenom || '';
+  var refLink = '';
+  try { refLink = window.location.origin + window.location.pathname + '?ref=' + encodeURIComponent(pseudo); } catch(e){}
+  if(qrEl && refLink) qrEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=' + encodeURIComponent(refLink);
+  if(lienEl) lienEl.textContent = refLink;
+  // Onglets défis
+  renderProfilDefis('crees');
+  // Gains
+  renderProfilGains();
+}
+
+function renderProfilDefis(tab) {
+  ['crees','en_cours','termines'].forEach(function(t) {
+    var btn = document.getElementById('profTab_' + t);
+    if(!btn) return;
+    var isActive = t === tab;
+    btn.style.background = isActive ? 'rgba(176,108,228,.35)' : 'rgba(255,255,255,.04)';
+    btn.style.border = isActive ? '1px solid rgba(176,108,228,.6)' : '1px solid rgba(255,255,255,.08)';
+    btn.style.color = isActive ? '#fff' : '#9A8FBF';
+  });
+  var container = document.getElementById('profilDefisContent');
+  if(!container) return;
+  var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
+  var myDefis = [];
+  try { myDefis = JSON.parse(localStorage.getItem('flowin_mydefis') || '[]'); } catch(e) {}
+  var items = [];
+  if(tab === 'crees') {
+    items = myDefis.filter(function(d){ return d.role === 'createur'; });
+    if(items.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:20px">Aucune room créée</div>';
+      return;
+    }
+    container.innerHTML = items.map(function(d) {
+      var statColor = d.status === 'waiting' ? '#F4A83A' : d.status === 'en_cours' ? '#22C9A0' : '#9A8FBF';
+      var statLabel = d.status === 'waiting' ? '⏳ En attente' : d.status === 'en_cours' ? '⚔️ En cours' : '✅ Terminé';
+      return '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;margin-bottom:8px">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center">'
+        + '<div style="font-size:14px;font-weight:800;color:#fff">' + (d.name || d.id || '?') + '</div>'
+        + '<span style="font-size:10px;font-weight:800;color:' + statColor + ';background:rgba(255,255,255,.05);padding:2px 8px;border-radius:6px">' + statLabel + '</span>'
+        + '</div>'
+        + '<div style="font-size:12px;color:#9A8FBF;margin-top:4px">Mise : ' + (d.mise || 0) + ' pts · ' + (d.theme || '') + '</div>'
+        + '</div>';
+    }).join('');
+  } else if(tab === 'en_cours') {
+    items = myDefis.filter(function(d){ return d.status === 'en_cours'; });
+    if(items.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:20px">Aucun défi en cours</div>';
+      return;
+    }
+    container.innerHTML = items.map(function(d) {
+      return '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(34,201,160,.2);border-radius:12px;padding:12px 14px;margin-bottom:8px">'
+        + '<div style="font-size:14px;font-weight:800;color:#fff">⚔️ ' + (d.name || d.id || '?') + '</div>'
+        + '<div style="font-size:12px;color:#9A8FBF;margin-top:4px">Mise : ' + (d.mise || 0) + ' pts · Adversaire : en attente</div>'
+        + '</div>';
+    }).join('');
+  } else {
+    items = myDefis.filter(function(d){ return d.status === 'termine'; });
+    if(items.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:20px">Aucun défi terminé</div>';
+      return;
+    }
+    container.innerHTML = items.map(function(d) {
+      var resColor = d.resultat === 'gagne' ? '#22C9A0' : '#EF4444';
+      var resLabel = d.resultat === 'gagne' ? '🏆 Gagné' : '😅 Perdu';
+      return '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;margin-bottom:8px">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center">'
+        + '<div style="font-size:14px;font-weight:800;color:#fff">' + (d.name || d.id || '?') + '</div>'
+        + '<span style="font-size:12px;font-weight:800;color:' + resColor + '">' + resLabel + '</span>'
+        + '</div>'
+        + '<div style="font-size:12px;color:#9A8FBF;margin-top:4px">Mise : ' + (d.mise || 0) + ' pts · Score : ' + (d.score || '—') + '</div>'
+        + '</div>';
+    }).join('');
+  }
+}
+
+function renderProfilGains() {
+  var container = document.getElementById('profilGains');
+  if(!container) return;
+  if(!SB_ENABLED) {
+    container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:20px">Connexion requise</div>';
+    return;
+  }
+  var pseudo = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
+  if(!pseudo) { container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:20px">Aucun gain</div>'; return; }
+  var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+  fetch(SUPABASE_URL + '/rest/v1/gains?pseudo=eq.' + encodeURIComponent(pseudo) + '&order=created_at.desc&limit=20', {headers: hdrs})
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(rows) {
+      if(!Array.isArray(rows) || rows.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:20px">Aucun gain pour l\'instant</div>';
+        return;
+      }
+      container.innerHTML = rows.map(function(g) {
+        var date = g.created_at ? new Date(g.created_at).toLocaleDateString('fr') : '';
+        return '<div style="background:rgba(176,108,228,.08);border:1px solid rgba(176,108,228,.2);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">'
+          + '<div style="font-size:28px">' + (g.lot_emoji || g.emoji || '🎁') + '</div>'
+          + '<div style="flex:1"><div style="font-size:14px;font-weight:800;color:#fff">' + (g.lot_nom || 'Lot') + '</div>'
+          + '<div style="font-size:12px;color:#9A8FBF;margin-top:2px">' + (g.code ? 'Code : <b style="color:#F4A83A">' + g.code + '</b>' : '') + (date ? ' · ' + date : '') + '</div></div>'
+          + '</div>';
+      }).join('');
+    }).catch(function() {
+      container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:20px">Impossible de charger les gains</div>';
+    });
+}
+
+function profilSave() {
+  var prenom = (document.getElementById('profilPrenom') || {value:''}).value.trim();
+  var nom = (document.getElementById('profilNom') || {value:''}).value.trim();
+  var ecole = (document.getElementById('profilEcole') || {value:''}).value.trim();
+  var classe = (document.getElementById('profilClasse') || {value:''}).value.trim();
+  if(prenom) userProfile.prenom = prenom;
+  if(nom) userProfile.nom = nom;
+  if(ecole) userProfile.ecole = ecole;
+  if(classe) userProfile.classe = classe;
+  try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+  // PATCH Supabase
+  var pseudo = userProfile.pseudo || userProfile.prenom || '';
+  if(pseudo && SB_ENABLED) {
+    var hdrs = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
+    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
+      method:'PATCH', headers:hdrs,
+      body:JSON.stringify({prenom:prenom, nom:nom, ecole:ecole, classe:classe, updated_at:new Date().toISOString()})
+    }).catch(function(){});
+  }
+  // Toast
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#22C9A0;color:#fff;padding:10px 20px;border-radius:20px;font-weight:800;font-size:14px;z-index:99999;box-shadow:0 4px 20px rgba(34,201,160,.5)';
+  t.textContent = '✅ Profil enregistré !';
+  document.body.appendChild(t);
+  setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2500);
+}
+
+function profilCopyLink() {
+  var lienEl = document.getElementById('profilLien');
+  if(!lienEl) return;
+  try { navigator.clipboard.writeText(lienEl.textContent); } catch(e){ var ta=document.createElement('textarea');ta.value=lienEl.textContent;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); }
+  var btn = document.getElementById('profilCopyBtn');
+  if(btn) { btn.textContent = '✅ Copié !'; setTimeout(function(){ btn.textContent = '🔗 Copier'; }, 2000); }
 }
 </script>
