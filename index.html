@@ -6002,6 +6002,14 @@ async function dfLoadThenJoin(roomId) {
   var room = existing || await dfLoadRoomFromSupabase(roomId);
   if(!room) { alert('❌ Room introuvable ou expirée.'); switchMode('defis'); return; }
   if(!existing) DF_ROOMS.unshift(room);
+  // Vérifier d'abord si la room est terminée (créateur ou invité)
+  if(room.status === 'termine') {
+    alert('⚔️ Ce défi est terminé. Crée une nouvelle room !');
+    // Nettoyer l'URL pour éviter la répersistance
+    try { window.history.replaceState(null, '', window.location.pathname); } catch(e){}
+    switchMode('defis');
+    return;
+  }
   // Si c'est ma room → salle d'attente
   var myName = userProfile.pseudo || userProfile.prenom || '';
   if(room.host && room.host.name === myName) {
@@ -6009,8 +6017,6 @@ async function dfLoadThenJoin(roomId) {
     dfShowBilletCreateur(room);
     return;
   }
-  // Si room terminée
-  if(room.status === 'termine') { alert('❌ Ce défi est terminé.'); switchMode('defis'); return; }
   // Invité → billet
   dfShowBilletInvite(room);
 }
@@ -6548,8 +6554,11 @@ function dfShowQuestion(){
   document.getElementById('qLabel').textContent = 'Question ' + (room.questionIdx+1) + ' / ' + total;
   document.getElementById('qProgress').style.width = (((room.questionIdx+1)/total)*100) + '%';
   document.getElementById('qText').textContent = myQ.q;
+  const letters = ['A','B','C','D'];
   const optsHtml = myQ.opts.map((opt, i) =>
-    '<button class="q-opt" onclick="dfAnswerQ(' + i + ')">' + opt + '</button>'
+    '<div class="q-opt" onclick="dfAnswerQ(' + i + ')">' +
+    '<div class="q-opt-letter">' + (letters[i]||String.fromCharCode(65+i)) + '</div>' +
+    opt + '</div>'
   ).join('');
   document.getElementById('qOpts').innerHTML = optsHtml;
   document.getElementById('qFeedback').innerHTML = '';
@@ -6616,7 +6625,7 @@ function dfAnswerQ(idx){
   });
   const fb = document.getElementById('qFeedback');
   fb.className = 'q-feedback show ' + (correct ? 'ok' : 'ko');
-  fb.innerHTML = (correct ? '✅ Bonne réponse ! +' + (100 + Math.round(Math.max(0, 50 - elapsed*2))) + ' pts' : (idx === -1 ? '⏰ Temps écoulé !' : '❌ Mauvaise réponse')) + (q.expl ? '<div style="margin-top:6px;font-size:13px;color:rgba(255,255,255,.85);font-weight:500">' + q.expl + '</div>' : '');
+  fb.innerHTML = (correct ? '✅ Bonne réponse ! +' + (100 + Math.round(Math.max(0, 50 - elapsed*2))) + ' pts' : (idx === -1 ? '⏰ Temps écoulé !' : '❌ Mauvaise réponse')) + (q.expl ? '<div style="margin-top:6px;font-size:13px;color:var(--ink);font-weight:500;opacity:.85">' + q.expl + '</div>' : '');
 
   dfUpdateLiveScores();
 
@@ -6729,6 +6738,8 @@ function dfEndGame(){
     id: room.id, status: 'termine',
     gagnant: finalWinner.name, score_moi: myScore, score_max: topScore
   });
+  // Nettoyer l'URL ?room= pour éviter rechargement sur room terminée
+  try { window.history.replaceState(null, '', window.location.pathname); } catch(e){};
   var pseudo = userProfile.pseudo || userProfile.prenom || '';
   if(pseudo && SB_ENABLED){
     var newBal = dfGetBalance();
@@ -6837,6 +6848,8 @@ function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversai
     }).catch(function(){});
   }
 
+  // Nettoyer l'URL ?room= pour éviter rechargement sur room terminée
+  try { window.history.replaceState(null, '', window.location.pathname); } catch(e){}
   // Afficher l'écran résultats
   switchMode('defis');
   dfTab('end');
