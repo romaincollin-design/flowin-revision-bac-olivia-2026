@@ -749,6 +749,7 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 
 .df-form-submit{width:100%;background:linear-gradient(135deg,#22C9A0,#0fa37e);color:#fff;border:none;border-radius:16px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px;box-shadow:0 4px 18px rgba(34,201,160,.35)}
 .df-form-submit:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+@keyframes pulseBar{0%,100%{opacity:.3;width:30%}50%{opacity:.7;width:60%}}
 
 /* Salle d'attente */
 .df-waiting{background:#fff;border-radius:22px;padding:20px;border:2px solid #EDE9FE;margin-bottom:12px}
@@ -2893,6 +2894,7 @@ function switchMode(m){
     var _bal = dfGetBalance();
     var _balEl = document.getElementById('dfBalance');
     if(_balEl) _balEl.textContent = _bal.toLocaleString('fr');
+    dfTab('lobby');
     dfFetchRooms();
   }
   // Pour le quiz, la navigation interne (qGo) gère ses propres sous-écrans
@@ -3151,39 +3153,7 @@ function setSpinMode(mode){
   });
   buildFilteredBanques();
 
-// Détecter un lien d'invitation dans l'URL
-(function() {
-  try {
-    var params = new URLSearchParams(window.location.search);
-    var roomId = params.get('room');
-    if(!roomId) return;
-    localStorage.setItem('flowin_pending_room', roomId);
-    // Lancer après que tout soit chargé
-    function goToRoom() {
-      var saved = localStorage.getItem('flowin_profile');
-      if(saved) {
-        // Inscrit : aller directement dans les défis
-        switchMode('defis');
-        setTimeout(function() { dfLoadThenJoin(roomId); }, 500);
-      } else {
-        // Pas inscrit : banner visible sur la landing
-        var existing = document.getElementById('roomInviteBanner');
-        if(existing) return;
-        var banner = document.createElement('div');
-        banner.id = 'roomInviteBanner';
-        banner.style.cssText = 'position:fixed;bottom:80px;left:12px;right:12px;background:#1A1035;border:2px solid #B06CE4;border-radius:16px;padding:14px 16px;z-index:99999;display:flex;align-items:center;gap:12px;box-sizing:border-box';
-        banner.innerHTML = '<div style="flex:1"><div style="color:#fff;font-size:14px;font-weight:800">Invitation reçue !</div><div style="color:#9A8FBF;font-size:12px;margin-top:2px">Inscris-toi pour rejoindre le défi</div></div>'
-          + '<button onclick="switchMode(\'inscription\')" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0">Rejoindre</button>';
-        document.body.appendChild(banner);
-      }
-    }
-    if(document.readyState === 'complete') {
-      setTimeout(goToRoom, 800);
-    } else {
-      window.addEventListener('load', function() { setTimeout(goToRoom, 800); });
-    }
-  } catch(e) {}
-})();
+// goToRoom déplacé après restoreProfile() — voir plus bas
   // Reset roue et réinitialiser
   QS.spinAngle = 0;
   document.getElementById('spinBtn').style.display='block';
@@ -3513,6 +3483,45 @@ async function loadPlayerStatsFromSupabase(pseudo) {
       }
     }
   } catch(e){}
+})();
+
+// ── LIEN D'INVITATION ?room= ──
+// Placé ici, APRÈS restoreProfile(), donc userProfile est déjà chargé depuis localStorage.
+// Pas besoin de setTimeout : restoreProfile est synchrone.
+(function() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var roomId = params.get('room');
+    if(!roomId) return;
+    localStorage.setItem('flowin_pending_room', roomId);
+    function goToRoom() {
+      var isInscrit = userProfile && (userProfile.pseudo || userProfile.prenom);
+      if(isInscrit) {
+        document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+        var vd = document.getElementById('v-defis');
+        if(vd) vd.classList.add('active');
+        dfTab('lobby');
+        var _b = dfGetBalance();
+        var _be = document.getElementById('dfBalance');
+        if(_be) _be.textContent = _b.toLocaleString('fr');
+        dfLoadThenJoin(roomId);
+      } else {
+        var existing = document.getElementById('roomInviteBanner');
+        if(existing) return;
+        var banner = document.createElement('div');
+        banner.id = 'roomInviteBanner';
+        banner.style.cssText = 'position:fixed;bottom:80px;left:12px;right:12px;background:#1A1035;border:2px solid #B06CE4;border-radius:16px;padding:14px 16px;z-index:99999;display:flex;align-items:center;gap:12px;box-sizing:border-box';
+        banner.innerHTML = '<div style="flex:1"><div style="color:#fff;font-size:14px;font-weight:800">Invitation reçue !</div><div style="color:#9A8FBF;font-size:12px;margin-top:2px">Inscris-toi pour rejoindre le défi</div></div>'
+          + '<button onclick="switchMode(\'inscription\')" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0">Rejoindre</button>';
+        document.body.appendChild(banner);
+      }
+    }
+    if(document.readyState === 'complete') {
+      goToRoom();
+    } else {
+      window.addEventListener('load', goToRoom);
+    }
+  } catch(e) {}
 })();
 
 // ── PUSH FIN DE JOURNÉE ──
@@ -5395,7 +5404,7 @@ function closeDefis(){
 
 // ── ONGLETS ──
 function dfTab(name){
-  const screens = {lobby:'dfScreenLobby', create:'dfScreenCreate', billet:'dfScreenBillet', waiting:'dfScreenWaiting', invite:'dfScreenInvite', end:'dfScreenEnd'};
+  const screens = {lobby:'dfScreenLobby', create:'dfScreenCreate', billet:'dfScreenBillet', waiting:'dfScreenWaiting', invite:'dfScreenInvite', end:'dfScreenEnd', waitresult:'dfScreenWaitResult'};
   Object.values(screens).forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('hidden'); });
   const target = screens[name] || 'dfScreenLobby';
   const el = document.getElementById(target); if(el) el.classList.remove('hidden');
@@ -5408,6 +5417,9 @@ function dfTab(name){
     if(name==='create') ttl.textContent = '➕ Créer un défi';
     else if(name==='waiting') ttl.textContent = '⏳ Salle d\'attente';
     else if(name==='end') ttl.textContent = '🏆 Résultats';
+    else if(name==='invite') ttl.textContent = '🎟️ Invitation reçue';
+    else if(name==='billet') ttl.textContent = '🎟️ Partager la room';
+    else if(name==='waitresult') ttl.textContent = '⏳ En attente des résultats…';
     else ttl.textContent = '⚔️ Défis multi-joueurs';
   }
   // Onglet actif
@@ -5653,8 +5665,8 @@ function dfRenderWaiting(){
   var isFull = room.players.length >= room.cap;
   var emojiEl = document.getElementById('dfWaitEmoji');
   if(emojiEl) emojiEl.textContent = isFull ? '✅' : '⏳';
-  document.getElementById('dfWaitTtl').textContent = isFull ? 'Room complete ! Prets ?' : 'En attente de joueurs…';
-  document.getElementById('dfWaitSub').textContent = room.players.length + '/' + room.cap + ' joueurs · ' + (DF_THEME_LABELS[room.theme]||room.theme);
+  var _ttl=document.getElementById('dfWaitTtl'); if(_ttl) _ttl.textContent = isFull ? 'Room complète !' : 'En attente de joueurs…';
+  var _sub=document.getElementById('dfWaitSub'); if(_sub) _sub.textContent = room.players.length + '/' + room.cap + ' joueurs · ' + (DF_THEME_LABELS[room.theme]||room.theme);
   var link = dfGetInviteLink(room.id);
   var qrImg = document.getElementById('dfQRimg');
   if(qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + encodeURIComponent(link);
@@ -5664,8 +5676,8 @@ function dfRenderWaiting(){
   var bt = document.getElementById('dfBilletTheme'); if(bt) bt.textContent = DF_THEME_LABELS[room.theme] || room.theme;
   var bj = document.getElementById('dfBilletJoueurs'); if(bj) bj.textContent = room.cap + ' max';
   var bl = document.getElementById('dfBilletLien'); if(bl) bl.textContent = link;
-  document.getElementById('dfWaitMise').textContent = room.mise;
-  document.getElementById('dfWaitCagnotte').textContent = (room.mise * room.players.length).toLocaleString('fr');
+  var _mise=document.getElementById('dfWaitMise'); if(_mise) _mise.textContent = room.mise;
+  var _cag=document.getElementById('dfWaitCagnotte'); if(_cag) _cag.textContent = (room.mise * room.players.length).toLocaleString('fr');
 
   // Badge privé + PIN
   var badge = document.getElementById('dfPrivateBadge');
@@ -5699,26 +5711,27 @@ function dfRenderWaiting(){
   }
 
   // Bouton lancer : actif dès 2 joueurs ET seulement si je suis le host
-  const btn = document.getElementById('dfStartBtn');
-  const hint = document.getElementById('dfWaitHint');
-  const meIsHost = room.players.find(p => p.isMe && p.isHost);
-  if(!meIsHost){
-    // J'ai rejoint, c'est l'host qui décide
-    btn.style.display = 'none';
-    hint.textContent = '⏳ ' + room.host.name + ' va lancer le défi…';
-    hint.style.color = '#7B4FBF';
-  } else if(room.players.length >= 2){
-    btn.style.display = '';
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    hint.textContent = '✅ Tu peux lancer le défi maintenant';
-    hint.style.color = '#22C9A0';
-  } else {
-    btn.style.display = '';
-    btn.disabled = true;
-    btn.style.opacity = '.5';
-    hint.textContent = 'Il faut au moins 2 joueurs pour lancer';
-    hint.style.color = '#7A7AAA';
+  var btn = document.getElementById('dfStartBtn');
+  var hint = document.getElementById('dfWaitHint');
+  var meIsHost = room.players.find(function(p){ return p.isMe && p.isHost; });
+  if(btn && hint) {
+    if(!meIsHost){
+      btn.style.display = 'none';
+      hint.textContent = '⏳ ' + (room.host ? room.host.name : 'Le créateur') + ' va lancer le défi…';
+      hint.style.color = '#7B4FBF';
+    } else if(room.players.length >= 2){
+      btn.style.display = '';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      hint.textContent = '✅ Tu peux lancer le défi maintenant';
+      hint.style.color = '#22C9A0';
+    } else {
+      btn.style.display = '';
+      btn.disabled = true;
+      btn.style.opacity = '.5';
+      hint.textContent = 'Il faut au moins 2 joueurs pour lancer';
+      hint.style.color = '#7A7AAA';
+    }
   }
 }
 
@@ -5736,16 +5749,31 @@ function dfCancelRoom(){
 function dfShowBilletCreateur(room) {
   var el = function(id){ return document.getElementById(id); };
   var link = dfGetInviteLink(room.id);
+  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(link);
+  // IDs dans dfScreenBillet (billet standalone)
   if(el('dbNom'))      el('dbNom').textContent      = room.name;
-  if(el('dbCreateur')) el('dbCreateur').textContent  = room.host.name;
+  if(el('dbCreateur')) el('dbCreateur').textContent  = room.host ? room.host.name : '';
   if(el('dbMise'))     el('dbMise').textContent      = room.mise + ' pts';
   if(el('dbTheme'))    el('dbTheme').textContent     = DF_THEME_LABELS[room.theme] || room.theme;
   if(el('dbJoueurs'))  el('dbJoueurs').textContent   = room.cap + ' joueurs max';
   if(el('dbCagnotte')) el('dbCagnotte').textContent  = (room.mise * room.cap) + ' pts';
   if(el('dbLien'))     el('dbLien').textContent      = link;
   var qr = el('dbQR');
-  if(qr) qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent(link);
-  dfTab('billet');
+  if(qr) { qr.src = qrUrl; qr.style.display='block'; }
+  // IDs dans dfScreenWaiting (billet intégré salle d'attente)
+  if(el('dfBilletNom'))   el('dfBilletNom').textContent  = room.name;
+  if(el('dfBilletMise'))  el('dfBilletMise').textContent = room.mise + ' pts';
+  if(el('dfBilletTheme')) el('dfBilletTheme').textContent= DF_THEME_LABELS[room.theme] || room.theme;
+  if(el('dfBilletJoueurs')) el('dfBilletJoueurs').textContent = room.cap + ' max';
+  if(el('dfBilletLien'))  el('dfBilletLien').textContent = link;
+  var qr2 = el('dfQRimg');
+  if(qr2) { qr2.src = qrUrl; qr2.style.display='block'; }
+  if(room.isPrivate) {
+    dfTab('billet');  // room privée : montrer le billet d'abord
+  } else {
+    dfTab('waiting'); // room publique : aller directement en salle d'attente
+    dfStartPollingParticipants(room.id);
+  }
 }
 
 function dbShareWhatsApp() {
@@ -5783,8 +5811,9 @@ function dbCopyLink() {
 }
 
 function dbGoToWaiting() {
+  if(DF_CURRENT) dfShowBilletCreateur(DF_CURRENT); // re-remplit le billet dans waiting
   dfTab('waiting');
-  dfStartPollingParticipants(DF_CURRENT.id);
+  if(DF_CURRENT) dfStartPollingParticipants(DF_CURRENT.id);
 }
 
 // ── LIEN INVITATION ──
@@ -5848,14 +5877,7 @@ function dfCreateRoom() {
     nb_joueurs: room.cap, status: 'waiting', is_private: DF_IS_PRIVATE ? true : false, ecole: userProfile.ecole || ''
   });
   dfAddToMyDefis({id: roomId, name: roomName, role: 'createur', mise: room.mise, theme: room.theme, status: 'waiting', ts: room.ts, resultat: null});
-  if(DF_IS_PRIVATE){
-    // Room privée → billet d'invitation avec lien/QR
-    dfShowBilletCreateur(room);
-  } else {
-    // Room publique → salle d'attente directement
-    dfTab('waiting');
-    dfStartPollingParticipants(room.id);
-  }
+  dfShowBilletCreateur(room); // gère le routage privée/publique
 }
 
 // ── REJOINDRE VIA LIEN (invité) ──
@@ -5879,12 +5901,30 @@ async function dfLoadRoomFromSupabase(roomId) {
 }
 
 async function dfLoadThenJoin(roomId) {
+  // Nettoyer le pending
+  try { localStorage.removeItem('flowin_pending_room'); } catch(e){}
+  // S'assurer que userProfile est chargé (peut arriver que goToRoom soit appelé tôt)
+  if(!(userProfile && (userProfile.pseudo || userProfile.prenom))) {
+    try {
+      var _saved = localStorage.getItem('flowin_profile');
+      if(_saved) { var _p = JSON.parse(_saved); userProfile = _p; userInscribed = true; QS.playerName = _p.pseudo || _p.prenom; }
+    } catch(e){}
+  }
   var existing = DF_ROOMS.find(function(r){ return r.id === roomId; });
-  if(existing) { dfJoinRoom(roomId); return; }
-  var room = await dfLoadRoomFromSupabase(roomId);
-  if(!room) { alert('❌ Room introuvable ou expirée.'); return; }
-  DF_ROOMS.unshift(room);
-  dfJoinRoom(roomId);
+  var room = existing || await dfLoadRoomFromSupabase(roomId);
+  if(!room) { alert('❌ Room introuvable ou expirée.'); switchMode('defis'); return; }
+  if(!existing) DF_ROOMS.unshift(room);
+  // Si c'est ma room → salle d'attente
+  var myName = userProfile.pseudo || userProfile.prenom || '';
+  if(room.host && room.host.name === myName) {
+    DF_CURRENT = room;
+    dfShowBilletCreateur(room);
+    return;
+  }
+  // Si room terminée
+  if(room.status === 'termine') { alert('❌ Ce défi est terminé.'); switchMode('defis'); return; }
+  // Invité → billet
+  dfShowBilletInvite(room);
 }
 
 function dfJoinRoom(roomId) {
@@ -5914,7 +5954,7 @@ function dfJoinRoom(roomId) {
 }
 
 function dfShowBilletInvite(room) {
-  // Remplir le billet invité
+  // Remplir le billet invité (écran dfScreenInvite)
   var el = function(id){ return document.getElementById(id); };
   if(el('diBilletNom')) el('diBilletNom').textContent = room.name || ('Défi de ' + room.host.name);
   if(el('diBilletHost')) el('diBilletHost').textContent = room.host.name;
@@ -6013,8 +6053,9 @@ function dfPollForGameStart(roomId) {
           dfRenderWaiting();
         }
       }
-      if(rows[0].status === 'en_cours') {
+      if(rows[0].status === 'en_cours' && !DF_CURRENT._gameStarted) {
         clearInterval(DF_GAME_START_POLL);
+        DF_CURRENT._gameStarted = true;
         dfStartGame();
       }
     } catch(e){}
@@ -6066,7 +6107,10 @@ function dfStartGame(){
   }
   if(!DF_CURRENT) return;
   const room = DF_CURRENT;
-  if(!room.isBot && room.players.length < 2) return;
+  // Room privée (2 joueurs humains) : on peut lancer dès que l'invité a rejoint (players.length >= 2)
+  // ou si c'est une bot room. On ne bloque plus les rooms privées à 1 joueur.
+  if(!room.isBot && !room.isPrivate && room.players.length < 2) return;
+  if(!room.isBot && room.isPrivate && room.players.length < 2) return;
 
   // Si le thème est "roulette", on tire au sort un thème avant de lancer
   if(room.theme === 'roulette'){
@@ -6406,123 +6450,121 @@ function dfAnswerQ(idx){
 
 function dfEndGame(){
   if(!DF_CURRENT) return;
-  const room = DF_CURRENT;
+  var room = DF_CURRENT;
   if(room.timerInt){ clearInterval(room.timerInt); }
 
-  // Cacher overlay
-  const live = document.getElementById('dfLiveOverlay');
+  var live = document.getElementById('dfLiveOverlay');
   if(live) live.style.display = 'none';
 
-  // Classement final
-  const sorted = room.players.slice().sort((a,b) => (room.scores[b.name]||0) - (room.scores[a.name]||0));
-  const winner = sorted[0];
-  const myName = room.players.find(p => p.isMe).name;
-  const myScore = room.scores[myName] || 0;
-  const topScore = room.scores[winner.name] || 0;
-  // Cagnotte = mise × nb joueurs réels (cap), pas longueur array avec bots
-  const cagnotte = room.mise * (room.isBot ? room.cap : room.players.length);
+  var myPlayer = room.players.find(function(p){ return p.isMe; });
+  var myName = myPlayer ? myPlayer.name : '';
+  var myScore = room.scores[myName] || 0;
+  var cagnotte = room.mise * (room.isBot ? room.cap : room.players.length);
 
-  // Égalité ? (mort subite simplifiée : on ajoute +50 pts random au gagnant pour départager visuellement)
-  const tied = sorted.filter(p => (room.scores[p.name]||0) === topScore);
-  let tieMsg = '';
+  // ROOM PRIVÉE : score asynchrone via Supabase
+  if(room.isPrivate && !room.isBot) {
+    var isCreateur = !!room.isMine;
+    var scoreField = isCreateur ? 'score_createur' : 'score_invite';
+    var adversaire = room.players.find(function(p){ return !p.isMe; });
+    var adversaireName = adversaire ? adversaire.name : '';
+    var hdrs = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
+    var patchBody = {};
+    patchBody[scoreField] = myScore;
+    fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(room.id), {
+      method: 'PATCH', headers: hdrs, body: JSON.stringify(patchBody)
+    }).catch(function(){});
+    supabaseInsert('sessions', {
+      ts: new Date().toISOString(), pseudo: myName,
+      ecole: userProfile.ecole||'', classe: userProfile.classe||'',
+      theme: 'Defi ' + room.theme + ' — ' + (room.name||room.id),
+      matiere: room.theme==='hist'?'Histoire':room.theme==='geo'?'Geographie':room.theme==='emc'?'EMC':'Roulette',
+      score_pct: 0, pts_round: 0, pts_total: dfGetBalance(),
+      streak: QS.dailyStreak||0, nb_questions: 10, ref: 'defi'
+    });
+    switchMode('defis');
+    dfTab('waitresult');
+    var wrScore = document.getElementById('dfWaitResultMyScore');
+    if(wrScore) wrScore.textContent = myScore.toLocaleString('fr');
+    var wrAdv = document.getElementById('dfWaitResultAdversaire');
+    if(wrAdv) wrAdv.textContent = adversaireName || 'ton adversaire';
+    var wrAdv2 = document.getElementById('dfWaitResultAdvName2');
+    if(wrAdv2) wrAdv2.textContent = adversaireName || 'ton adversaire';
+    var wrAdvName = document.getElementById('dfWaitResultAdvName');
+    if(wrAdvName) wrAdvName.textContent = adversaireName || '—';
+    var wrMyName = document.getElementById('dfWaitResultMyName');
+    if(wrMyName) wrMyName.textContent = myName;
+    var wrMyScoreBar = document.getElementById('dfWaitResultMyScoreBar');
+    if(wrMyScoreBar) wrMyScoreBar.textContent = myScore;
+    dfPollAdversaireScore(room.id, myScore, cagnotte, myName, adversaireName, isCreateur);
+    DF_ROOMS = DF_ROOMS.filter(function(r){ return r.id !== room.id; });
+    DF_CURRENT = null;
+    return;
+  }
+
+  // BOT ROOM / ROOM PUBLIQUE : flux inchangé
+  var sorted = room.players.slice().sort(function(a,b){ return (room.scores[b.name]||0) - (room.scores[a.name]||0); });
+  var winner = sorted[0];
+  var topScore = room.scores[winner.name] || 0;
+  var tied = sorted.filter(function(p){ return (room.scores[p.name]||0) === topScore; });
+  var tieMsg = '';
   if(tied.length > 1){
-    const lucky = tied[Math.floor(Math.random()*tied.length)];
+    var lucky = tied[Math.floor(Math.random()*tied.length)];
     room.scores[lucky.name] += 50;
     tieMsg = '⚡ Mort subite remportée par ' + lucky.name + ' !';
-    sorted.sort((a,b) => (room.scores[b.name]||0) - (room.scores[a.name]||0));
+    sorted.sort(function(a,b){ return (room.scores[b.name]||0) - (room.scores[a.name]||0); });
   }
-  const finalWinner = sorted[0];
-  const meWon = finalWinner.isMe;
-
-  // Crédite/debite le joueur selon résultat
-  const gain = meWon ? cagnotte : 0;
-  if(meWon){
-    dfSetBalance(dfGetBalance() + cagnotte);
-    // NB : dfSetBalance gère flowin_balance uniquement
-    // QS.totalScore reste intact (score quiz indépendant)
-  }
-
-  // Enregistrer dans mes défis
+  var finalWinner = sorted[0];
+  var meWon = finalWinner.isMe;
+  var gain = meWon ? cagnotte : 0;
+  if(meWon){ dfSetBalance(dfGetBalance() + cagnotte); }
   dfUpdateMyDefi(room.id, {
-    resultat: meWon ? 'gagne' : 'perdu',
-    gain: gain,
-    status: 'termine',
-    score: myScore,
-    players: sorted.map(function(p){return p.name;})
+    resultat: meWon ? 'gagne' : 'perdu', gain: gain,
+    status: 'termine', score: myScore,
+    players: sorted.map(function(p){ return p.name; })
   });
-
-  // Sauvegarder résultat dans Supabase
   supabaseInsert('sessions', {
-    ts: new Date().toISOString(),
-    pseudo:      userProfile.pseudo || userProfile.prenom || 'Anonyme',
-    ecole:       userProfile.ecole  || '',
-    classe:      userProfile.classe || '',
-    theme:       'Defi ' + room.theme + ' — ' + (room.name||room.id),
-    matiere:     room.theme === 'hist' ? 'Histoire' : room.theme === 'geo' ? 'Geographie' : room.theme === 'emc' ? 'EMC' : 'Roulette',
-    score_pct:   room.players.length > 0 ? Math.round(myScore / Math.max(topScore,1) * 100) : 0,
-    pts_round:   meWon ? cagnotte : -room.mise,
-    pts_total:   dfGetBalance(), // balance défis = score réel après le défi
-    streak:      QS.dailyStreak || 0,
-    nb_questions: 10,
-    ref:         'defi'
+    ts: new Date().toISOString(), pseudo: myName,
+    ecole: userProfile.ecole||'', classe: userProfile.classe||'',
+    theme: 'Defi ' + room.theme + ' — ' + (room.name||room.id),
+    matiere: room.theme==='hist'?'Histoire':room.theme==='geo'?'Geographie':room.theme==='emc'?'EMC':'Roulette',
+    score_pct: room.players.length > 0 ? Math.round(myScore / Math.max(topScore,1) * 100) : 0,
+    pts_round: meWon ? cagnotte : -room.mise, pts_total: dfGetBalance(),
+    streak: QS.dailyStreak||0, nb_questions: 10, ref: 'defi'
   });
-
-  // Mettre à jour la table defis
   supabaseUpsert('defis', {
-    id:         room.id,
-    status:     'termine',
-    gagnant:    finalWinner.name,
-    score_moi:  myScore,
-    score_max:  topScore
+    id: room.id, status: 'termine',
+    gagnant: finalWinner.name, score_moi: myScore, score_max: topScore
   });
-
-  // PATCH joueurs.pts_total avec la nouvelle balance défis
-  // (la balance défis reflète les gains/pertes accumulés)
   var pseudo = userProfile.pseudo || userProfile.prenom || '';
   if(pseudo && SB_ENABLED){
     var newBal = dfGetBalance();
     fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        pts_total: newBal,
-        updated_at: new Date().toISOString()
-      })
+      headers: {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+      body: JSON.stringify({pts_total: newBal, updated_at: new Date().toISOString()})
     }).catch(function(){});
   }
-
-  // Affichage écran fin
   document.getElementById('dfEndEmoji').textContent = meWon ? '🏆' : '😅';
   document.getElementById('dfEndTtl').textContent = meWon ? 'Tu as gagné !' : 'Pas cette fois…';
-  document.getElementById('dfEndSub').textContent = (tieMsg || (meWon ? 'Bien joué, tu remportes la cagnotte' : 'C\'est ' + finalWinner.name + ' qui rafle la mise'));
+  document.getElementById('dfEndSub').textContent = tieMsg || (meWon ? 'Bien joué, tu remportes la cagnotte' : 'C\'est ' + finalWinner.name + ' qui rafle la mise');
   document.getElementById('dfEndPts').textContent = (meWon ? '+' : '−') + (meWon ? cagnotte : room.mise).toLocaleString('fr');
-  document.getElementById('dfEndPts').style.color = meWon ? '#fff' : '#fff';
-  document.getElementById('dfEndCagnotte') && (document.getElementById('dfEndCagnotte').style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)');
-  const cag = document.querySelector('#dfScreenEnd .df-end-cagnotte');
-  if(cag) cag.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
+  var cagEl = document.getElementById('dfEndCagnotte');
+  if(cagEl) cagEl.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
+  var cag2 = document.querySelector('#dfScreenEnd .df-end-cagnotte');
+  if(cag2) cag2.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
   document.getElementById('dfEndPtsLbl').textContent = meWon ? 'points remportés (cagnotte de ' + cagnotte + ')' : 'mise perdue';
-
-  const podium = sorted.map((p, i) => {
-    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i+1);
+  var podium = sorted.map(function(p, i){
+    var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
     return '<div class="df-podium-row' + (i===0?' first':'') + '">'
       + '<div class="df-podium-medal">' + medal + '</div>'
-      + '<div class="df-podium-name">' + p.name + (p.isMe ? ' (toi)' : '') + '</div>'
+      + '<div class="df-podium-name">' + p.name + (p.isMe?' (toi)':'') + '</div>'
       + '<div class="df-podium-pts">' + (room.scores[p.name]||0) + ' pts</div>'
       + '</div>';
   }).join('');
   document.getElementById('dfEndPodium').innerHTML = podium;
-
-  // Retour à la vue défis
   switchMode('defis');
   dfTab('end');
-
-  // Nettoyer la room (elle quitte le lobby)
-  DF_ROOMS = DF_ROOMS.filter(r => r.id !== room.id);
+  DF_ROOMS = DF_ROOMS.filter(function(r){ return r.id !== room.id; });
   DF_CURRENT = null;
 }
 
@@ -6530,6 +6572,108 @@ function dfEndGame(){
 // FLOWIN — SUPABASE SYNC
 // ═══════════════════════════════════════════════════════
 // SUPABASE_URL and SUPABASE_KEY defined earlier
+
+// ── DÉFI PRIVÉ : poll score adversaire + affichage résultats ──
+var DF_RESULT_POLL = null;
+
+function dfPollAdversaireScore(roomId, myScore, cagnotte, myName, adversaireName, isCreateur) {
+  if(DF_RESULT_POLL) clearInterval(DF_RESULT_POLL);
+  var adversaireField = isCreateur ? 'score_invite' : 'score_createur';
+  var startTime = Date.now();
+  var TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes max
+  DF_RESULT_POLL = setInterval(function() {
+    // Timeout : afficher résultats avec ce qu'on a
+    if(Date.now() - startTime > TIMEOUT_MS) {
+      clearInterval(DF_RESULT_POLL);
+      dfShowResultPrivee(myScore, null, cagnotte, myName, adversaireName, isCreateur);
+      return;
+    }
+    if(!SB_ENABLED) { clearInterval(DF_RESULT_POLL); return; }
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=' + adversaireField, {headers: hdrs})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(rows) {
+        if(!Array.isArray(rows) || rows.length === 0) return;
+        var adversaireScore = rows[0][adversaireField];
+        if(adversaireScore !== null && adversaireScore !== undefined) {
+          clearInterval(DF_RESULT_POLL);
+          dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur);
+        }
+      }).catch(function(){});
+  }, 3000);
+}
+
+function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur) {
+  // Si timeout : on affiche avec score adversaire inconnu
+  var advScore = (adversaireScore !== null && adversaireScore !== undefined) ? adversaireScore : -1;
+  var meWon = advScore >= 0 ? myScore > advScore : true; // timeout = on gagne par défaut
+  var egalite = advScore >= 0 && myScore === advScore;
+
+  // Départager à l'égalité : le créateur gagne (règle simple)
+  if(egalite) meWon = !!isCreateur;
+
+  // Créditer/débiter la balance
+  if(meWon) {
+    dfSetBalance(dfGetBalance() + cagnotte);
+  }
+
+  // PATCH Supabase : gagnant + status termine
+  var hdrs = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
+  fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(isCreateur ? '' : ''), {method:'PATCH',headers:hdrs,body:JSON.stringify({status:'termine',gagnant:meWon?myName:adversaireName})}).catch(function(){});
+
+  // Mettre à jour pts_total joueur
+  var pseudo = userProfile.pseudo || userProfile.prenom || '';
+  if(pseudo && SB_ENABLED) {
+    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
+      method:'PATCH', headers:hdrs,
+      body: JSON.stringify({pts_total: dfGetBalance(), updated_at: new Date().toISOString()})
+    }).catch(function(){});
+  }
+
+  // Afficher l'écran résultats
+  switchMode('defis');
+  dfTab('end');
+
+  var emoji = egalite ? '🤝' : meWon ? '🏆' : '😅';
+  document.getElementById('dfEndEmoji').textContent = emoji;
+  document.getElementById('dfEndTtl').textContent = egalite ? 'Égalité !' : meWon ? 'Tu as gagné !' : 'Pas cette fois…';
+  document.getElementById('dfEndSub').textContent = egalite
+    ? 'Match nul — le créateur remporte la cagnotte'
+    : meWon ? 'Bien joué, tu remportes la cagnotte' : adversaireName + ' remporte la mise !';
+
+  var cagEl = document.getElementById('dfEndCagnotte');
+  if(cagEl) cagEl.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
+  var cag2 = document.querySelector('#dfScreenEnd .df-end-cagnotte');
+  if(cag2) cag2.style.background = meWon ? 'linear-gradient(135deg,#F4A83A,#e8850a)' : 'linear-gradient(135deg,#9096B2,#5A5F7A)';
+  document.getElementById('dfEndPts').textContent = (meWon ? '+' : '−') + (meWon ? cagnotte : cagnotte/2).toLocaleString('fr');
+  document.getElementById('dfEndPtsLbl').textContent = meWon ? 'points remportés (cagnotte de ' + cagnotte + ')' : 'mise perdue';
+
+  // Podium avec vrais scores
+  var rows = [];
+  if(myScore >= (advScore >= 0 ? advScore : -1)) {
+    rows = [
+      {name: myName, score: myScore, isMe: true, won: meWon},
+      {name: adversaireName || '?', score: advScore >= 0 ? advScore : '—', isMe: false, won: !meWon}
+    ];
+  } else {
+    rows = [
+      {name: adversaireName || '?', score: advScore >= 0 ? advScore : '—', isMe: false, won: !meWon},
+      {name: myName, score: myScore, isMe: true, won: meWon}
+    ];
+  }
+  var medals = ['🥇','🥈'];
+  var podiumHtml = rows.map(function(p, i) {
+    var gain = p.won ? '+' + cagnotte : '−' + (cagnotte/2);
+    var gainColor = p.won ? '#0F6E56' : '#993C1D';
+    return '<div class="df-podium-row' + (i===0?' first':'') + '">'
+      + '<div class="df-podium-medal">' + medals[i] + '</div>'
+      + '<div style="flex:1;text-align:left"><div class="df-podium-name">' + p.name + (p.isMe?' <span style="font-size:10px;color:#9A8FBF;font-weight:600">(toi)</span>':'') + '</div>'
+      + '<div style="font-size:11px;color:#9A8FBF;font-weight:600">' + (typeof p.score === 'number' ? p.score.toLocaleString('fr') : p.score) + ' pts au quiz</div></div>'
+      + '<div style="font-size:13px;font-weight:800;color:' + gainColor + '">' + gain + ' pts</div>'
+      + '</div>';
+  }).join('');
+  document.getElementById('dfEndPodium').innerHTML = podiumHtml;
+}
 
 function supabaseUpsert(table, payload) {
   try {
@@ -6730,7 +6874,7 @@ function dfSetMode(mode) {
     </div>
 
     <!-- ÉCRAN LOBBY -->
-    <div class="df-screen" id="dfScreenLobby">
+    <div class="df-screen hidden" id="dfScreenLobby">
 
       <!-- ACCROCHE DÉFIS GAMING -->
       <div style="background:linear-gradient(135deg,#0d001a,#1a0035,#0d001a);border-radius:16px;padding:20px 16px;margin-bottom:16px;font-family:inherit;overflow:hidden;position:relative">
@@ -7060,13 +7204,61 @@ function dfSetMode(mode) {
         <button class="df-form-submit" onclick="dfTab('lobby')" style="background:linear-gradient(135deg,#22C9A0,#0fa37e)">
           🏛️ Retour au lobby
         </button>
+        <button onclick="dfShowCreate()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:16px;padding:14px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px">
+          ➕ Nouvelle room
+        </button>
+      </div>
+    </div>
+
+    <!-- ÉCRAN ATTENTE RÉSULTATS (room privée async) -->
+    <div class="df-screen hidden" id="dfScreenWaitResult">
+      <div style="padding:4px 0 60px">
+
+        <div style="text-align:center;padding:24px 0 20px">
+          <div style="font-size:52px;margin-bottom:12px">⏳</div>
+          <div style="font-size:20px;font-weight:800;color:#fff">En attente des résultats…</div>
+          <div style="font-size:13px;color:#9A8FBF;margin-top:6px"><span id="dfWaitResultAdversaire">ton adversaire</span> joue encore</div>
+        </div>
+
+        <div style="background:#1a1035;border-radius:18px;padding:16px;border:1.5px solid rgba(176,108,228,.25);margin-bottom:14px">
+          <div style="font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">📊 Scores en attente</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">TOI</div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:800;color:#fff" id="dfWaitResultMyName">Toi</div>
+                <div style="height:8px;background:rgba(176,108,228,.15);border-radius:4px;margin-top:5px;overflow:hidden">
+                  <div style="height:100%;background:linear-gradient(90deg,#B06CE4,#7B4FBF);border-radius:4px;width:100%"></div>
+                </div>
+              </div>
+              <div style="font-size:18px;font-weight:800;color:#F4A83A;min-width:50px;text-align:right" id="dfWaitResultMyScore">—</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0">ADV</div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:700;color:#9A8FBF" id="dfWaitResultAdvName">—</div>
+                <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;margin-top:5px;overflow:hidden">
+                  <div style="height:100%;background:rgba(255,255,255,.1);border-radius:4px;width:40%;animation:pulseBar 1.5s ease-in-out infinite"></div>
+                </div>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.25);min-width:50px;text-align:right">En cours…</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(34,201,160,.06);border:1px solid rgba(34,201,160,.2);border-radius:14px;padding:12px 16px;text-align:center;margin-bottom:16px">
+          <div style="font-size:12px;color:#22C9A0;font-weight:700">Les résultats s'afficheront automatiquement dès que <span id="dfWaitResultAdvName2">ton adversaire</span> aura terminé</div>
+        </div>
+
+        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
+          Retour au lobby (abandon)
+        </button>
+
       </div>
     </div>
 
   </div>
 </div>
-
-<!-- ═══ STATS DASHBOARD v3 ═══ -->
 <div class="view" id="v-stats" style="background:#F8F6FF!important;min-height:100vh!important">
 <style>
 #v-stats,#v-stats *{box-sizing:border-box}
