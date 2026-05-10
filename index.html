@@ -5300,35 +5300,8 @@ function dfUpdateMyDefi(id,updates){
   var idx=list.findIndex(function(d){return d.id===id;});
   if(idx>=0){list[idx]=Object.assign({},list[idx],updates);dfSaveMyDefis(list);}
 }
-function dfRenderMyDefis(){
-  var list=dfGetMyDefis();
-  var container=document.getElementById('dfRoomsList');
-  if(!container)return;
-  if(list.length===0){
-    container.innerHTML='<div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,.4);font-size:14px">Aucun defi pour l\'instant.<br><span style="font-size:12px">Cree ou rejoins un defi dans le lobby !</span></div>';
-    return;
-  }
-  var tEmoji={roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️'};
-  container.innerHTML=list.map(function(d){
-    var isWin=d.resultat==='gagne';
-    var isLoss=d.resultat==='perdu';
-    var canReplay=isLoss;
-    var html='<div style="background:rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,.08)">';
-    html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
-    html+='<div style="font-size:15px;font-weight:700;color:#fff">'+(tEmoji[d.theme]||'🎯')+' '+d.name+'</div>';
-    html+='<div style="font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;background:'+(isWin?'rgba(34,197,94,.2)':isLoss?'rgba(239,68,68,.2)':'rgba(255,255,255,.1)')+';color:'+(isWin?'#4ade80':isLoss?'#f87171':'rgba(255,255,255,.6)')+'">'+( isWin?'🏆 Gagne':isLoss?'😅 Perdu':'⏳ En attente')+'</div>';
-    html+='</div>';
-    html+='<div style="display:flex;gap:12px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">';
-    html+='<span>💰 Mise : '+d.mise+' pts</span>';
-    html+='<span>📅 '+(d.ts?new Date(d.ts).toLocaleDateString('fr-FR'):'—')+'</span>';
-    html+='<span>'+(d.role==='createur'?'👑 Createur':'🎮 Participant')+'</span>';
-    html+='</div>';
-    if(d.resultat)html+='<div style="font-size:13px;font-weight:700;color:'+(isWin?'#4ade80':'#f87171')+'">'+(isWin?'+'+( d.gain||0):'−'+d.mise)+' pts</div>';
-    if(canReplay)html+='<button onclick="dfReplayById(this)" data-id="'+d.id+'" data-mise="'+d.mise+'" data-theme="'+d.theme+'" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#7B4FBF,#9B6FDF);color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer">&#x1F504; Revanche</button>';
-    html+='</div>';
-    return html;
-  }).join('');
-}
+// dfRenderMyDefis : version unique définie plus bas dans la section "FLOWIN V12+ — FONCTIONS AJOUTÉES"
+// (badges, statuts urgents, revanche, badge tab Mes défis). L'ancienne version simple a été supprimée.
 function dfReplayById(btn) {
   var id = btn.dataset.id;
   var mise = parseInt(btn.dataset.mise) || 35;
@@ -6315,12 +6288,13 @@ function dfStartPollingParticipants(roomId) {
       var rows = await r.json();
       if(!Array.isArray(rows)) return;
       var creatorName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
+      var meName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
       // Préserver les bots locaux (ajoutés par dfSimulateBotJoins) que Supabase ne connaît pas
       var localBots = (DF_CURRENT.players || []).filter(function(p){ return p.isBot; });
-      var players = [{name: creatorName, ava: creatorName.charAt(0).toUpperCase(), color: '#7B4FBF', isMe: true, isHost: true}];
+      var players = [{name: creatorName, ava: creatorName.charAt(0).toUpperCase(), color: '#7B4FBF', isMe: creatorName === meName, isHost: true}];
       rows.forEach(function(p) {
         if(p.pseudo && p.pseudo !== creatorName) {
-          players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: '#22C9A0', isMe: false});
+          players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: '#22C9A0', isMe: p.pseudo === meName});
         }
       });
       var capLimit = DF_CURRENT.cap || 99;
