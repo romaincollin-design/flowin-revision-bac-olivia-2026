@@ -986,6 +986,7 @@ window.addEventListener('unhandledrejection', function(e){
     <!-- Nav avec menu user -->
     <nav style="position:relative;z-index:100">
       <div class="lnav-logo">Flowin</div>
+      <button id="welcomeProfilBtn" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:2px solid rgba(176,108,228,.4);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0" title="Mon profil"><span id="welcomeProfilAvatar">?</span></button>
     </nav>
 
     <!-- Hero personnalisé -->
@@ -1382,6 +1383,7 @@ window.addEventListener('unhandledrejection', function(e){
         <button class="quiz-nav-btn" onclick="openDefis()" style="background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff" title="Défis multi-joueurs">⚔️ Défis</button>
         <button class="prog-nav-btn" onclick="openShare()" title="Partager Flowin" id="shareNavBtn" style="font-size:17px">🔗</button>
         <button class="prog-nav-btn" onclick="switchMode('stats')" title="Ma progression" id="statsNavBtn">📊</button>
+        <button id="appProfilBtn" title="Mon profil" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:2px solid rgba(176,108,228,.4);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span id="appProfilAvatar">?</span></button>
       </div>
     </div>
     <!-- LISTE -->
@@ -3671,6 +3673,8 @@ function populateWelcomeBack(){
   const greet = h<6 ? '🌙 Bonsoir' : h<12 ? '☀️ Bonjour' : h<18 ? '👋 Salut' : '🌆 Bonsoir';
   const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   setText('welcomeGreeting', greet);
+  var _wb = document.getElementById('welcomeProfilAvatar');
+  if(_wb) _wb.textContent = initials;
   setText('welcomeName', prenom + ' !');
 
 
@@ -3703,13 +3707,12 @@ function populateWelcomeBack(){
 
 function logoutUser(){
   if(!confirm('Te déconnecter de Flowin ? Tes scores resteront sauvegardés sur ce navigateur.')) return;
-  try {
-    localStorage.removeItem('flowin_profile');
-  } catch(e){}
+  try { localStorage.removeItem('flowin_profile'); } catch(e){}
+  try { localStorage.removeItem('flowin_balance'); } catch(e){}
   userInscribed = false;
   userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
-  // Retour à la landing
-  document.getElementById('v-welcome').classList.remove('active');
+  // Cacher toutes les vues, revenir à landing
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('v-landing').classList.add('active');
 }
 
@@ -7597,9 +7600,10 @@ function dfSetMode(mode) {
 </div>
 <!-- ═══ VUE PROFIL ÉLÈVE ═══ -->
 <div class="view" id="v-profil" style="background:#0F0E1A;min-height:100vh;font-family:'Calibri','Trebuchet MS',Arial,sans-serif">
-  <div style="background:linear-gradient(135deg,#2D1B6B,#1E1048);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100">
-    <button id="profilRetourBtn" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">← Retour</button>
-    <div style="flex:1;font-size:17px;font-weight:800;color:#fff">👤 Mon profil</div>
+  <div style="background:linear-gradient(135deg,#2D1B6B,#1E1048);padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100">
+    <button id="profilRetourBtn" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">← Retour</button>
+    <div style="flex:1;font-size:17px;font-weight:800;color:#fff">Mon profil</div>
+    <button id="profilLogoutBtn" style="background:transparent;border:1px solid rgba(239,68,68,.5);color:#EF4444;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0">Déconnexion</button>
   </div>
   <div style="padding:16px 16px 80px">
     <div id="profilAvatar" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;margin:0 auto 8px"></div>
@@ -8284,6 +8288,14 @@ function renderProfil() {
   }
 
   bind('profilRetourBtn', function(){ goHome(); });
+  bind('profilLogoutBtn', function(){ logoutUser(); });
+
+  // ── Mettre à jour initiales dans les deux boutons nav ──
+  var _ini = initiales;
+  var _wa = document.getElementById('welcomeProfilAvatar');
+  var _aa = document.getElementById('appProfilAvatar');
+  if(_wa) _wa.textContent = _ini;
+  if(_aa) _aa.textContent = _ini;
 
   bind('profilSaveBtn', function(){
     var prenom = el('profilPrenom') ? el('profilPrenom').value.trim() : '';
@@ -8517,6 +8529,21 @@ function showGlobalUserMenu(p){
     avatar.textContent = name.slice(0,2).toUpperCase();
   }
 }
+
+// ── Listeners boutons profil nav (attachés au DOMContentLoaded) ──
+(function(){
+  function attachProfilBtns(){
+    var wb = document.getElementById('welcomeProfilBtn');
+    var ab = document.getElementById('appProfilBtn');
+    if(wb) wb.addEventListener('click', function(){ switchMode('profil'); });
+    if(ab) ab.addEventListener('click', function(){ switchMode('profil'); });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', attachProfilBtns);
+  } else {
+    attachProfilBtns();
+  }
+})();
 
 
 
