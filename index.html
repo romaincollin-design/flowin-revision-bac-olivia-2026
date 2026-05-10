@@ -5146,9 +5146,9 @@ function trackShare(method){
   } catch(e){}
   // Cumuler les points dans QS
   try {
-    QS.totalScore = (QS.totalScore||0) + SHARE_PTS;
+    addPts(SHARE_PTS);
     var me = PLAYERS.find(function(p){return p.me;});
-    if(me) me.pts = (me.pts||0) + SHARE_PTS;
+    if(me) me.pts = QS.totalScore;
   } catch(e){}
   // Toast visuel
   showShareToast('+'+SHARE_PTS+' pts ! Merci pour le partage à '+dest+' 🎉');
