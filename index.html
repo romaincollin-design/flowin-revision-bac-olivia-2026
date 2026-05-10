@@ -7614,107 +7614,51 @@ function dfSetMode(mode) {
   </div>
 </div>
 <!-- ═══ VUE PROFIL ÉLÈVE ═══ -->
-<div class="view" id="v-profil" style="background:#0F0E1A;min-height:100vh;font-family:'Calibri','Trebuchet MS',Arial,sans-serif;color:#fff">
-
-  <!-- 1. HEADER : avatar + pseudo + retour -->
-  <div style="background:linear-gradient(135deg,#2D1B6B 0%,#1E1048 100%);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.08)">
-    <button onclick="goHome()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">← Retour</button>
-    <div id="profilAvatarH" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0">??</div>
-    <div style="flex:1;min-width:0">
-      <div id="profilPseudoH" style="font-size:15px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
-      <div id="profilEcoleH" style="font-size:11px;color:#9A8FBF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
-    </div>
+<div class="view" id="v-profil" style="background:#0F0E1A;min-height:100vh;font-family:'Calibri','Trebuchet MS',Arial,sans-serif">
+  <div style="background:linear-gradient(135deg,#2D1B6B,#1E1048);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100">
+    <button id="profilRetourBtn" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">← Retour</button>
+    <div style="flex:1;font-size:17px;font-weight:800;color:#fff">👤 Mon profil</div>
   </div>
-
-  <div style="padding:14px 14px 80px;max-width:560px;margin:0 auto">
-
-    <!-- 2. WALLET : points + ligue + barre -->
-    <div style="background:linear-gradient(135deg,rgba(244,168,58,.12),rgba(176,108,228,.08));border:1px solid rgba(244,168,58,.25);border-radius:18px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">💰 Wallet</div>
-      <div style="font-size:38px;font-weight:800;color:#F4A83A;text-align:center;line-height:1.1"><span id="profilBalance">0</span> <span style="font-size:16px;font-weight:700;color:rgba(244,168,58,.6)">pts</span></div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px">
-        <span id="profilLigueEmoji" style="font-size:22px">🥉</span>
-        <span id="profilLigueName" style="font-size:14px;font-weight:800;color:#fff">Bronze</span>
-      </div>
-      <div style="margin-top:12px;background:rgba(255,255,255,.08);height:8px;border-radius:6px;overflow:hidden">
-        <div id="profilLigueBar" style="height:100%;width:0%;background:linear-gradient(90deg,#F4A83A,#B06CE4);transition:width .6s"></div>
-      </div>
-      <div id="profilLigueHint" style="font-size:11px;color:#9A8FBF;margin-top:6px;text-align:center">—</div>
+  <div style="padding:16px 16px 80px">
+    <div id="profilAvatar" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;margin:0 auto 8px"></div>
+    <div id="profilPseudo" style="text-align:center;font-size:20px;font-weight:800;color:#fff;margin-bottom:4px"></div>
+    <div id="profilEcoleLabel" style="text-align:center;font-size:13px;color:#9A8FBF;margin-bottom:16px"></div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px;text-align:center">
+      <div id="profilPoints" style="font-size:36px;font-weight:800;color:#F4A83A"></div>
+      <div style="font-size:12px;color:#9A8FBF;margin-top:4px">POINTS</div>
+      <div id="profilLigue" style="margin-top:8px;font-size:14px;font-weight:700;color:#B06CE4"></div>
     </div>
-
-    <!-- 3. STATS : quiz joués, streak, score moyen -->
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">📊 Mes stats</div>
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">📊 Mes stats</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center"><div id="profilNbQuiz" style="font-size:22px;font-weight:800;color:#22C9A0"></div><div style="font-size:10px;color:#9A8FBF;margin-top:2px">QUIZ FAITS</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center"><div id="profilStreak" style="font-size:22px;font-weight:800;color:#F4A83A"></div><div style="font-size:10px;color:#9A8FBF;margin-top:2px">STREAK 🔥</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center"><div id="profilScoreMoy" style="font-size:22px;font-weight:800;color:#B06CE4"></div><div style="font-size:10px;color:#9A8FBF;margin-top:2px">SCORE MOY.</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px;text-align:center"><div id="profilDefisGagnes" style="font-size:22px;font-weight:800;color:#22C9A0"></div><div style="font-size:10px;color:#9A8FBF;margin-top:2px">DÉFIS GAGNÉS</div></div>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">✏️ Mes infos</div>
+      <input id="profilPrenom" placeholder="Prénom" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;margin-bottom:8px;box-sizing:border-box;font-family:inherit">
+      <input id="profilNom" placeholder="Nom" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;margin-bottom:8px;box-sizing:border-box;font-family:inherit">
+      <input id="profilEcole" placeholder="École" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;margin-bottom:8px;box-sizing:border-box;font-family:inherit">
+      <input id="profilClasse" placeholder="Classe" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;margin-bottom:12px;box-sizing:border-box;font-family:inherit">
+      <button id="profilSaveBtn" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">💾 Sauvegarder</button>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">🎁 Mon parrainage</div>
+      <div style="text-align:center;margin-bottom:12px"><img id="profilQR" src="" alt="QR" style="width:120px;height:120px;background:#fff;border-radius:10px;padding:6px"></div>
+      <div id="profilLien" style="font-size:11px;color:#D4AAFF;word-break:break-all;text-align:center;margin-bottom:12px"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div style="background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.2);border-radius:12px;padding:10px 6px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#B06CE4" id="profilStatsRounds">0</div>
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px;margin-top:2px">Quiz joués</div>
-        </div>
-        <div style="background:rgba(244,168,58,.1);border:1px solid rgba(244,168,58,.2);border-radius:12px;padding:10px 6px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#F4A83A" id="profilStatsStreak">0</div>
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px;margin-top:2px">Série jours</div>
-        </div>
-        <div style="background:rgba(34,201,160,.1);border:1px solid rgba(34,201,160,.2);border-radius:12px;padding:10px 6px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#22C9A0"><span id="profilStatsAvg">0</span>%</div>
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px;margin-top:2px">Score moyen</div>
-        </div>
+        <button id="profilWABtn" style="background:#25D366;color:#fff;border:none;border-radius:10px;padding:10px 4px;font-size:11px;font-weight:800;cursor:pointer">💬 WA</button>
+        <button id="profilSMSBtn" style="background:#5856D6;color:#fff;border:none;border-radius:10px;padding:10px 4px;font-size:11px;font-weight:800;cursor:pointer">📱 SMS</button>
+        <button id="profilCopyBtn" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 4px;font-size:11px;font-weight:800;cursor:pointer">🔗 Copier</button>
       </div>
     </div>
-
-    <!-- 4. INFOS MODIFIABLES -->
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">📝 Mes infos</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div>
-          <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">Prénom</label>
-          <input id="profilPrenom" type="text" placeholder="Ton prénom" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">Nom</label>
-          <input id="profilNom" type="text" placeholder="Ton nom" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
-        </div>
-      </div>
-      <div style="margin-bottom:10px">
-        <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">École</label>
-        <input id="profilEcole" type="text" placeholder="Ton école" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
-      </div>
-      <div style="margin-bottom:14px">
-        <label style="font-size:11px;font-weight:700;color:#9A8FBF;display:block;margin-bottom:4px">Classe</label>
-        <input id="profilClasse" type="text" placeholder="Ta classe" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;box-sizing:border-box">
-      </div>
-      <button onclick="profilSave()" style="width:100%;background:linear-gradient(135deg,#22C9A0,#0fa37e);color:#fff;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">💾 Enregistrer</button>
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">🏆 Mes gains</div>
+      <div id="profilGains"></div>
     </div>
-
-    <!-- 5. PARRAINAGE : QR + lien + boutons -->
-    <div style="background:rgba(176,108,228,.08);border:1px solid rgba(176,108,228,.2);border-radius:18px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">🎁 Parrainage</div>
-      <div style="text-align:center;margin-bottom:12px">
-        <img id="profilQR" src="" alt="QR" style="width:140px;height:140px;border-radius:12px;background:#fff;padding:6px">
-      </div>
-      <div id="profilLien" style="font-size:11px;color:#B06CE4;word-break:break-all;text-align:center;margin-bottom:10px;background:rgba(176,108,228,.06);padding:8px;border-radius:8px">—</div>
-      <div style="display:flex;gap:8px">
-        <button id="profilCopyBtn" onclick="profilCopyLink()" style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:10px;padding:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">🔗 Copier</button>
-        <button onclick="profilShareWA()" style="flex:1;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:10px;padding:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">📲 WhatsApp</button>
-      </div>
-    </div>
-
-    <!-- 6. GAINS depuis Supabase -->
-    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">🏆 Mes gains</div>
-      <div id="profilGains"><div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">Chargement…</div></div>
-    </div>
-
-    <!-- 7. DÉFIS : 3 onglets Créés / En cours / Terminés -->
-    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">⚔️ Mes défis</div>
-      <div style="display:flex;gap:6px;margin-bottom:14px">
-        <button id="profTab_crees" onclick="profilSetTab('crees')" style="flex:1;padding:8px 4px;background:rgba(176,108,228,.25);border:1px solid rgba(176,108,228,.4);color:#fff;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Créés</button>
-        <button id="profTab_en_cours" onclick="profilSetTab('en_cours')" style="flex:1;padding:8px 4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#9A8FBF;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">En cours</button>
-        <button id="profTab_termines" onclick="profilSetTab('termines')" style="flex:1;padding:8px 4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#9A8FBF;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Terminés</button>
-      </div>
-      <div id="profilDefisContent"><div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">Chargement…</div></div>
-    </div>
-
   </div>
 </div>
 
@@ -8302,251 +8246,152 @@ function iosPickerConfirm() {
   iosPickerClose();
 }
 
-// ═══════════════════════════════════════════════
-// VUE PROFIL ÉLÈVE — v-profil (réécriture complète)
-// 7 sections : header, wallet, stats, infos, parrainage, gains, défis
-// ═══════════════════════════════════════════════
-
-var PROFIL_TAB = 'crees';
+// ═══════════════════════════════════════════════════════════════════
+// VUE PROFIL ÉLÈVE — v-profil (rewrite intégral)
+// 100% addEventListener (zéro onclick=) sur tous les boutons
+// ═══════════════════════════════════════════════════════════════════
 
 function renderProfil() {
   var p = (typeof userProfile !== 'undefined' && userProfile) ? userProfile : {};
   var pseudo = p.pseudo || p.prenom || '';
-  var ecole = p.ecole || '';
+  var initiales = ((p.prenom || '').charAt(0) + (p.nom || '').charAt(0)).toUpperCase() || pseudo.charAt(0).toUpperCase() || '?';
+  var el = function(id){ return document.getElementById(id); };
 
-  // 1. Header : avatar + pseudo + ecole
-  var avEl = document.getElementById('profilAvatarH');
-  if(avEl) avEl.textContent = (pseudo || '??').slice(0,2).toUpperCase();
-  var psEl = document.getElementById('profilPseudoH');
-  if(psEl) psEl.textContent = pseudo || '—';
-  var ecEl = document.getElementById('profilEcoleH');
-  if(ecEl) ecEl.textContent = ecole || '—';
+  // ── Header : avatar + pseudo + école ──
+  if(el('profilAvatar')) el('profilAvatar').textContent = initiales;
+  if(el('profilPseudo')) el('profilPseudo').textContent = pseudo || '—';
+  if(el('profilEcoleLabel')) el('profilEcoleLabel').textContent = (p.ecole || '') + (p.classe ? ' · ' + p.classe : '');
 
-  // 2. Wallet : balance + ligue + barre
+  // ── Points + Ligue ──
   var bal = (typeof dfGetBalance === 'function') ? dfGetBalance() : 0;
-  var balEl = document.getElementById('profilBalance');
-  if(balEl) balEl.textContent = bal.toLocaleString('fr');
-  profilUpdateLigue(bal);
+  if(el('profilPoints')) el('profilPoints').textContent = bal.toLocaleString('fr');
+  var ligue = bal >= 5000 ? '👑 Légende'
+            : bal >= 3000 ? '💎 Diamant'
+            : bal >= 1500 ? '🥇 Or'
+            : bal >= 500  ? '🥈 Argent'
+            :               '🥉 Bronze';
+  if(el('profilLigue')) el('profilLigue').textContent = ligue;
 
-  // 3. Stats : valeurs locales par défaut, override depuis Supabase
-  var rdEl = document.getElementById('profilStatsRounds');
-  if(rdEl) rdEl.textContent = (typeof QS !== 'undefined' && QS && QS.roundsPlayed) || 0;
-  var stEl = document.getElementById('profilStatsStreak');
-  if(stEl) stEl.textContent = (typeof QS !== 'undefined' && QS && (QS.dailyStreak || QS.streak)) || 0;
-  var avgEl = document.getElementById('profilStatsAvg');
-  if(avgEl) avgEl.textContent = '0';
+  // ── Stats locales (override async ci-dessous) ──
+  if(el('profilNbQuiz'))      el('profilNbQuiz').textContent      = (typeof QS !== 'undefined' && QS && QS.roundsPlayed) || 0;
+  if(el('profilStreak'))      el('profilStreak').textContent      = (typeof QS !== 'undefined' && QS && (QS.dailyStreak || QS.streak)) || 0;
+  if(el('profilScoreMoy'))    el('profilScoreMoy').textContent    = '0%';
+  if(el('profilDefisGagnes')) el('profilDefisGagnes').textContent = '—';
 
-  // 4. Infos modifiables
-  var prEl = document.getElementById('profilPrenom');
-  if(prEl) prEl.value = p.prenom || '';
-  var nmEl = document.getElementById('profilNom');
-  if(nmEl) nmEl.value = p.nom || '';
-  var ecInEl = document.getElementById('profilEcole');
-  if(ecInEl) ecInEl.value = p.ecole || '';
-  var clEl = document.getElementById('profilClasse');
-  if(clEl) clEl.value = p.classe || '';
+  // ── Infos modifiables ──
+  if(el('profilPrenom')) el('profilPrenom').value = p.prenom || '';
+  if(el('profilNom'))    el('profilNom').value    = p.nom || '';
+  if(el('profilEcole'))  el('profilEcole').value  = p.ecole || '';
+  if(el('profilClasse')) el('profilClasse').value = p.classe || '';
 
-  // 5. Parrainage : QR + lien
+  // ── Parrainage : QR + lien ──
   var refLink = '';
   try { refLink = window.location.origin + window.location.pathname + '?ref=' + encodeURIComponent(pseudo); } catch(e){}
-  var qrEl = document.getElementById('profilQR');
-  if(qrEl && refLink) qrEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=' + encodeURIComponent(refLink);
-  var liEl = document.getElementById('profilLien');
-  if(liEl) liEl.textContent = refLink || '—';
+  if(el('profilLien')) el('profilLien').textContent = refLink;
+  if(el('profilQR'))   el('profilQR').src = refLink ? 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(refLink) : '';
 
-  // Async : stats Supabase + gains Supabase + onglet défis
-  profilLoadStats(pseudo);
-  profilLoadGains(pseudo);
-  profilSetTab(PROFIL_TAB);
-}
-
-function profilUpdateLigue(bal) {
-  var cfg = (typeof LIGUES_CONFIG !== 'undefined' && LIGUES_CONFIG && LIGUES_CONFIG.length) ? LIGUES_CONFIG : [{name:'Bronze',key:'bronze',min:0,max:499}];
-  var current = cfg[0], next = null;
-  for(var i=0;i<cfg.length;i++){
-    if(bal >= cfg[i].min) current = cfg[i];
-    if(bal < cfg[i].min && !next) next = cfg[i];
+  // ── Listeners (addEventListener uniquement, jamais onclick=) ──
+  // Helper : clone le bouton pour wipe les listeners précédents (idempotence sur re-render),
+  // puis addEventListener neuf. Aucune affectation à .onclick.
+  function bind(id, fn){
+    var node = el(id);
+    if(!node) return;
+    var clone = node.cloneNode(true);
+    node.parentNode.replaceChild(clone, node);
+    clone.addEventListener('click', fn);
   }
-  var emojis = {bronze:'🥉', silver:'🥈', gold:'🥇', diamond:'💎', legend:'👑'};
-  var emEl = document.getElementById('profilLigueEmoji');
-  if(emEl) emEl.textContent = emojis[current.key] || '🥉';
-  var nmEl = document.getElementById('profilLigueName');
-  if(nmEl) nmEl.textContent = current.name || 'Bronze';
-  var hintEl = document.getElementById('profilLigueHint');
-  var barEl = document.getElementById('profilLigueBar');
-  if(next) {
-    var span = next.min - current.min;
-    var done = bal - current.min;
-    var pct = span > 0 ? Math.min(100, Math.max(0, Math.round(done * 100 / span))) : 0;
-    if(barEl) barEl.style.width = pct + '%';
-    if(hintEl) hintEl.textContent = (next.min - bal) + ' pts pour atteindre ' + next.name;
+
+  bind('profilRetourBtn', function(){ goHome(); });
+
+  bind('profilSaveBtn', function(){
+    var prenom = el('profilPrenom') ? el('profilPrenom').value.trim() : '';
+    var nom    = el('profilNom')    ? el('profilNom').value.trim()    : '';
+    var ecole  = el('profilEcole')  ? el('profilEcole').value.trim()  : '';
+    var classe = el('profilClasse') ? el('profilClasse').value.trim() : '';
+    if(typeof userProfile === 'undefined' || !userProfile) userProfile = {};
+    userProfile.prenom = prenom;
+    userProfile.nom    = nom;
+    userProfile.ecole  = ecole;
+    userProfile.classe = classe;
+    try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+    var psv = userProfile.pseudo || userProfile.prenom;
+    if(typeof SB_ENABLED !== 'undefined' && SB_ENABLED && psv) {
+      fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(psv), {
+        method: 'PATCH',
+        headers: { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Prefer':'return=minimal' },
+        body: JSON.stringify({ prenom:prenom, nom:nom, ecole:ecole, classe:classe })
+      }).catch(function(){});
+    }
+    if(el('profilEcoleLabel')) el('profilEcoleLabel').textContent = ecole + (classe ? ' · ' + classe : '');
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#22C9A0;color:#fff;padding:10px 24px;border-radius:20px;font-weight:800;font-size:14px;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+    t.textContent = '✓ Profil mis à jour';
+    document.body.appendChild(t);
+    setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2500);
+  });
+
+  bind('profilWABtn',  function(){ try { window.open('https://wa.me/?text=' + encodeURIComponent('Rejoins Flowin ! ' + refLink), '_blank'); } catch(e){} });
+  bind('profilSMSBtn', function(){ try { window.open('sms:?body='        + encodeURIComponent('Rejoins Flowin ! ' + refLink), '_blank'); } catch(e){} });
+  bind('profilCopyBtn',function(){
+    try {
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(refLink);
+      else { var ta = document.createElement('textarea'); ta.value = refLink; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
+    } catch(e){}
+    var btn = el('profilCopyBtn');
+    if(btn) { btn.textContent = '✓ Copié'; setTimeout(function(){ var b = el('profilCopyBtn'); if(b) b.textContent = '🔗 Copier'; }, 2000); }
+  });
+
+  // ── Async : stats sessions + gains Supabase ──
+  if(typeof SB_ENABLED !== 'undefined' && SB_ENABLED && pseudo) {
+    var hdrs = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+    fetch(SUPABASE_URL + '/rest/v1/sessions?pseudo=eq.' + encodeURIComponent(pseudo) + '&select=score_pct,streak&order=ts.desc&limit=200', { headers: hdrs })
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows){
+        if(!Array.isArray(rows)) return;
+        if(el('profilNbQuiz')) el('profilNbQuiz').textContent = rows.length;
+        var maxStr = 0, sum = 0, n = 0;
+        for(var i=0;i<rows.length;i++){
+          var r = rows[i];
+          if(typeof r.streak === 'number' && r.streak > maxStr) maxStr = r.streak;
+          if(typeof r.score_pct === 'number'){ sum += r.score_pct; n++; }
+        }
+        if(el('profilStreak'))   el('profilStreak').textContent   = maxStr;
+        if(el('profilScoreMoy')) el('profilScoreMoy').textContent = (n > 0 ? Math.round(sum/n) : 0) + '%';
+      }).catch(function(){});
+
+    fetch(SUPABASE_URL + '/rest/v1/gains?pseudo=eq.' + encodeURIComponent(pseudo) + '&order=ts.desc&limit=10', { headers: hdrs })
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(gains){
+        var gEl = el('profilGains');
+        if(!gEl) return;
+        if(!Array.isArray(gains) || gains.length === 0){
+          gEl.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:12px">Pas encore de lot — continue à réviser !</div>';
+          return;
+        }
+        var html = '';
+        for(var i=0;i<gains.length;i++){
+          var g = gains[i];
+          html += '<div style="background:rgba(244,168,58,.08);border:1px solid rgba(244,168,58,.2);border-radius:12px;padding:12px;margin-bottom:8px">'
+            + '<div style="font-size:14px;font-weight:800;color:#F4A83A">' + (g.lot_titre || g.lot_nom || 'Lot') + '</div>'
+            + '<div style="font-size:18px;font-weight:800;color:#fff;margin:6px 0;letter-spacing:.05em">' + (g.code || '—') + '</div>'
+            + '<div style="font-size:11px;color:#9A8FBF">' + (g.condition || '') + '</div>'
+            + '</div>';
+        }
+        gEl.innerHTML = html;
+      }).catch(function(){});
   } else {
-    if(barEl) barEl.style.width = '100%';
-    if(hintEl) hintEl.textContent = 'Ligue max atteinte !';
+    var gEl0 = el('profilGains');
+    if(gEl0) gEl0.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:12px">Connexion requise pour voir les gains</div>';
   }
-}
 
-function profilLoadStats(pseudo) {
-  if(!pseudo || typeof SB_ENABLED === 'undefined' || !SB_ENABLED) return;
-  var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-  fetch(SUPABASE_URL + '/rest/v1/sessions?pseudo=eq.' + encodeURIComponent(pseudo) + '&select=score_pct,streak&order=ts.desc&limit=200', {headers: hdrs})
-    .then(function(r){ return r.ok ? r.json() : []; })
-    .then(function(rows) {
-      if(!Array.isArray(rows)) return;
-      var rdEl = document.getElementById('profilStatsRounds');
-      if(rdEl) rdEl.textContent = rows.length;
-      var maxStreak = 0, sum = 0, n = 0;
-      for(var i=0;i<rows.length;i++){
-        var r = rows[i];
-        if(typeof r.streak === 'number' && r.streak > maxStreak) maxStreak = r.streak;
-        if(typeof r.score_pct === 'number') { sum += r.score_pct; n++; }
-      }
-      var stEl = document.getElementById('profilStatsStreak');
-      if(stEl) stEl.textContent = maxStreak;
-      var avg = n > 0 ? Math.round(sum / n) : 0;
-      var avgEl = document.getElementById('profilStatsAvg');
-      if(avgEl) avgEl.textContent = avg;
-    })
-    .catch(function(){});
-}
-
-function profilLoadGains(pseudo) {
-  var container = document.getElementById('profilGains');
-  if(!container) return;
-  if(!pseudo || typeof SB_ENABLED === 'undefined' || !SB_ENABLED) {
-    container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">Aucun gain</div>';
-    return;
-  }
-  var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-  fetch(SUPABASE_URL + '/rest/v1/gains?pseudo=eq.' + encodeURIComponent(pseudo) + '&order=ts.desc&limit=20', {headers: hdrs})
-    .then(function(r){ return r.ok ? r.json() : []; })
-    .then(function(rows) {
-      if(!Array.isArray(rows) || rows.length === 0) {
-        container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">Aucun gain pour l\'instant</div>';
-        return;
-      }
-      var html = '';
-      for(var i=0;i<rows.length;i++) {
-        var g = rows[i];
-        var emoji = g.lot_emoji || g.emoji || '🎁';
-        var nom = g.lot_nom || g.lot_titre || 'Lot';
-        var code = g.code || '';
-        var dt = g.ts ? new Date(g.ts).toLocaleDateString('fr') : '';
-        html += '<div style="background:rgba(176,108,228,.08);border:1px solid rgba(176,108,228,.2);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px">'
-          + '<div style="font-size:26px;flex-shrink:0">' + emoji + '</div>'
-          + '<div style="flex:1;min-width:0">'
-          +   '<div style="font-size:14px;font-weight:800;color:#fff">' + nom + '</div>'
-          +   '<div style="font-size:11px;color:#9A8FBF;margin-top:2px">' + (code ? 'Code : <span style="color:#F4A83A;font-weight:800">' + code + '</span>' : '') + (dt ? ' · ' + dt : '') + '</div>'
-          + '</div>'
-          + '</div>';
-      }
-      container.innerHTML = html;
-    })
-    .catch(function() {
-      container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">Impossible de charger les gains</div>';
-    });
-}
-
-function profilSetTab(tab) {
-  PROFIL_TAB = tab;
-  var tabs = ['crees','en_cours','termines'];
-  for(var t=0;t<tabs.length;t++) {
-    var k = tabs[t];
-    var btn = document.getElementById('profTab_' + k);
-    if(!btn) continue;
-    var active = (k === tab);
-    btn.style.background = active ? 'rgba(176,108,228,.25)' : 'rgba(255,255,255,.04)';
-    btn.style.borderColor = active ? 'rgba(176,108,228,.4)' : 'rgba(255,255,255,.08)';
-    btn.style.color = active ? '#fff' : '#9A8FBF';
-  }
-  var container = document.getElementById('profilDefisContent');
-  if(!container) return;
-  var myDefis = [];
-  try { if(typeof dfGetMyDefis === 'function') myDefis = dfGetMyDefis(); } catch(e){}
-  var items = [];
-  if(tab === 'crees') items = myDefis.filter(function(d){ return d.role === 'createur'; });
-  else if(tab === 'en_cours') items = myDefis.filter(function(d){ return (d.status === 'waiting' || d.status === 'en_cours') && !d.resultat; });
-  else items = myDefis.filter(function(d){ return d.status === 'termine' || d.resultat; });
-
-  if(items.length === 0) {
-    var empty = tab === 'crees' ? 'Aucune room créée' : tab === 'en_cours' ? 'Aucun défi en cours' : 'Aucun défi terminé';
-    container.innerHTML = '<div style="text-align:center;color:#9A8FBF;font-size:13px;padding:16px">' + empty + '</div>';
-    return;
-  }
-  var html = '';
-  for(var i=0;i<items.length;i++){
-    var d = items[i];
-    var name = (d.name || d.id || '?');
-    var mise = (d.mise || 0);
-    var theme = (d.theme || '—');
-    var statColor = '#9A8FBF', statLabel = '—';
-    if(d.resultat === 'gagne') { statColor = '#22C9A0'; statLabel = '🏆 +' + (d.gain || (mise*2)) + ' pts'; }
-    else if(d.resultat === 'perdu') { statColor = '#EF4444'; statLabel = '😅 −' + mise + ' pts'; }
-    else if(d.status === 'waiting') { statColor = '#F4A83A'; statLabel = '⏳ En attente'; }
-    else if(d.status === 'en_cours') { statColor = '#B06CE4'; statLabel = '⚔️ En cours'; }
-    else if(d.status === 'termine') { statColor = '#22C9A0'; statLabel = '✅ Terminé'; }
-    html += '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;margin-bottom:8px">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">'
-      +   '<div style="font-size:14px;font-weight:800;color:#fff;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + name + '</div>'
-      +   '<span style="font-size:10px;font-weight:800;color:' + statColor + ';background:rgba(255,255,255,.05);padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0">' + statLabel + '</span>'
-      + '</div>'
-      + '<div style="font-size:11px;color:#9A8FBF;margin-top:4px">Mise : ' + mise + ' pts · ' + theme + '</div>'
-      + '</div>';
-  }
-  container.innerHTML = html;
-}
-
-function profilSave() {
-  var prenom = (document.getElementById('profilPrenom') || {value:''}).value.trim();
-  var nom = (document.getElementById('profilNom') || {value:''}).value.trim();
-  var ecole = (document.getElementById('profilEcole') || {value:''}).value.trim();
-  var classe = (document.getElementById('profilClasse') || {value:''}).value.trim();
-  if(typeof userProfile === 'undefined' || !userProfile) userProfile = {};
-  if(prenom) userProfile.prenom = prenom;
-  if(nom) userProfile.nom = nom;
-  if(ecole) userProfile.ecole = ecole;
-  if(classe) userProfile.classe = classe;
-  try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
-  // Refresh header
-  var ecH = document.getElementById('profilEcoleH');
-  if(ecH) ecH.textContent = ecole || '—';
-  var pseudo = userProfile.pseudo || userProfile.prenom || '';
-  if(pseudo && typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
-    var hdrs = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
-    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
-      method:'PATCH', headers:hdrs,
-      body:JSON.stringify({prenom:prenom, nom:nom, ecole:ecole, classe:classe, updated_at:new Date().toISOString()})
-    }).catch(function(){});
-  }
-  profilToast('✅ Profil enregistré !', '#22C9A0');
-}
-
-function profilCopyLink() {
-  var liEl = document.getElementById('profilLien');
-  if(!liEl) return;
-  var txt = liEl.textContent || '';
+  // ── Défis gagnés (local localStorage via dfGetMyDefis) ──
   try {
-    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt);
-    else { var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
+    if(typeof dfGetMyDefis === 'function'){
+      var myDefis = dfGetMyDefis();
+      var won = myDefis.filter(function(d){ return d.resultat === 'gagne'; }).length;
+      if(el('profilDefisGagnes')) el('profilDefisGagnes').textContent = won;
+    }
   } catch(e){}
-  var btn = document.getElementById('profilCopyBtn');
-  if(btn) { btn.textContent = '✅ Copié'; setTimeout(function(){ btn.textContent = '🔗 Copier'; }, 2000); }
-}
-
-function profilShareWA() {
-  var liEl = document.getElementById('profilLien');
-  var pseudo = (typeof userProfile !== 'undefined' && userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
-  var link = liEl ? liEl.textContent : '';
-  var msg = '🎁 ' + pseudo + ' te parraine sur Flowin — révise et gagne des points : ' + link;
-  try { window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); } catch(e){}
-}
-
-function profilToast(text, color) {
-  var t = document.createElement('div');
-  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:'+(color||'#22C9A0')+';color:#fff;padding:10px 20px;border-radius:20px;font-weight:800;font-size:14px;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.4)';
-  t.textContent = text;
-  document.body.appendChild(t);
-  setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2500);
 }
 
 
