@@ -8575,7 +8575,7 @@ function showGlobalUserMenu(p){
 function hideGlobalUserMenu(){}
 
 function openProfilMenu(){
-  // Supprimer menu existant
+  // Toggle : si menu déjà ouvert, le fermer
   var old = document.getElementById('flowin-pmenu');
   if(old){ old.remove(); return; }
   var p = userProfile || {};
@@ -8584,26 +8584,50 @@ function openProfilMenu(){
   menu.style.cssText = 'position:fixed;top:64px;right:10px;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999';
   var pseudo = p.pseudo||p.prenom||'';
   var ecole  = p.ecole||'';
-  menu.innerHTML =
-    '<div style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px">'
-    + '<div style="font-size:14px;font-weight:800;color:#fff">'+pseudo+'</div>'
-    + '<div style="font-size:11px;color:#9A8FBF;margin-top:2px">'+ecole+'</div>'
-    + '</div>'
-    + '<button onclick="switchMode(&quot;app&quot;);document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>'
-    + '<button onclick="switchMode(&quot;stats&quot;);document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>'
-    + '<button onclick="openShare();document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>'
-    + '<button onclick="switchMode(&quot;profil&quot;);document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">👤 Mon profil</button>'
-    + '<button onclick="logoutUser();document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🚪 Déconnexion</button>';
+  // Header (texte sécurisé : pseudo/ecole peuvent contenir caractères spéciaux)
+  var header = document.createElement('div');
+  header.style.cssText = 'padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
+  var hPseudo = document.createElement('div');
+  hPseudo.style.cssText = 'font-size:14px;font-weight:800;color:#fff';
+  hPseudo.textContent = pseudo;
+  var hEcole = document.createElement('div');
+  hEcole.style.cssText = 'font-size:11px;color:#9A8FBF;margin-top:2px';
+  hEcole.textContent = ecole;
+  header.appendChild(hPseudo);
+  header.appendChild(hEcole);
+  menu.appendChild(header);
+  // Items : addEventListener + stopPropagation pour éviter toute race avec le close-on-outside
+  var items = [
+    {label:'📖 Mes fiches',     action:function(){ switchMode('app'); }},
+    {label:'📊 Ma progression', action:function(){ switchMode('stats'); }},
+    {label:'🎁 Parrainer',      action:function(){ openShare(); }},
+    {label:'👤 Mon profil',     action:function(){ switchMode('profil'); }},
+    {label:'🚪 Déconnexion',    action:function(){ logoutUser(); }, danger:true}
+  ];
+  items.forEach(function(it){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = it.label;
+    btn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:'+(it.danger?'#EF4444':'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      e.preventDefault();
+      menu.remove();
+      try { it.action(); } catch(err){ console.error('[profilMenu]', err); }
+    });
+    menu.appendChild(btn);
+  });
   document.body.appendChild(menu);
-  // Fermer si clic hors menu
+  // Fermer si clic hors menu (50ms pour laisser passer le click qui a ouvert le menu)
   setTimeout(function(){
-    document.addEventListener('click', function handler(e){
-      if(!menu.contains(e.target)){
-        menu.remove();
+    function handler(e){
+      if(!document.body.contains(menu) || !menu.contains(e.target)){
+        if(document.body.contains(menu)) menu.remove();
         document.removeEventListener('click', handler);
       }
-    });
-  }, 10);
+    }
+    document.addEventListener('click', handler);
+  }, 50);
 }
 
 </script>
