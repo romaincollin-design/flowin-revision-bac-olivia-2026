@@ -8551,7 +8551,22 @@ function openProfilMenu(){
     var btn=document.createElement('button');
     btn.style.cssText='width:100%;padding:9px 12px;background:transparent;border:none;color:'+(item.color||'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px';
     btn.textContent=item.icon+' '+item.label;
-    btn.addEventListener('click',function(){menu.remove();item.fn();});
+    btn.addEventListener('click',function(){
+      // ── DIAGNOSTIC PROD (à retirer après debug) ──
+      var dbg=document.createElement('div');
+      dbg.style.cssText='position:fixed;top:50%;left:10px;right:10px;background:#22C9A0;color:#fff;padding:18px;border-radius:14px;font-weight:800;font-size:15px;z-index:99999;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5)';
+      dbg.textContent='✓ CLICK reçu : '+item.label;
+      document.body.appendChild(dbg);
+      setTimeout(function(){if(dbg.parentNode)dbg.remove();},2500);
+      menu.remove();
+      try{ item.fn(); }catch(err){
+        var er=document.createElement('div');
+        er.style.cssText='position:fixed;top:60%;left:10px;right:10px;background:#EF4444;color:#fff;padding:18px;border-radius:14px;font-weight:800;font-size:13px;z-index:99999;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);word-break:break-word';
+        er.textContent='❌ ERR '+item.label+' : '+(err && err.message ? err.message : String(err));
+        document.body.appendChild(er);
+        setTimeout(function(){if(er.parentNode)er.remove();},6000);
+      }
+    });
     menu.appendChild(btn);
   });
   document.body.appendChild(menu);
