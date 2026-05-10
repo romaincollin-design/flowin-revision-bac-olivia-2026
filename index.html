@@ -7004,20 +7004,43 @@ function supabaseUpsert(table, payload) {
     fetch(SUPABASE_URL+'/rest/v1/'+table,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(payload)}).catch(function(){});
   }catch(e){}
 }
+// Retire d'un payload une colonne signalée manquante par PostgREST (PGRST204).
+function _stripMissingColumn(payload, errMsg) {
+  if(!errMsg) return null;
+  var m = errMsg.match(/'([^']+)' column/);
+  if(!m || !m[1] || !(m[1] in payload)) return null;
+  var clone = Object.assign({}, payload);
+  delete clone[m[1]];
+  return clone;
+}
 function supabaseInsert(table, payload) {
   if(!SB_ENABLED) return;
-  try {
-    fetch(SUPABASE_URL + '/rest/v1/' + table, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify(payload)
-    }).catch(function() {});
-  } catch(e) {}
+  function attempt(p, depth) {
+    if(depth > 6) return;
+    try {
+      fetch(SUPABASE_URL + '/rest/v1/' + table, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(p)
+      }).then(function(r) {
+        if(r.ok) return;
+        if(r.status === 400) {
+          return r.json().then(function(err) {
+            if(err && err.code === 'PGRST204') {
+              var stripped = _stripMissingColumn(p, err.message);
+              if(stripped) attempt(stripped, depth + 1);
+            }
+          }).catch(function(){});
+        }
+      }).catch(function(){});
+    } catch(e) {}
+  }
+  attempt(payload, 0);
 }
 
 // Sauvegarde profil joueur (à l'inscription)
