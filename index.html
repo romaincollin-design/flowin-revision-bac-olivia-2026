@@ -35,8 +35,8 @@
 body{font-family:'Calibri','Trebuchet MS',Arial,sans-serif;background:#0F0E1A;min-height:100vh}
 
 /* ── VIEWS ── */
-.view{display:none;background:#0F0E1A}
-.view.active{display:block;background:#0F0E1A}
+.view{display:none!important;background:#0F0E1A}
+.view.active{display:block;min-height:100vh;background:#0F0E1A;overflow-x:hidden}
 
 /* ═══════════════════════════════════════════════
    LANDING
@@ -1000,7 +1000,7 @@ window.addEventListener('unhandledrejection', function(e){
   </div>
 </div>
 
-<div class="view" id="v-welcome">
+<div class="view active" id="v-welcome">
   <div class="landing" style="overflow-y:auto">
     <div class="grid-bg"></div>
     <div class="orb" style="width:500px;height:500px;background:rgba(176,108,228,.18);top:-120px;left:-150px"></div>
@@ -1109,7 +1109,7 @@ window.addEventListener('unhandledrejection', function(e){
 </div>
 
 <!-- ═══ LANDING ═══ -->
-<div class="view active" id="v-landing">
+<div class="view" id="v-landing">
   <div class="landing">
     <div class="grid-bg"></div>
     <div class="orb" style="width:500px;height:500px;background:rgba(176,108,228,.15);top:-120px;left:-150px"></div>
