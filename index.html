@@ -698,9 +698,6 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 .q-rchip { font-size:13px !important; padding:7px 14px !important; }
 
 /* Stats dashboard */
-#userMenu.open{display:block !important}
-#userMenu-backdrop{position:fixed;inset:0;z-index:9998;background:transparent}
-#userMenuBtn:hover{background:rgba(255,255,255,.14) !important}
 @keyframes palierPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 
 /* ═══ DEFIS MULTI-JOUEURS ═══ */
@@ -989,13 +986,6 @@ window.addEventListener('unhandledrejection', function(e){
     <!-- Nav avec menu user -->
     <nav style="position:relative;z-index:100">
       <div class="lnav-logo">Flowin</div>
-      <div style="position:relative">
-        <button onclick="toggleUserMenu()" id="userMenuBtn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center" title="Mon compte">
-          <span id="welcomeAvatar">OL</span>
-        </button>
-        <div id="userMenu" style="display:none;position:absolute;top:46px;right:0;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:210px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999">
-        </div>
-      </div>
     </nav>
 
     <!-- Hero personnalisé -->
@@ -3667,10 +3657,7 @@ function populateWelcomeBack(){
   const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   setText('welcomeGreeting', greet);
   setText('welcomeName', prenom + ' !');
-  setText('welcomeAvatar', initials);
 
-  setText('welcomeNameMenu', prenom);
-  setText('welcomeEmailMenu', userProfile.email || '');
 
   // Stats — toujours depuis QS (lui-même chargé depuis Supabase)
   let pts    = (QS && QS.totalScore) || 0;
@@ -3697,48 +3684,7 @@ function populateWelcomeBack(){
 }
 
 
-function toggleUserMenu() {
-  var menu = document.getElementById('userMenu');
-  var isOpen = menu.classList.contains('open');
-  function closeMenu() {
-    menu.classList.remove('open');
-    var bd = document.getElementById('userMenu-backdrop');
-    if(bd) bd.remove();
-  }
-  if(isOpen) { closeMenu(); return; }
-  // Créer le menu dynamiquement — addEventListener uniquement, zéro eval/onclick=
-  menu.innerHTML = '';
-  var nameDiv = document.createElement('div');
-  nameDiv.style.cssText = 'padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
-  nameDiv.innerHTML = '<div style="font-size:14px;font-weight:700;color:#fff">' + (userProfile.pseudo || userProfile.prenom || 'Utilisateur') + '</div><div style="font-size:11px;color:rgba(255,255,255,.5)">' + (userProfile.email || '') + '</div>';
-  menu.appendChild(nameDiv);
-  var items = [
-    {text: '📖 Mes fiches',    fn: function(){ switchMode('app'); }},
-    {text: '📊 Ma progression',fn: function(){ switchMode('stats'); }},
-    {text: '🎁 Parrainer',     fn: function(){ openShare(); }},
-    {text: '👤 Mon profil',    fn: function(){ switchMode('profil'); }}
-  ];
-  items.forEach(function(item) {
-    var b = document.createElement('button');
-    b.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
-    b.textContent = item.text;
-    b.addEventListener('click', function(){ closeMenu(); try { item.fn(); } catch(e){ console.error('[menu]', e); } });
-    menu.appendChild(b);
-  });
-  var sep = document.createElement('div');
-  sep.style.cssText = 'height:1px;background:rgba(255,255,255,.08);margin:4px 0';
-  menu.appendChild(sep);
-  var logoutBtn = document.createElement('button');
-  logoutBtn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
-  logoutBtn.textContent = '🚪 Déconnexion';
-  logoutBtn.addEventListener('click', function(){ logoutUser(); });
-  menu.appendChild(logoutBtn);
-  menu.classList.add('open');
-  var bd = document.createElement('div');
-  bd.id = 'userMenu-backdrop';
-  bd.addEventListener('click', function(){ closeMenu(); });
-  document.body.appendChild(bd);
-}
+
 
 function logoutUser(){
   if(!confirm('Te déconnecter de Flowin ? Tes scores resteront sauvegardés sur ce navigateur.')) return;
@@ -3750,17 +3696,9 @@ function logoutUser(){
   // Retour à la landing
   document.getElementById('v-welcome').classList.remove('active');
   document.getElementById('v-landing').classList.add('active');
-  document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove();
 }
 
-// Fermer le menu user quand on clique ailleurs
-document.addEventListener('click', function(e){
-  const menu = document.getElementById('userMenu');
-  const btn = document.getElementById('userMenuBtn');
-  if(menu && menu.classList.contains('open') && btn && !btn.contains(e.target) && !menu.contains(e.target)){
-    menu.classList.remove('open');
-  }
-});
+
 
 // Leaderboard démo
 const PLAYERS = [
@@ -8564,7 +8502,6 @@ function showGlobalUserMenu(p){
     avatar.textContent = name.slice(0,2).toUpperCase();
   }
 }
-function hideGlobalUserMenu(){}
 
 
 
