@@ -2899,7 +2899,13 @@ function switchMode(m){
   const target = document.getElementById('v-'+m);
   if(!target) return;
   target.classList.add('active');
-  if(m==='app') renderThemeList();
+  if(m==='app'){
+    renderThemeList();
+    var _p = (typeof userProfile !== 'undefined' && userProfile) ? userProfile : {};
+    var _ini = ((_p.prenom||'').charAt(0) + (_p.nom||'').charAt(0)).toUpperCase() || (_p.pseudo||'?').charAt(0).toUpperCase() || '?';
+    var _ava = document.getElementById('appProfilAvatar');
+    if(_ava) _ava.textContent = _ini;
+  }
   if(m==='stats'){
     renderStats();
     // Recharger classement + lots en parallèle depuis Supabase
