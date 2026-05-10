@@ -2951,6 +2951,7 @@ function submitFlowinSignup(){
   // → Google Sheets (inscription)
   saveProfileToSheets(userProfile);
   if(typeof showGlobalUserMenu==='function') showGlobalUserMenu(userProfile);
+  showToast('Bienvenue ' + (userProfile.pseudo || userProfile.prenom) + ' ! Ton profil est créé.', 'success');
 
   // Si invitation reçue avant inscription
   // Nettoyer le banner d'invitation s'il est affiché
@@ -5404,7 +5405,19 @@ function dfGetBotRooms(){
   return DF_BOT_ROOMS.filter(function(r,i){if(h>=0&&h<6)return i<1;if(h<8)return i<2;return true;});
 }
 
+async function dfCleanZombieRooms(){
+  if(!SB_ENABLED) return;
+  try {
+    var cutoff = new Date(Date.now() - 7200000).toISOString();
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'};
+    fetch(SUPABASE_URL + '/rest/v1/defis?status=eq.waiting&ts=lt.' + encodeURIComponent(cutoff), {
+      method: 'PATCH', headers: hdrs,
+      body: JSON.stringify({status: 'annule'})
+    }).catch(function(){});
+  } catch(e){}
+}
 async function dfFetchRooms(){
+  dfCleanZombieRooms();
   var list = document.getElementById('dfRoomsList');
   if(list) list.innerHTML = '<div style="text-align:center;padding:24px 16px;color:rgba(255,255,255,.3);font-size:13px">Chargement…</div>';
   try{
@@ -7031,7 +7044,8 @@ function supabaseInsert(table, payload) {
 
 // Sauvegarde profil joueur (à l'inscription)
 function saveProfileToSheets(profile) {
-  supabaseInsert('joueurs', {
+  if(!SB_ENABLED) return;
+  var payload = {
     ts: new Date().toISOString(),
     pseudo:  profile.pseudo  || '',
     prenom:  profile.prenom  || '',
@@ -7039,11 +7053,22 @@ function saveProfileToSheets(profile) {
     email:   profile.email   || '',
     ecole:   profile.ecole   || '',
     classe:  profile.classe  || '',
-    genre:   document.querySelector('.g-btn.sel')?.textContent?.trim() || '',
+    genre:   (document.querySelector('.g-btn.sel') ? document.querySelector('.g-btn.sel').textContent.trim() : ''),
     pts_total: 0,
     streak: 0,
-    ref:     (() => { try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
-  });
+    ref: (function(){ try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; } })()
+  };
+  // UPSERT sur pseudo — évite les doublons si l'élève se réinscrit
+  fetch(SUPABASE_URL + '/rest/v1/joueurs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'resolution=ignore-duplicates,return=minimal'
+    },
+    body: JSON.stringify(payload)
+  }).catch(function(){});
 }
 
 // Sauvegarde session quiz (à la fin de chaque round)
