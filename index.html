@@ -7195,22 +7195,97 @@ function renderGainsSection() {
 }
 
 function dfSetMode(mode) {
-  DF_IS_PRIVATE = (mode === 'priv');  // Synchroniser la variable globale
   var ba = document.getElementById('dfModeAll');
   var bp = document.getElementById('dfModePriv');
-  var msg = document.getElementById('dfPrivMsg');
-  var list = document.getElementById('dfPlayersList');
+  var playersList = document.getElementById('dfPlayersList');
+  var roomsLbl = document.getElementById('dfRoomsLbl');
   if (mode === 'priv') {
     if (ba) ba.classList.remove('on');
     if (bp) bp.classList.add('on');
-    if (msg) msg.style.display = 'block';
-    if (list) list.style.display = 'none';
+    if (playersList) playersList.style.display = 'none';
+    if (roomsLbl) roomsLbl.textContent = 'Mes rooms privees';
+    dfLoadPrivateRooms();
   } else {
     if (ba) ba.classList.add('on');
     if (bp) bp.classList.remove('on');
-    if (msg) msg.style.display = 'none';
-    if (list) { list.style.display = 'block'; dfRenderPlayers(); }
+    if (playersList) { playersList.style.display = 'block'; dfRenderPlayers(); }
+    if (roomsLbl) roomsLbl.textContent = 'Rooms ouvertes';
+    dfFetchRooms();
   }
+}
+
+async function dfLoadPrivateRooms() {
+  var list = document.getElementById('dfRoomsList');
+  if (list) list.innerHTML = '<div style="text-align:center;padding:20px;color:#9A8FBF;font-size:13px">Chargement...</div>';
+  var myName = userProfile.pseudo || userProfile.prenom || '';
+  if (!myName) {
+    if (list) list.innerHTML = '<div style="text-align:center;padding:20px;color:#9A8FBF;font-size:13px">Connecte-toi pour voir tes rooms privees</div>';
+    return;
+  }
+  var privateRooms = DF_ROOMS.filter(function(r) {
+    return (r.isPrivate || r.is_private) && r.status !== 'termine' && r.status !== 'annule';
+  });
+  if (SB_ENABLED) {
+    try {
+      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      var cutoff = new Date(Date.now() - 7200000).toISOString();
+      var url = SUPABASE_URL + '/rest/v1/defis?is_private=eq.true&createur=eq.'
+        + encodeURIComponent(myName) + '&status=eq.waiting&ts=gte.'
+        + encodeURIComponent(cutoff) + '&select=*&order=ts.desc&limit=10';
+      var r = await fetch(url, {headers: hdrs});
+      if (r.ok) {
+        var rows = await r.json();
+        if (Array.isArray(rows)) {
+          rows.forEach(function(d) {
+            if (!privateRooms.find(function(pr) { return pr.id === d.id; })) {
+              privateRooms.push({
+                id: d.id,
+                name: d.nom || ('Defi prive de ' + (d.createur || '?')),
+                host: {name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF'},
+                mise: d.mise || 0, theme: d.theme || 'roulette', cap: d.nb_joueurs || 2,
+                players: [{name: d.createur || '?', ava: (d.createur || '?').charAt(0).toUpperCase(), color: '#7B4FBF', isHost: true}],
+                isPrivate: true, is_private: true, isMine: true, status: d.status || 'waiting', ts: d.ts || ''
+              });
+            }
+          });
+        }
+      }
+    } catch(e) { console.error('[dfLoadPrivateRooms]', e); }
+  }
+  if (!list) return;
+  if (privateRooms.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:30px 16px;color:#9A8FBF;font-size:13px">'
+      + '<div style="font-size:32px;margin-bottom:10px">&#128274;</div>'
+      + '<div style="font-weight:700;margin-bottom:6px">Aucune room privee</div>'
+      + '<div>Cree une room en mode prive ou rejoins-en une via un lien.</div>'
+      + '</div>';
+    return;
+  }
+  list.innerHTML = '';
+  privateRooms.forEach(function(r) {
+    var cagnotte = r.mise * 2;
+    var themeLbl = DF_THEME_LABELS[r.theme] || r.theme;
+    var card = document.createElement('div');
+    card.className = 'df-room';
+    card.style.cssText = 'border:1.5px solid rgba(244,168,58,.3);background:rgba(244,168,58,.05);cursor:pointer';
+    var nameStr = '&#128274; ' + (r.name || 'Room privee');
+    if (r.isMine) nameStr += ' <span style="color:#22C9A0;font-size:11px">(toi)</span>';
+    card.innerHTML = '<div class="df-room-top">'
+      + '<div class="df-room-host-ava" style="background:linear-gradient(135deg,#F4A83A,#e8850a)">' + r.host.ava + '</div>'
+      + '<div class="df-room-host-info">'
+      + '<div class="df-room-host-name">' + nameStr + '</div>'
+      + '<div class="df-room-host-sub">' + themeLbl + ' - mise ' + r.mise + ' pts</div>'
+      + '</div>'
+      + '<div class="df-room-mise" style="background:rgba(244,168,58,.2);color:#F4A83A">&#9889;' + r.mise + '</div>'
+      + '</div>'
+      + '<div class="df-room-meta">'
+      + '<span class="df-chip" style="background:rgba(244,168,58,.15);color:#F4A83A">&#128274; Privee</span>'
+      + '<span class="df-chip">' + themeLbl + '</span>'
+      + '<span class="df-chip">Cagnotte: ' + cagnotte + ' pts</span>'
+      + '</div>';
+    (function(rid){ card.addEventListener('click', function(){ dfJoinRoom(rid); }); })(r.id);
+    list.appendChild(card);
+  });
 }
 </script>
 
