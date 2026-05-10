@@ -2885,10 +2885,9 @@ let curTheme=null,curTab='rev',curFilter='all';
 // ═══ MODE SWITCH ═══
 function switchMode(m){
   if(m==='inscription'){
-    try{
-      const saved=localStorage.getItem('flowin_profile');
-      if(saved){const p=JSON.parse(saved);userProfile=p;userInscribed=true;QS.playerName=p.pseudo||p.prenom;const me=PLAYERS.find(pl=>pl.me);if(me)me.name=QS.playerName;const hg=document.querySelector('.app-hero-greet');if(hg)hg.textContent='👋 Salut '+(p.pseudo||p.prenom)+' !';m='app';logConnexion(p.pseudo||p.prenom);}
-    }catch(e){}
+    // NE PAS rediriger vers 'app' même si un profil existe
+    // Un élève sur device partagé ou un invité doit pouvoir créer son propre profil
+    // La redirection automatique était la cause du bug "lien invitation → compte Olivia"
   }
   if(m==='pwa'){try{if(localStorage.getItem('pwa_installed'))m='app';}catch(e){}}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -2955,6 +2954,10 @@ function submitFlowinSignup(){
   if(typeof showGlobalUserMenu==='function') showGlobalUserMenu(userProfile);
 
   // Si invitation reçue avant inscription
+  // Nettoyer le banner d'invitation s'il est affiché
+  var invBanner = document.getElementById('roomInviteBanner');
+  if(invBanner) invBanner.remove();
+
   var pendingRoom = null;
   try { pendingRoom = localStorage.getItem('flowin_pending_room'); } catch(e){}
   if(pendingRoom) {
@@ -5028,7 +5031,8 @@ endRound = function() {
 
 
 
-// ── PWA MANIFEST (inline) ──
+// ── PWA MANIFEST (data URI - compatible GitHub Pages) ──
+// Blob URL bloque beforeinstallprompt sur Chrome. Data URI fonctionne.
 (function() {
   var manifest = {
     name: 'Flowin',
@@ -5044,11 +5048,14 @@ endRound = function() {
       type: 'image/svg+xml'
     }]
   };
-  var blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  var url = URL.createObjectURL(blob);
-  var link = document.createElement('link');
-  link.rel = 'manifest'; link.href = url;
-  document.head.appendChild(link);
+  // Vérifier qu'un manifest n'est pas déjà présent (ex: statique GitHub Pages)
+  if(!document.querySelector('link[rel="manifest"]')) {
+    var encoded = encodeURIComponent(JSON.stringify(manifest));
+    var link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = 'data:application/manifest+json,' + encoded;
+    document.head.appendChild(link);
+  }
 })();
 
 // ═══ SHARE & QR ═══
