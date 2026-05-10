@@ -2901,10 +2901,7 @@ function switchMode(m){
   target.classList.add('active');
   if(m==='app'){
     renderThemeList();
-    var _p = (typeof userProfile !== 'undefined' && userProfile) ? userProfile : {};
-    var _ini = ((_p.prenom||'').charAt(0) + (_p.nom||'').charAt(0)).toUpperCase() || (_p.pseudo||'?').charAt(0).toUpperCase() || '?';
-    var _ava = document.getElementById('appProfilAvatar');
-    if(_ava) _ava.textContent = _ini;
+    if(typeof updateAppProfilAvatar === 'function') updateAppProfilAvatar();
   }
   if(m==='stats'){
     renderStats();
@@ -3673,6 +3670,7 @@ function populateWelcomeBack(){
   setText('welcomeName', prenom + ' !');
   setText('welcomeAvatar', initials);
   setText('appProfilAvatar', initials);
+  if(typeof updateAppProfilAvatar === 'function') updateAppProfilAvatar();
   setText('welcomeNameMenu', prenom);
   setText('welcomeEmailMenu', userProfile.email || '');
 
@@ -8571,13 +8569,20 @@ function showGlobalUserMenu(p){
 function hideGlobalUserMenu(){}
 
 // ── Bouton profil header v-app ──
+function updateAppProfilAvatar(){
+  var p = (typeof userProfile !== 'undefined' && userProfile) ? userProfile : {};
+  var ini = ((p.prenom||'').charAt(0) + (p.nom||'').charAt(0)).toUpperCase()
+         || (p.pseudo||'').charAt(0).toUpperCase()
+         || '?';
+  var ava = document.getElementById('appProfilAvatar');
+  if(ava) ava.textContent = ini;
+}
 (function(){
   function bindAppProfil(){
     var btn = document.getElementById('appProfilBtn');
     if(!btn) return;
-    var clone = btn.cloneNode(true);
-    btn.parentNode.replaceChild(clone, btn);
-    clone.addEventListener('click', function(){ switchMode('profil'); });
+    btn.addEventListener('click', function(){ switchMode('profil'); });
+    updateAppProfilAvatar();
   }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', bindAppProfil);
