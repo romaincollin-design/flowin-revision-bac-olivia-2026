@@ -5342,10 +5342,13 @@ function dfGetBalance(){
     if(isNaN(parsed) || parsed === 0) {
       var init = (QS && QS.totalScore > 0) ? QS.totalScore : 0;
       if(init > 0) localStorage.setItem('flowin_balance', String(init));
-      return init;
+      parsed = init;
     }
-    return Math.max(0, parsed);
-  } catch(e){ return 0; }
+    parsed = Math.max(0, parsed);
+    // Mode test : seuil min 500 pts si le solde tombe sous 50, pour ne pas bloquer la création/jointure de défis
+    if(parsed < 50) return 500;
+    return parsed;
+  } catch(e){ return 500; }
 }
 function dfSetBalance(v){
   var val = Math.max(0, Math.round(v));
