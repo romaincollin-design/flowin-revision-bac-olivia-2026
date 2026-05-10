@@ -2956,9 +2956,21 @@ function submitFlowinSignup(){
   if(invBanner) invBanner.remove();
 
   var pendingRoom = null;
-  try { pendingRoom = localStorage.getItem('flowin_pending_room'); } catch(e){}
+  try {
+    pendingRoom = localStorage.getItem('flowin_pending_room');
+    var pendingTs = parseInt(localStorage.getItem('flowin_pending_room_ts') || '0');
+    // TTL 2h — si plus vieux, on ignore
+    if(pendingRoom && (Date.now() - pendingTs) > 7200000) {
+      localStorage.removeItem('flowin_pending_room');
+      localStorage.removeItem('flowin_pending_room_ts');
+      pendingRoom = null;
+    }
+  } catch(e){}
   if(pendingRoom) {
-    try { localStorage.removeItem('flowin_pending_room'); } catch(e){}
+    try {
+      localStorage.removeItem('flowin_pending_room');
+      localStorage.removeItem('flowin_pending_room_ts');
+    } catch(e){}
     switchMode('defis');
     setTimeout(function(){ dfLoadThenJoin(pendingRoom); }, 600);
   } else {
@@ -3528,7 +3540,10 @@ async function loadPlayerStatsFromSupabase(pseudo) {
     var params = new URLSearchParams(window.location.search);
     var roomId = params.get('room');
     if(!roomId) return;
+    // Nettoyer l'URL pour éviter re-trigger au reload
+    try { window.history.replaceState(null, '', window.location.pathname); } catch(e){}
     localStorage.setItem('flowin_pending_room', roomId);
+    localStorage.setItem('flowin_pending_room_ts', Date.now().toString());
     function goToRoom() {
       var isInscrit = userProfile && (userProfile.pseudo || userProfile.prenom);
       if(isInscrit) {
