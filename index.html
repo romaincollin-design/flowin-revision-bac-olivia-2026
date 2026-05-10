@@ -8693,64 +8693,36 @@ function showGlobalUserMenu(p){
 function hideGlobalUserMenu(){}
 
 function openProfilMenu(){
-  // Toggle : si menu déjà ouvert, le fermer
   var old = document.getElementById('flowin-pmenu');
   if(old){ old.remove(); return; }
   var p = userProfile || {};
   var menu = document.createElement('div');
   menu.id = 'flowin-pmenu';
   menu.style.cssText = 'position:fixed;top:64px;right:10px;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999';
-  var pseudo = p.pseudo||p.prenom||'';
-  var ecole  = p.ecole||'';
-  // Header (texte sécurisé : pseudo/ecole peuvent contenir caractères spéciaux)
   var header = document.createElement('div');
   header.style.cssText = 'padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
-  var hPseudo = document.createElement('div');
-  hPseudo.style.cssText = 'font-size:14px;font-weight:800;color:#fff';
-  hPseudo.textContent = pseudo;
-  var hEcole = document.createElement('div');
-  hEcole.style.cssText = 'font-size:11px;color:#9A8FBF;margin-top:2px';
-  hEcole.textContent = ecole;
-  header.appendChild(hPseudo);
-  header.appendChild(hEcole);
+  header.innerHTML = '<div style="font-size:14px;font-weight:800;color:#fff">' + (p.pseudo||p.prenom||'') + '</div><div style="font-size:11px;color:#9A8FBF;margin-top:2px">' + (p.email||p.ecole||'') + '</div>';
   menu.appendChild(header);
-  // ── BOUTONS ──
-  // btn.onclick = fn (property assignment) plutôt que addEventListener :
-  // équivalent à l'attribut HTML inline onclick natif, supporté universellement
-  // par iOS Safari, Chrome Android, et tous les WebView. Pas de stopPropagation
-  // ni preventDefault : l'action s'exécute, puis le menu se retire.
-  function mkBtn(label, fn, danger){
+  var items = [
+    {icon:'📖', label:'Mes fiches', fn:function(){ switchMode('app'); }},
+    {icon:'📊', label:'Ma progression', fn:function(){ switchMode('stats'); }},
+    {icon:'🎁', label:'Parrainer', fn:function(){ openShare(); }},
+    {icon:'👤', label:'Mon profil', fn:function(){ switchMode('profil'); }},
+    {icon:'🚪', label:'Déconnexion', fn:function(){ logoutUser(); }, color:'#EF4444'}
+  ];
+  items.forEach(function(item){
     var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = label;
-    btn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:'+(danger?'#EF4444':'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
-    btn.onclick = function(){
-      try { fn(); } catch(err){ console.error('[profilMenu]', err); }
-      var m = document.getElementById('flowin-pmenu');
-      if(m && m.parentNode) m.parentNode.removeChild(m);
-    };
-    return btn;
-  }
-  menu.appendChild(mkBtn('📖 Mes fiches',     function(){ switchMode('app'); }));
-  menu.appendChild(mkBtn('📊 Ma progression', function(){ switchMode('stats'); }));
-  menu.appendChild(mkBtn('🎁 Parrainer',      function(){ openShare(); }));
-  menu.appendChild(mkBtn('👤 Mon profil',     function(){ switchMode('profil'); }));
-  menu.appendChild(mkBtn('🚪 Déconnexion',    function(){ logoutUser(); }, true));
+    btn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:'+(item.color||'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
+    btn.textContent = item.icon+' '+item.label;
+    btn.addEventListener('click', function(){ menu.remove(); item.fn(); });
+    menu.appendChild(btn);
+  });
   document.body.appendChild(menu);
-  // ── CLOSE-ON-OUTSIDE ──
-  // Pas de stopPropagation sur les boutons → le click bubble jusqu'au document.
-  // Le handler vérifie si la cible est INSIDE le menu encore présent dans le DOM ;
-  // sinon il ferme. Si le menu a déjà été retiré par un click bouton, !menu.parentNode
-  // suffit à cleanup le listener sans effet de bord.
   setTimeout(function(){
-    function docHandler(e){
-      if(!menu.parentNode){ document.removeEventListener('click', docHandler, true); return; }
-      if(menu.contains(e.target)) return; // clic dans le menu : on laisse passer
-      if(menu.parentNode) menu.parentNode.removeChild(menu);
-      document.removeEventListener('click', docHandler, true);
-    }
-    document.addEventListener('click', docHandler, true);
-  }, 100);
+    document.addEventListener('click', function handler(e){
+      if(!menu.contains(e.target)){ menu.remove(); document.removeEventListener('click', handler); }
+    });
+  }, 10);
 }
 
 </script>
