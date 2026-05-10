@@ -6393,7 +6393,34 @@ function dfConfirmStart(){
   var m = document.createElement('div');
   m.id = 'dfConfirmModal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
-  m.innerHTML = '<div style="background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center">'    + '<div style="font-size:36px;margin-bottom:12px">⚔️</div>'    + '<div style="font-weight:800;font-size:18px;color:#1E1048;margin-bottom:8px">Confirmer le defi</div>'    + '<div style="font-size:14px;color:#7A7AAA;margin-bottom:16px;line-height:1.5">Tu vas miser <b style=\"color:#F4A83A\">'+mise+' pts</b>.<br>Cagnotte totale : <b style=\"color:#7B4FBF\">'+cagnotte+' pts</b>.<br>Le meilleur score remporte tout.<br><span style=\"color:#EF4444;font-weight:700\">Si tu perds, tu perds ta mise.</span></div>'    + '<div style="display:flex;gap:10px">'    +   '<button onclick="document.getElementById(\'dfConfirmModal\').remove();" style="flex:1;background:#F3F4F6;color:#6B7280;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">Annuler</button>'    +   '<button onclick="document.getElementById(\'dfConfirmModal\').remove();dfStartGame();" style="flex:1;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer">Oui, je joue !</button>'    + '</div>'    + '</div>';
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center';
+  var ico = document.createElement('div');
+  ico.style.cssText = 'font-size:36px;margin-bottom:12px';
+  ico.textContent = '⚔️';
+  var ttl = document.createElement('div');
+  ttl.style.cssText = 'font-weight:800;font-size:18px;color:#1E1048;margin-bottom:8px';
+  ttl.textContent = 'Confirmer le défi';
+  var desc = document.createElement('div');
+  desc.style.cssText = 'font-size:14px;color:#7A7AAA;margin-bottom:16px;line-height:1.5';
+  desc.innerHTML = 'Tu vas miser <b style="color:#F4A83A">' + mise + ' pts</b>.<br>Cagnotte totale : <b style="color:#7B4FBF">' + cagnotte + ' pts</b>.<br>Le meilleur score remporte tout.<br><span style="color:#EF4444;font-weight:700">Si tu perds, tu perds ta mise.</span>';
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:10px';
+  var btnCancel = document.createElement('button');
+  btnCancel.style.cssText = 'flex:1;background:#F3F4F6;color:#6B7280;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer';
+  btnCancel.textContent = 'Annuler';
+  btnCancel.addEventListener('click', function(){ m.remove(); });
+  var btnGo = document.createElement('button');
+  btnGo.style.cssText = 'flex:1;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer';
+  btnGo.textContent = 'Oui, je joue !';
+  btnGo.addEventListener('click', function(){ m.remove(); dfStartGame(); });
+  row.appendChild(btnCancel);
+  row.appendChild(btnGo);
+  inner.appendChild(ico);
+  inner.appendChild(ttl);
+  inner.appendChild(desc);
+  inner.appendChild(row);
+  m.appendChild(inner);
   document.body.appendChild(m);
 }
 
