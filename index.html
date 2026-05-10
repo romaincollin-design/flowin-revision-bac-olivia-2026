@@ -1392,7 +1392,6 @@ window.addEventListener('unhandledrejection', function(e){
         <button class="quiz-nav-btn" onclick="openDefis()" style="background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff" title="Défis multi-joueurs">⚔️ Défis</button>
         <button class="prog-nav-btn" onclick="openShare()" title="Partager Flowin" id="shareNavBtn" style="font-size:17px">🔗</button>
         <button class="prog-nav-btn" onclick="switchMode('stats')" title="Ma progression" id="statsNavBtn">📊</button>
-        <button id="appProfilBtn" title="Mon profil" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span id="appProfilAvatar">?</span></button>
       </div>
     </div>
     <!-- LISTE -->
@@ -2901,7 +2900,7 @@ function switchMode(m){
   target.classList.add('active');
   if(m==='app'){
     renderThemeList();
-    if(typeof updateAppProfilAvatar === 'function') updateAppProfilAvatar();
+
   }
   if(m==='stats'){
     renderStats();
@@ -3669,8 +3668,7 @@ function populateWelcomeBack(){
   setText('welcomeGreeting', greet);
   setText('welcomeName', prenom + ' !');
   setText('welcomeAvatar', initials);
-  setText('appProfilAvatar', initials);
-  if(typeof updateAppProfilAvatar === 'function') updateAppProfilAvatar();
+
   setText('welcomeNameMenu', prenom);
   setText('welcomeEmailMenu', userProfile.email || '');
 
@@ -8568,28 +8566,7 @@ function showGlobalUserMenu(p){
 }
 function hideGlobalUserMenu(){}
 
-// ── Bouton profil header v-app ──
-function updateAppProfilAvatar(){
-  var p = (typeof userProfile !== 'undefined' && userProfile) ? userProfile : {};
-  var ini = ((p.prenom||'').charAt(0) + (p.nom||'').charAt(0)).toUpperCase()
-         || (p.pseudo||'').charAt(0).toUpperCase()
-         || '?';
-  var ava = document.getElementById('appProfilAvatar');
-  if(ava) ava.textContent = ini;
-}
-(function(){
-  function bindAppProfil(){
-    var btn = document.getElementById('appProfilBtn');
-    if(!btn) return;
-    btn.addEventListener('click', function(){ switchMode('profil'); });
-    updateAppProfilAvatar();
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', bindAppProfil);
-  } else {
-    bindAppProfil();
-  }
-})();
+
 
 
 </script>
