@@ -2878,6 +2878,21 @@ function switchMode(m){
     // NE PAS rediriger vers 'app' même si un profil existe
     // Un élève sur device partagé ou un invité doit pouvoir créer son propre profil
     // La redirection automatique était la cause du bug "lien invitation → compte Olivia"
+    // Reset complet de tous les champs pour ne pas pré-remplir avec les données du précédent inscrit
+    ['finscPrenom','finscNom','finscEmail','finscPseudo','finscCP','finscEcole','finscClasse','finscDdn'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.value = '';
+    });
+    var pE = document.getElementById('pickerEcoleLabel');
+    if(pE){ pE.textContent = 'Sélectionner…'; pE.classList.add('ios-placeholder'); }
+    var pC = document.getElementById('pickerClasseLabel');
+    if(pC){ pC.textContent = 'Sélectionner…'; pC.classList.add('ios-placeholder'); }
+    var pD = document.getElementById('pickerDdnLabel');
+    if(pD){ pD.textContent = 'Jour / Mois / Année'; pD.classList.add('ios-placeholder'); }
+    var gF = document.getElementById('gF');
+    var gH = document.getElementById('gH');
+    if(gF) gF.classList.add('sel');
+    if(gH) gH.classList.remove('sel');
   }
   if(m==='pwa'){try{if(localStorage.getItem('pwa_installed'))m='app';}catch(e){}}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
