@@ -6273,10 +6273,18 @@ function dfStartPollingParticipants(roomId) {
       var rows = await r.json();
       if(!Array.isArray(rows)) return;
       var creatorName = DF_CURRENT.host ? DF_CURRENT.host.name : '';
+      // Préserver les bots locaux (ajoutés par dfSimulateBotJoins) que Supabase ne connaît pas
+      var localBots = (DF_CURRENT.players || []).filter(function(p){ return p.isBot; });
       var players = [{name: creatorName, ava: creatorName.charAt(0).toUpperCase(), color: '#7B4FBF', isMe: true, isHost: true}];
       rows.forEach(function(p) {
         if(p.pseudo && p.pseudo !== creatorName) {
           players.push({name: p.pseudo, ava: p.pseudo.charAt(0).toUpperCase(), color: '#22C9A0', isMe: false});
+        }
+      });
+      var capLimit = DF_CURRENT.cap || 99;
+      localBots.forEach(function(b){
+        if(players.length < capLimit && !players.find(function(pp){ return pp.name === b.name; })) {
+          players.push(b);
         }
       });
       // Détecter nouveaux joueurs et afficher un toast
