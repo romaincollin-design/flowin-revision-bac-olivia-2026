@@ -8714,38 +8714,43 @@ function openProfilMenu(){
   header.appendChild(hPseudo);
   header.appendChild(hEcole);
   menu.appendChild(header);
-  // Items : addEventListener + stopPropagation pour éviter toute race avec le close-on-outside
-  var items = [
-    {label:'📖 Mes fiches',     action:function(){ switchMode('app'); }},
-    {label:'📊 Ma progression', action:function(){ switchMode('stats'); }},
-    {label:'🎁 Parrainer',      action:function(){ openShare(); }},
-    {label:'👤 Mon profil',     action:function(){ switchMode('profil'); }},
-    {label:'🚪 Déconnexion',    action:function(){ logoutUser(); }, danger:true}
-  ];
-  items.forEach(function(it){
+  // ── BOUTONS ──
+  // btn.onclick = fn (property assignment) plutôt que addEventListener :
+  // équivalent à l'attribut HTML inline onclick natif, supporté universellement
+  // par iOS Safari, Chrome Android, et tous les WebView. Pas de stopPropagation
+  // ni preventDefault : l'action s'exécute, puis le menu se retire.
+  function mkBtn(label, fn, danger){
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = it.label;
-    btn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:'+(it.danger?'#EF4444':'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      e.preventDefault();
-      menu.remove();
-      try { it.action(); } catch(err){ console.error('[profilMenu]', err); }
-    });
-    menu.appendChild(btn);
-  });
+    btn.textContent = label;
+    btn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:'+(danger?'#EF4444':'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
+    btn.onclick = function(){
+      try { fn(); } catch(err){ console.error('[profilMenu]', err); }
+      var m = document.getElementById('flowin-pmenu');
+      if(m && m.parentNode) m.parentNode.removeChild(m);
+    };
+    return btn;
+  }
+  menu.appendChild(mkBtn('📖 Mes fiches',     function(){ switchMode('app'); }));
+  menu.appendChild(mkBtn('📊 Ma progression', function(){ switchMode('stats'); }));
+  menu.appendChild(mkBtn('🎁 Parrainer',      function(){ openShare(); }));
+  menu.appendChild(mkBtn('👤 Mon profil',     function(){ switchMode('profil'); }));
+  menu.appendChild(mkBtn('🚪 Déconnexion',    function(){ logoutUser(); }, true));
   document.body.appendChild(menu);
-  // Fermer si clic hors menu (50ms pour laisser passer le click qui a ouvert le menu)
+  // ── CLOSE-ON-OUTSIDE ──
+  // Pas de stopPropagation sur les boutons → le click bubble jusqu'au document.
+  // Le handler vérifie si la cible est INSIDE le menu encore présent dans le DOM ;
+  // sinon il ferme. Si le menu a déjà été retiré par un click bouton, !menu.parentNode
+  // suffit à cleanup le listener sans effet de bord.
   setTimeout(function(){
-    function handler(e){
-      if(!document.body.contains(menu) || !menu.contains(e.target)){
-        if(document.body.contains(menu)) menu.remove();
-        document.removeEventListener('click', handler);
-      }
+    function docHandler(e){
+      if(!menu.parentNode){ document.removeEventListener('click', docHandler, true); return; }
+      if(menu.contains(e.target)) return; // clic dans le menu : on laisse passer
+      if(menu.parentNode) menu.parentNode.removeChild(menu);
+      document.removeEventListener('click', docHandler, true);
     }
-    document.addEventListener('click', handler);
-  }, 50);
+    document.addEventListener('click', docHandler, true);
+  }, 100);
 }
 
 </script>
