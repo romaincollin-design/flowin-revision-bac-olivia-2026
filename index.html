@@ -3695,47 +3695,46 @@ function populateWelcomeBack(){
 
 
 function toggleUserMenu() {
-  const menu = document.getElementById('userMenu');
-  const isOpen = menu.classList.contains('open');
-  if(isOpen) {
+  var menu = document.getElementById('userMenu');
+  var isOpen = menu.classList.contains('open');
+  function closeMenu() {
     menu.classList.remove('open');
-    const bd = document.getElementById('userMenu-backdrop');
+    var bd = document.getElementById('userMenu-backdrop');
     if(bd) bd.remove();
-  } else {
-    // Créer le menu dynamiquement
-    menu.innerHTML = '';
-    const nameDiv = document.createElement('div');
-    nameDiv.style.cssText = 'padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
-    nameDiv.innerHTML = '<div style="font-size:14px;font-weight:700;color:#fff">' + (userProfile.pseudo || userProfile.prenom || 'Utilisateur') + '</div><div style="font-size:11px;color:rgba(255,255,255,.5)">' + (userProfile.email || '') + '</div>';
-    menu.appendChild(nameDiv);
-    const buttons = [
-      {text: '📖 Mes fiches', action: "switchMode('app')"},
-      {text: '📊 Ma progression', action: "switchMode('stats')"},
-      {text: '🎁 Parrainer', action: 'openShare()'},
-      {text: '👤 Mon profil', action: "switchMode('profil')"}
-    ];
-    buttons.forEach(btn => {
-      const b = document.createElement('button');
-      b.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
-      b.innerHTML = btn.text;
-      b.onclick = () => { eval(btn.action); menu.classList.remove('open'); const bd = document.getElementById('userMenu-backdrop'); if(bd) bd.remove(); };
-      menu.appendChild(b);
-    });
-    const sep = document.createElement('div');
-    sep.style.cssText = 'height:1px;background:rgba(255,255,255,.08);margin:4px 0';
-    menu.appendChild(sep);
-    const logoutBtn = document.createElement('button');
-    logoutBtn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
-    logoutBtn.innerHTML = '🚪 Déconnexion';
-    logoutBtn.onclick = () => { logoutUser(); };
-    menu.appendChild(logoutBtn);
-    menu.classList.add('open');
-    // Add backdrop to close on outside click
-    const bd = document.createElement('div');
-    bd.id = 'userMenu-backdrop';
-    bd.onclick = () => { menu.classList.remove('open'); bd.remove(); };
-    document.body.appendChild(bd);
   }
+  if(isOpen) { closeMenu(); return; }
+  // Créer le menu dynamiquement — addEventListener uniquement, zéro eval/onclick=
+  menu.innerHTML = '';
+  var nameDiv = document.createElement('div');
+  nameDiv.style.cssText = 'padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
+  nameDiv.innerHTML = '<div style="font-size:14px;font-weight:700;color:#fff">' + (userProfile.pseudo || userProfile.prenom || 'Utilisateur') + '</div><div style="font-size:11px;color:rgba(255,255,255,.5)">' + (userProfile.email || '') + '</div>';
+  menu.appendChild(nameDiv);
+  var items = [
+    {text: '📖 Mes fiches',    fn: function(){ switchMode('app'); }},
+    {text: '📊 Ma progression',fn: function(){ switchMode('stats'); }},
+    {text: '🎁 Parrainer',     fn: function(){ openShare(); }},
+    {text: '👤 Mon profil',    fn: function(){ switchMode('profil'); }}
+  ];
+  items.forEach(function(item) {
+    var b = document.createElement('button');
+    b.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
+    b.textContent = item.text;
+    b.addEventListener('click', function(){ closeMenu(); try { item.fn(); } catch(e){ console.error('[menu]', e); } });
+    menu.appendChild(b);
+  });
+  var sep = document.createElement('div');
+  sep.style.cssText = 'height:1px;background:rgba(255,255,255,.08);margin:4px 0';
+  menu.appendChild(sep);
+  var logoutBtn = document.createElement('button');
+  logoutBtn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
+  logoutBtn.textContent = '🚪 Déconnexion';
+  logoutBtn.addEventListener('click', function(){ logoutUser(); });
+  menu.appendChild(logoutBtn);
+  menu.classList.add('open');
+  var bd = document.createElement('div');
+  bd.id = 'userMenu-backdrop';
+  bd.addEventListener('click', function(){ closeMenu(); });
+  document.body.appendChild(bd);
 }
 
 function logoutUser(){
@@ -8552,20 +8551,8 @@ function openProfilMenu(){
     btn.style.cssText='width:100%;padding:9px 12px;background:transparent;border:none;color:'+(item.color||'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px';
     btn.textContent=item.icon+' '+item.label;
     btn.addEventListener('click',function(){
-      // ── DIAGNOSTIC PROD (à retirer après debug) ──
-      var dbg=document.createElement('div');
-      dbg.style.cssText='position:fixed;top:50%;left:10px;right:10px;background:#22C9A0;color:#fff;padding:18px;border-radius:14px;font-weight:800;font-size:15px;z-index:99999;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5)';
-      dbg.textContent='✓ CLICK reçu : '+item.label;
-      document.body.appendChild(dbg);
-      setTimeout(function(){if(dbg.parentNode)dbg.remove();},2500);
       menu.remove();
-      try{ item.fn(); }catch(err){
-        var er=document.createElement('div');
-        er.style.cssText='position:fixed;top:60%;left:10px;right:10px;background:#EF4444;color:#fff;padding:18px;border-radius:14px;font-weight:800;font-size:13px;z-index:99999;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);word-break:break-word';
-        er.textContent='❌ ERR '+item.label+' : '+(err && err.message ? err.message : String(err));
-        document.body.appendChild(er);
-        setTimeout(function(){if(er.parentNode)er.remove();},6000);
-      }
+      try{ item.fn(); }catch(err){ console.error('[profilMenu]', item.label, err); }
     });
     menu.appendChild(btn);
   });
