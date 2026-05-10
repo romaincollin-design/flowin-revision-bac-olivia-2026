@@ -986,6 +986,7 @@ window.addEventListener('unhandledrejection', function(e){
     <!-- Nav avec menu user -->
     <nav style="position:relative;z-index:100">
       <div class="lnav-logo">Flowin</div>
+      <button onclick="showPWAModal()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Installer l'app">📲</button>
       <button id="welcomeProfilBtn" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:2px solid rgba(176,108,228,.4);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0" title="Mon profil"><span id="welcomeProfilAvatar">?</span></button>
     </nav>
 
@@ -1383,6 +1384,7 @@ window.addEventListener('unhandledrejection', function(e){
         <button class="quiz-nav-btn" onclick="openDefis()" style="background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff" title="Défis multi-joueurs">⚔️ Défis</button>
         <button class="prog-nav-btn" onclick="openShare()" title="Partager Flowin" id="shareNavBtn" style="font-size:17px">🔗</button>
         <button class="prog-nav-btn" onclick="switchMode('stats')" title="Ma progression" id="statsNavBtn">📊</button>
+        <button onclick="showPWAModal()" class="prog-nav-btn" title="Installer l'app" style="font-size:17px">📲</button>
         <button id="appProfilBtn" title="Mon profil" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:2px solid rgba(176,108,228,.4);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span id="appProfilAvatar">?</span></button>
       </div>
     </div>
