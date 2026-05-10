@@ -994,16 +994,6 @@ window.addEventListener('unhandledrejection', function(e){
           <span id="welcomeAvatar">OL</span>
         </button>
         <div id="userMenu" style="display:none;position:absolute;top:46px;right:0;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:210px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999">
-          <div id="userMenuName" style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px">
-            <div style="font-size:14px;font-weight:700;color:#fff" id="welcomeNameMenu">Olivia</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.5)" id="welcomeEmailMenu">olivia.l@mail.com</div>
-          </div>
-          <button onclick="switchMode('app');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>
-          <button onclick="switchMode('stats');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>
-          <button onclick="openShare();document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>
-          <button onclick="switchMode('profil');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">👤 Mon profil</button>
-          <div style="height:1px;background:rgba(255,255,255,.08);margin:4px 0"></div>
-          <button onclick="logoutUser()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🚪 Déconnexion</button>
         </div>
       </div>
     </nav>
@@ -3697,6 +3687,33 @@ function toggleUserMenu() {
     const bd = document.getElementById('userMenu-backdrop');
     if(bd) bd.remove();
   } else {
+    // Créer le menu dynamiquement
+    menu.innerHTML = '';
+    const nameDiv = document.createElement('div');
+    nameDiv.style.cssText = 'padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
+    nameDiv.innerHTML = '<div style="font-size:14px;font-weight:700;color:#fff">' + (userProfile.pseudo || userProfile.prenom || 'Utilisateur') + '</div><div style="font-size:11px;color:rgba(255,255,255,.5)">' + (userProfile.email || '') + '</div>';
+    menu.appendChild(nameDiv);
+    const buttons = [
+      {text: '📖 Mes fiches', action: "switchMode('app')"},
+      {text: '📊 Ma progression', action: "switchMode('stats')"},
+      {text: '🎁 Parrainer', action: 'openShare()'},
+      {text: '👤 Mon profil', action: "switchMode('profil')"}
+    ];
+    buttons.forEach(btn => {
+      const b = document.createElement('button');
+      b.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
+      b.innerHTML = btn.text;
+      b.onclick = () => { eval(btn.action); menu.classList.remove('open'); const bd = document.getElementById('userMenu-backdrop'); if(bd) bd.remove(); };
+      menu.appendChild(b);
+    });
+    const sep = document.createElement('div');
+    sep.style.cssText = 'height:1px;background:rgba(255,255,255,.08);margin:4px 0';
+    menu.appendChild(sep);
+    const logoutBtn = document.createElement('button');
+    logoutBtn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
+    logoutBtn.innerHTML = '🚪 Déconnexion';
+    logoutBtn.onclick = () => { logoutUser(); };
+    menu.appendChild(logoutBtn);
     menu.classList.add('open');
     // Add backdrop to close on outside click
     const bd = document.createElement('div');
@@ -5150,6 +5167,20 @@ function showShareToast(msg){
   t.style.opacity = '1';
   setTimeout(function(){ t.style.opacity = '0'; }, 3200);
 }
+function showToast(msg, type){
+  var bg = type === 'error' ? 'linear-gradient(135deg,#EF4444,#dc2626)' : 'linear-gradient(135deg,#22C9A0,#0fa37e)';
+  var t = document.getElementById('generalToast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'generalToast';
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);color:#fff;padding:14px 22px;border-radius:24px;font-family:Calibri,Arial,sans-serif;font-weight:600;font-size:15px;z-index:9999;box-shadow:0 6px 28px rgba(0,0,0,.4);opacity:0;transition:opacity .3s';
+    document.body.appendChild(t);
+  }
+  t.style.background = bg;
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity = '0'; }, 3200);
+}
 function refreshShareStats(){
   var log = getShareLog();
   var el = document.getElementById('shareCount');
@@ -5962,7 +5993,7 @@ function dfCopyLinkWait() {
 function dfCreateRoom() {
   var bal = dfGetBalance();
   if(DF_FORM.mise > bal) {
-    alert('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + DF_FORM.mise + '.');
+    showToast('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + DF_FORM.mise + '.', 'error');
     return;
   }
   dfSetBalance(bal - DF_FORM.mise);
@@ -6031,11 +6062,11 @@ async function dfLoadThenJoin(roomId) {
   }
   var existing = DF_ROOMS.find(function(r){ return r.id === roomId; });
   var room = existing || await dfLoadRoomFromSupabase(roomId);
-  if(!room) { alert('❌ Room introuvable ou expirée.'); switchMode('defis'); return; }
+  if(!room) { showToast('❌ Room introuvable ou expirée.', 'error'); switchMode('defis'); return; }
   if(!existing) DF_ROOMS.unshift(room);
   // Vérifier d'abord si la room est terminée ou annulée (créateur ou invité)
   if(room.status === 'termine' || room.status === 'annule') {
-    alert('⚔️ Ce défi est terminé ou annulé. Crée une nouvelle room !');
+    showToast('⚔️ Ce défi est terminé ou annulé. Crée une nouvelle room !', 'error');
     try { window.history.replaceState(null, '', window.location.pathname); } catch(e){}
     DF_ROOMS = DF_ROOMS.filter(function(r){ return r.id !== room.id; });
     switchMode('defis');
@@ -6061,7 +6092,7 @@ function dfJoinRoom(roomId) {
   }
   // Vérifier que la room n'est pas expirée côté client
   if(room.status === 'termine' || room.status === 'annule') {
-    alert('⚔️ Ce défi est terminé ou annulé. Crée une nouvelle room !');
+    showToast('⚔️ Ce défi est terminé ou annulé. Crée une nouvelle room !', 'error');
     // Nettoyer DF_ROOMS
     DF_ROOMS = DF_ROOMS.filter(function(r){ return r.id !== roomId; });
     dfRenderLobby();
@@ -6071,7 +6102,7 @@ function dfJoinRoom(roomId) {
   if(room.isMine) { DF_CURRENT = room; dfTab('waiting'); dfStartPollingParticipants(roomId); return; }
   if(room.isBot){
     var bal=dfGetBalance();
-    if(room.mise>bal){alert('Solde insuffisant. Tu as '+bal+' pts, il en faut '+room.mise+'.');return;}
+    if(room.mise>bal){showToast('Solde insuffisant. Tu as '+bal+' pts, il en faut '+room.mise+'.', 'error');return;}
     dfSetBalance(bal-room.mise);
     var myName=userProfile.pseudo||userProfile.prenom||'Toi';
     var myAva=((userProfile.prenom||'T').charAt(0)+(userProfile.nom||'').charAt(0)).toUpperCase()||'TO';
@@ -8451,9 +8482,9 @@ function dfUpdateMyDefisBadge(){
 async function dfGoToMyRoom(roomIdOrEl){
   var roomId = (typeof roomIdOrEl === 'string') ? roomIdOrEl : roomIdOrEl.dataset.id;
   var room = await dfLoadRoomFromSupabase(roomId);
-  if(!room){ alert('Room introuvable.'); return; }
+  if(!room){ showToast('Room introuvable.', 'error'); return; }
   if(room.status==='termine'){
-    alert('⚔️ Ce défi est déjà terminé. Lance une revanche !');
+    showToast('⚔️ Ce défi est déjà terminé. Lance une revanche !', 'error');
     try { window.history.replaceState(null,'',window.location.pathname); } catch(e){}
     switchMode('defis'); return;
   }
