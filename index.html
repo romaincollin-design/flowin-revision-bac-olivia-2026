@@ -35,8 +35,8 @@
 body{font-family:'Calibri','Trebuchet MS',Arial,sans-serif;background:#0F0E1A;min-height:100vh}
 
 /* ── VIEWS ── */
-.view{display:none!important;background:#0F0E1A}
-.view.active{display:block;min-height:100vh;background:#0F0E1A;overflow-x:hidden}
+.view{display:none;background:#0F0E1A}
+.view.active{display:block;background:#0F0E1A}
 
 /* ═══════════════════════════════════════════════
    LANDING
@@ -51,7 +51,6 @@ body{font-family:'Calibri','Trebuchet MS',Arial,sans-serif;background:#0F0E1A;mi
 .hero-section{min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;position:relative}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:7px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);margin-bottom:28px}
 .hero-badge span{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes slideDown { from { transform:translateX(-50%) translateY(-20px); opacity:0; } to { transform:translateX(-50%) translateY(0); opacity:1; } }
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 .hero-title{font-family:'Calibri','Trebuchet MS',Arial,sans-serif;font-weight:800;font-size:clamp(48px,8vw,88px);font-weight:800;line-height:.95;letter-spacing:-3px;margin-bottom:24px}
 .hero-title .l1,.hero-title .l3{color:#fff}
@@ -981,25 +980,6 @@ window.addEventListener('unhandledrejection', function(e){
 </form>
 
 <!-- ═══ WELCOME BACK (utilisateur déjà inscrit) ═══ -->
-<div id="userMenuWrap" style="position:fixed;top:14px;right:14px;z-index:10000;display:none">
-  <div style="position:relative">
-    <button onclick="toggleUserMenu()" id="userMenuBtn" style="background:rgba(123,79,191,.9);border:1px solid rgba(176,108,228,.4);color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.4)" title="Mon compte">
-      <span id="welcomeAvatar">FL</span>
-    </button>
-    <div id="userMenu" style="display:none;position:absolute;top:48px;right:0;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:210px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999">
-      <div id="userMenuName" style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px">
-        <div id="userMenuPseudo" style="font-size:14px;font-weight:800;color:#fff">—</div>
-        <div id="userMenuEcole" style="font-size:11px;color:#9A8FBF;margin-top:2px"></div>
-      </div>
-      <button onclick="switchMode('app');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:function(){}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>
-      <button onclick="switchMode('stats');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:function(){}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>
-      <button onclick="openShare();document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:function(){}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>
-      <button onclick="switchMode('profil');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:function(){}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">👤 Mon profil</button>
-      <button onclick="logoutUser()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🚪 Déconnexion</button>
-    </div>
-  </div>
-</div>
-
 <div class="view active" id="v-welcome">
   <div class="landing" style="overflow-y:auto">
     <div class="grid-bg"></div>
@@ -1009,7 +989,15 @@ window.addEventListener('unhandledrejection', function(e){
     <!-- Nav avec menu user -->
     <nav style="position:relative;z-index:100">
       <div class="lnav-logo">Flowin</div>
-      
+      <div style="position:relative">
+        <button onclick="toggleUserMenu()" id="userMenuBtn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center" title="Mon compte">
+          <span id="welcomeAvatar">OL</span>
+        </button>
+        <div id="userMenu" style="display:none;position:absolute;top:46px;right:0;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:210px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999">
+          <div id="userMenuName" style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px">
+            <div style="font-size:14px;font-weight:700;color:#fff" id="welcomeNameMenu">Olivia</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5)" id="welcomeEmailMenu">olivia.l@mail.com</div>
+          </div>
           <button onclick="switchMode('app');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>
           <button onclick="switchMode('stats');document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>
           <button onclick="openShare();document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>
@@ -1057,7 +1045,7 @@ window.addEventListener('unhandledrejection', function(e){
           <div style="font-size:38px;flex-shrink:0;line-height:1">📖</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:18px;font-weight:800;line-height:1.2">Réviser mes cours</div>
-            <div style="font-size:13px;font-weight:600;opacity:.8;margin-top:3px" id="welcomeLastTheme">23 fiches t'attendent</div>
+            <div style="font-size:13px;font-weight:600;opacity:.8;margin-top:3px" id="welcomeLastTheme">23 fiches t\'attendent</div>
           </div>
           <div style="font-size:22px;opacity:.7;flex-shrink:0">→</div>
         </button>
@@ -1414,7 +1402,7 @@ window.addEventListener('unhandledrejection', function(e){
         <button class="quiz-nav-btn" onclick="openDefis()" style="background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff" title="Défis multi-joueurs">⚔️ Défis</button>
         <button class="prog-nav-btn" onclick="openShare()" title="Partager Flowin" id="shareNavBtn" style="font-size:17px">🔗</button>
         <button class="prog-nav-btn" onclick="switchMode('stats')" title="Ma progression" id="statsNavBtn">📊</button>
-        <button class="prog-nav-btn" onclick="switchMode('profil')" title="Mon profil" id="profilNavBtn" style="font-size:17px">👤</button>
+        <button class="prog-nav-btn" onclick="openProfilMenu()" title="Mon profil" style="font-size:17px">👤</button>
       </div>
     </div>
     <!-- LISTE -->
@@ -2923,7 +2911,6 @@ function switchMode(m){
     if(_balEl) _balEl.textContent = _bal.toLocaleString('fr');
     dfTab('lobby');
     dfFetchRooms();
-    // Vérifier les défis en attente + badge
     checkMyPendingDefis();
     dfUpdateMyDefisBadge();
   }
@@ -3428,7 +3415,6 @@ async function loadPlayerStatsFromSupabase(pseudo) {
     // Stocker globalement pour la courbe 7 jours par thème
     USER_SESSIONS = sessions;
     // BUG-POINTS-02 fix : lire aussi joueurs.pts_total (modifiable par admin)
-    // On prend MAX(sessions, joueurs) pour que le PATCH admin soit visible côté élève
     const ptsFromSessions = Math.max(...sessions.map(s => s.pts_total||0), 0);
     let totalPts = ptsFromSessions;
     try {
@@ -3518,7 +3504,6 @@ async function loadPlayerStatsFromSupabase(pseudo) {
 
       loadPlayerStatsFromSupabase(p.pseudo || p.prenom);
       setTimeout(function(){ if(typeof dfStartPendingCheck==='function') dfStartPendingCheck(); }, 3000);
-      if(typeof showGlobalUserMenu==='function') showGlobalUserMenu(p);
       loadLeaderboardFromSupabase();
       loadLotsConfig();
       // Bascule vers la vue welcome au lieu de la landing
@@ -3729,7 +3714,6 @@ function logoutUser(){
   document.getElementById('v-welcome').classList.remove('active');
   document.getElementById('v-landing').classList.add('active');
   document.getElementById('userMenu').classList.remove('open');(document.getElementById('userMenu-backdrop')||{remove:()=>{}}).remove();
-  if(typeof hideGlobalUserMenu==='function') hideGlobalUserMenu();
 }
 
 // Fermer le menu user quand on clique ailleurs
@@ -3837,7 +3821,6 @@ function qGo(id){
   if(id==='crm') initCRM();
   if(id==='round') {
     renderRound();
-    // Rafraîchir lot de la semaine et gains à chaque affichage écran round
     if(typeof renderLotSemaine === 'function') renderLotSemaine();
     if(typeof renderGainsSection === 'function') renderGainsSection();
   }
@@ -5070,7 +5053,7 @@ endRound = function() {
 
 // ═══ SHARE & QR ═══
 // ═══ SHARE TRACKING — points par partage ═══
-// INC-01 fix: SHARE_PTS lié à BAREME_CONFIG pour respecter le barème admin
+// INC-01 fix: SHARE_PTS lié à BAREME_CONFIG
 var SHARE_PTS = (BAREME_CONFIG && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
 function getShareLog(){
   try { return JSON.parse(localStorage.getItem('flowin_share_log')||'[]'); }
@@ -5266,149 +5249,33 @@ function dfUpdateMyDefi(id,updates){
   if(idx>=0){list[idx]=Object.assign({},list[idx],updates);dfSaveMyDefis(list);}
 }
 function dfRenderMyDefis(){
-  var list = dfGetMyDefis();
-  var container = document.getElementById('dfRoomsList');
-  if(!container) return;
-
-  // Tri : adversaire_rejoint > en_cours > waiting > termine
-  function sortScore(d){
-    if(d.invite_pseudo && !d.resultat) return 0;
-    if(d.status==='en_cours' && !d.resultat) return 1;
-    if(!d.resultat) return 2;
-    return 3;
-  }
-  list = list.slice().sort(function(a,b){ return sortScore(a)-sortScore(b); });
-
+  var list=dfGetMyDefis();
+  var container=document.getElementById('dfRoomsList');
+  if(!container)return;
   if(list.length===0){
-    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:rgba(255,255,255,.4);font-size:14px">⚔️<br><br>Aucun défi pour l\'instant.<br><span style="font-size:12px">Crée-en un dans le Lobby !</span></div>';
+    container.innerHTML='<div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,.4);font-size:14px">Aucun defi pour l\'instant.<br><span style="font-size:12px">Cree ou rejoins un defi dans le lobby !</span></div>';
     return;
   }
-  var tEmoji = {roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️',pse:'🩺'};
-  container.innerHTML = list.map(function(d){
-    var isWin  = d.resultat === 'gagne';
-    var isLoss = d.resultat === 'perdu';
-    var isDone = !!d.resultat;
-    var hasAdv = !!d.invite_pseudo && !isDone;
-    var isWaiting = !isDone && d.status !== 'en_cours';
-
-    var cardBg, cardBorder, statusBg, statusColor, statusLabel;
-    if(hasAdv){
-      cardBg='rgba(34,201,160,.1)'; cardBorder='rgba(34,201,160,.4)';
-      statusBg='rgba(34,201,160,.2)'; statusColor='#22C9A0'; statusLabel='⚔️ Adversaire prêt !';
-    } else if(isWin){
-      cardBg='rgba(34,197,94,.07)'; cardBorder='rgba(34,197,94,.25)';
-      statusBg='rgba(34,197,94,.2)'; statusColor='#4ade80'; statusLabel='🏆 Gagné';
-    } else if(isLoss){
-      cardBg='rgba(239,68,68,.07)'; cardBorder='rgba(239,68,68,.2)';
-      statusBg='rgba(239,68,68,.15)'; statusColor='#f87171'; statusLabel='😅 Perdu';
-    } else {
-      cardBg='rgba(255,255,255,.05)'; cardBorder='rgba(255,255,255,.1)';
-      statusBg='rgba(255,255,255,.1)'; statusColor='rgba(255,255,255,.55)'; statusLabel='⏳ En attente';
-    }
-
-    var html = '<div style="background:' + cardBg + ';border-radius:16px;padding:14px 16px;margin-bottom:10px;border:1.5px solid ' + cardBorder + '">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
-    html += '<div style="font-size:15px;font-weight:800;color:#fff">' + (tEmoji[d.theme]||'🎯') + ' ' + d.name + '</div>';
-    html += '<div style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:' + statusBg + ';color:' + statusColor + '">' + statusLabel + '</div>';
-    html += '</div>';
-    html += '<div style="display:flex;gap:12px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px">';
-    html += '<span>💰 ' + d.mise + ' pts</span>';
-    html += '<span>📅 ' + (d.ts ? new Date(d.ts).toLocaleDateString('fr-FR') : '—') + '</span>';
-    html += '<span>' + (d.role==='createur' ? '👑 Créateur' : '🎮 Invité') + '</span>';
-    html += '</div>';
-
-    if(hasAdv){
-      html += '<div style="font-size:13px;font-weight:700;color:#22C9A0;margin-bottom:10px">👤 ' + d.invite_pseudo + ' t\'attend !</div>';
-      html += '<button onclick="dfGoToMyRoom(\'' + d.id + '\')" style="width:100%;background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">⚔️ Jouer maintenant</button>';
-    } else if(d.status === 'en_cours' && !isDone){
-      html += '<div style="font-size:12px;color:rgba(176,108,228,.9);font-style:italic"><i style="margin-right:4px">⏳</i>Tu as joué — en attente du score de ton adversaire…</div>';
-    } else if(isWaiting){
-      html += '<div style="font-size:12px;color:rgba(255,255,255,.35);font-style:italic">En attente que quelqu\'un accepte…</div>';
-    } else if(isDone){
-      html += '<div style="font-size:14px;font-weight:700;color:' + (isWin?'#4ade80':'#f87171') + '">' + (isWin ? '+' + (d.gain||0) : '−' + d.mise) + ' pts</div>';
-      if(isLoss) html += '<button onclick="dfReplayById(this)" data-id="' + d.id + '" data-mise="' + d.mise + '" data-theme="' + d.theme + '" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#7B4FBF,#9B6FDF);color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer">🔄 Revanche</button>';
-    }
-    html += '</div>';
+  var tEmoji={roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️'};
+  container.innerHTML=list.map(function(d){
+    var isWin=d.resultat==='gagne';
+    var isLoss=d.resultat==='perdu';
+    var canReplay=isLoss;
+    var html='<div style="background:rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,.08)">';
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
+    html+='<div style="font-size:15px;font-weight:700;color:#fff">'+(tEmoji[d.theme]||'🎯')+' '+d.name+'</div>';
+    html+='<div style="font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;background:'+(isWin?'rgba(34,197,94,.2)':isLoss?'rgba(239,68,68,.2)':'rgba(255,255,255,.1)')+';color:'+(isWin?'#4ade80':isLoss?'#f87171':'rgba(255,255,255,.6)')+'">'+( isWin?'🏆 Gagne':isLoss?'😅 Perdu':'⏳ En attente')+'</div>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:12px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">';
+    html+='<span>💰 Mise : '+d.mise+' pts</span>';
+    html+='<span>📅 '+(d.ts?new Date(d.ts).toLocaleDateString('fr-FR'):'—')+'</span>';
+    html+='<span>'+(d.role==='createur'?'👑 Createur':'🎮 Participant')+'</span>';
+    html+='</div>';
+    if(d.resultat)html+='<div style="font-size:13px;font-weight:700;color:'+(isWin?'#4ade80':'#f87171')+'">'+(isWin?'+'+( d.gain||0):'−'+d.mise)+' pts</div>';
+    if(canReplay)html+='<button onclick="dfReplayById(this)" data-id="'+d.id+'" data-mise="'+d.mise+'" data-theme="'+d.theme+'" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#7B4FBF,#9B6FDF);color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer">&#x1F504; Revanche</button>';
+    html+='</div>';
     return html;
   }).join('');
-  dfUpdateMyDefisBadge();
-}
-
-function dfUpdateMyDefisBadge(){
-  var list = dfGetMyDefis();
-  var urgent = list.filter(function(d){ return d.invite_pseudo && !d.resultat; }).length;
-  var tab = document.getElementById('dfTabMy');
-  if(!tab) return;
-  var badge = tab.querySelector('.df-tab-badge');
-  if(urgent > 0){
-    if(!badge){ badge = document.createElement('span'); badge.className='df-tab-badge'; tab.appendChild(badge); }
-    badge.textContent = urgent;
-    badge.style.cssText = 'display:inline-block;background:#EF4444;color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 5px;margin-left:4px;vertical-align:middle;min-width:16px;text-align:center;line-height:14px';
-  } else {
-    if(badge) badge.remove();
-  }
-}
-
-async function dfGoToMyRoom(roomId){
-  var room = await dfLoadRoomFromSupabase(roomId);
-  if(!room){ alert('Room introuvable ou expirée.'); return; }
-  if(room.status === 'termine'){
-    alert('⚔️ Ce défi est déjà terminé. Lance une revanche !');
-    try { window.history.replaceState(null,'',window.location.pathname); } catch(e){}
-    switchMode('defis');
-    return;
-  }
-  room.isMine = true; room.isPrivate = true;
-  DF_CURRENT = room;
-  switchMode('defis');
-  dfShowBilletCreateur(room);
-  dfStartPresencePing(roomId, true);
-  dfStartPollingParticipants(roomId);
-}
-
-// ── CHECK DÉFIS EN ATTENTE (poll léger hors salle d'attente) ──
-var DF_PENDING_CHECK_INT = null;
-async function checkMyPendingDefis(){
-  if(!SB_ENABLED || !userProfile) return;
-  var myName = userProfile.pseudo || userProfile.prenom || '';
-  if(!myName) return;
-  try {
-    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-    // Chercher mes rooms créées en attente avec un invité qui a rejoint
-    var r = await fetch(SUPABASE_URL + '/rest/v1/defis?createur=eq.' + encodeURIComponent(myName) + '&status=eq.waiting&invite=not.is.null&select=id,nom,invite,mise,theme', {headers: hdrs});
-    if(!r.ok) return;
-    var rows = await r.json();
-    if(!Array.isArray(rows) || rows.length === 0) return;
-
-    // Mettre à jour localStorage avec invite_pseudo
-    rows.forEach(function(row){
-      dfUpdateMyDefi(row.id, {invite_pseudo: row.invite, status: 'waiting'});
-    });
-
-    // Toast si l'utilisateur n'est pas déjà en salle d'attente
-    if(!DF_CURRENT || DF_CURRENT.status === 'termine'){
-      rows.forEach(function(row){
-        var existing = document.getElementById('defi-notif-' + row.id.replace(/[^a-z0-9]/gi,'_'));
-        if(existing) return; // déjà affiché
-        var toast = document.createElement('div');
-        toast.id = 'defi-notif-' + row.id.replace(/[^a-z0-9]/gi,'_');
-        toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;padding:12px 20px;border-radius:16px;font-weight:800;font-size:14px;z-index:99999;box-shadow:0 4px 24px rgba(34,201,160,.5);cursor:pointer;max-width:90%;text-align:center;animation:slideDown .3s ease';
-        toast.innerHTML = '⚔️ ' + row.invite + ' a rejoint ton défi !<br><span style="font-size:12px;font-weight:600;opacity:.9">Tape pour jouer maintenant</span>';
-        toast.onclick = function(){ toast.remove(); dfGoToMyRoom(row.id); };
-        document.body.appendChild(toast);
-        setTimeout(function(){ if(toast.parentNode) toast.remove(); }, 8000);
-      });
-    }
-
-    dfUpdateMyDefisBadge();
-  } catch(e){}
-}
-
-function dfStartPendingCheck(){
-  if(DF_PENDING_CHECK_INT) clearInterval(DF_PENDING_CHECK_INT);
-  checkMyPendingDefis();
-  DF_PENDING_CHECK_INT = setInterval(checkMyPendingDefis, 20000); // toutes 20s
-  setTimeout(function(){ clearInterval(DF_PENDING_CHECK_INT); }, 3600000); // max 1h
 }
 function dfReplayById(btn) {
   var id = btn.dataset.id;
@@ -5417,25 +5284,16 @@ function dfReplayById(btn) {
   dfReplaySetup(id, mise, theme);
 }
 function dfReplaySetup(id, mise, theme){
-  // S'assurer qu'on est dans la vue défis
-  if(document.getElementById('v-defis') && !document.getElementById('v-defis').classList.contains('active')){
-    switchMode('defis');
-  }
-  // Réinitialiser le formulaire proprement (comme dfShowCreate)
+  switchMode('defis');
   dfShowCreate();
-  // Appliquer mise et thème du défi d'origine
-  // Si la mise n'existe plus dans les pills → prendre la plus proche disponible
   var pMises = Array.from(document.querySelectorAll('#dfMisePills .df-pill')).map(function(p){ return parseInt(p.dataset.mise); });
-  var closestMise = pMises.reduce(function(prev, cur){ return Math.abs(cur-mise)<Math.abs(prev-mise)?cur:prev; }, pMises[0]||35);
+  var closestMise = pMises.reduce(function(prev,cur){ return Math.abs(cur-mise)<Math.abs(prev-mise)?cur:prev; }, pMises[0]||35);
   dfSelMise(closestMise);
   dfSelTheme(theme);
   var nameInput = document.getElementById('dfRoomName');
   var orig = dfGetMyDefis().find(function(d){ return d.id===id; });
   if(nameInput && orig) nameInput.value = 'Revanche — ' + orig.name;
-  // Pré-activer room privée si l'original était privé
-  if(orig && orig.role === 'createur' && !DF_IS_PRIVATE){
-    dfTogglePrivate();
-  }
+  if(orig && orig.role === 'createur' && !DF_IS_PRIVATE) dfTogglePrivate();
 }
 
 function dfGetBalance(){
@@ -5505,7 +5363,7 @@ function dfGenerateRooms(){
 // État du défi en cours
 let DF_CURRENT = null;
 // Choix dans l'écran de création
-let DF_FORM = { mise: 35, theme: 'roulette', cap: 2 }; // défaut aligné sur pills HTML
+let DF_FORM = { mise: 35, theme: 'roulette', cap: 2 };
 var DF_IS_PRIVATE = false;
 
 const DF_THEME_LABELS = {
@@ -5829,7 +5687,7 @@ function dfSelCap(c){
   dfUpdateCagnottePreview();
 }
 function dfUpdateCagnottePreview(){
-  // R9 : cagnotte = mise × 2 toujours (gagnant rafle la mise de l'adversaire)
+  // R9 : cagnotte = mise × 2 toujours
   const cagnotte = DF_FORM.mise * 2;
   const el = document.getElementById('dfCagnottePreview');
   if(el) el.textContent = cagnotte.toLocaleString('fr');
@@ -5957,7 +5815,6 @@ function dfRenderWaiting(){
       hint.textContent = '✅ Tu peux lancer le défi maintenant';
       hint.style.color = '#22C9A0';
     } else {
-      // Room publique à 1 joueur : peut lancer avec des bots
       btn.style.display = '';
       btn.disabled = false;
       btn.style.opacity = '1';
@@ -6005,7 +5862,6 @@ function dfShowBilletCreateur(room) {
   } else {
     dfTab('waiting'); // room publique : aller directement en salle d'attente
     dfStartPollingParticipants(room.id);
-    // Simuler des bots qui rejoignent pour rooms publiques créées par l'user
     setTimeout(function(){ dfSimulateBotJoins(); }, 1500);
   }
 }
@@ -6160,7 +6016,6 @@ async function dfLoadThenJoin(roomId) {
   // Vérifier d'abord si la room est terminée (créateur ou invité)
   if(room.status === 'termine') {
     alert('⚔️ Ce défi est terminé. Crée une nouvelle room !');
-    // Nettoyer l'URL pour éviter la répersistance
     try { window.history.replaceState(null, '', window.location.pathname); } catch(e){}
     switchMode('defis');
     return;
@@ -6218,19 +6073,6 @@ function dfShowBilletInvite(room) {
   if(el('diBilletWarnTxt')) el('diBilletWarnTxt').textContent = 'Solde insuffisant — tu as ' + bal + ' pts, il en faut ' + room.mise;
   var btn = el('diBilletBtn');
   if(btn) { btn.disabled = !soldeOk; btn.style.opacity = soldeOk ? '1' : '.4'; }
-  // Bouton annuler adaptatif
-  var btnAnnuler = el('diBilletAnnuler');
-  if(btnAnnuler) {
-    if(!soldeOk) {
-      btnAnnuler.textContent = '📚 Faire des quiz pour gagner des pts';
-      btnAnnuler.onclick = function(){ switchMode('quiz'); };
-      btnAnnuler.style.color = '#F4A83A';
-    } else {
-      btnAnnuler.textContent = 'Annuler';
-      btnAnnuler.onclick = function(){ dfTab('lobby'); };
-      btnAnnuler.style.color = '#7A7AAA';
-    }
-  }
   // Stocker la room
   window._diRoom = room;
   dfTab('invite');
@@ -6418,7 +6260,6 @@ function dfPollForGameStart(roomId) {
           dfRenderWaiting();
         }
       }
-      // Fix double-trigger : si countdown déjà lancé, laisser dfStartCountdown gérer
       if(d.status === 'en_cours' && !DF_CURRENT._gameStarted && !DF_CURRENT._countdownStarted) {
         clearInterval(DF_GAME_START_POLL);
         DF_CURRENT._gameStarted = true;
@@ -6471,10 +6312,8 @@ function dfStartGame(){
   }
   if(!DF_CURRENT) return;
   const room = DF_CURRENT;
-  // Bot room ou room publique : si moins de 2 joueurs, compléter avec bots automatiquement
+  // Bot room ou room publique : minimum 2 joueurs requis
   if(!room.isBot && !room.isPrivate && room.players.length < 2) {
-    // Compléter avec des bots pour permettre le lancement
-    var myNameFill = room.players[0] ? room.players[0].name : (userProfile.pseudo||userProfile.prenom||'Toi');
     var taken2 = new Set(room.players.map(function(p){ return p.name; }));
     var freeBots = DF_BOTS.filter(function(b){ return !taken2.has(b.name); });
     while(room.players.length < room.cap && freeBots.length > 0){
@@ -6916,8 +6755,6 @@ function dfEndGame(){
     id: room.id, status: 'termine',
     gagnant: finalWinner.name, score_moi: myScore, score_max: topScore
   });
-  // Nettoyer l'URL ?room= pour éviter rechargement sur room terminée
-  try { window.history.replaceState(null, '', window.location.pathname); } catch(e){};
   var pseudo = userProfile.pseudo || userProfile.prenom || '';
   if(pseudo && SB_ENABLED){
     var newBal = dfGetBalance();
@@ -7026,9 +6863,7 @@ function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversai
     }).catch(function(){});
   }
 
-  // Nettoyer l'URL ?room= pour éviter rechargement sur room terminée
-  try { window.history.replaceState(null, '', window.location.pathname); } catch(e){}
-  // Afficher l'écran résultats
+  try { window.history.replaceState(null,'',window.location.pathname); } catch(e){}
   switchMode('defis');
   dfTab('end');
 
@@ -7466,7 +7301,7 @@ function dfSetMode(mode) {
         <button onclick="dbGoToWaiting()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px">
           ⏳ Voir la salle d'attente
         </button>
-        <button id="diBilletAnnuler" onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
+        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
           Retour au lobby
         </button>
 
@@ -8372,7 +8207,7 @@ function renderProfilDefis(tab) {
   if(!container) return;
   var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
   var myDefis = [];
-  try { myDefis = dfGetMyDefis(); } catch(e) { myDefis = []; } // Utilise dfGetMyDefis (clé flowin_my_defis)
+  try { myDefis = dfGetMyDefis(); } catch(e) { myDefis = []; }
   var items = [];
   if(tab === 'crees') {
     items = myDefis.filter(function(d){ return d.role === 'createur'; });
@@ -8488,22 +8323,178 @@ function profilCopyLink() {
   if(btn) { btn.textContent = '✅ Copié !'; setTimeout(function(){ btn.textContent = '🔗 Copier'; }, 2000); }
 }
 
-// ── USERMENU GLOBAL (position:fixed, fonctionne sur toutes les vues) ──
+
+// ══════════════════════════════════════════════════════════════
+// FLOWIN V12+ — FONCTIONS AJOUTÉES
+// ══════════════════════════════════════════════════════════════
+
+// ── MES DÉFIS — rendu des cartes avec tri et CTA ──
+function dfRenderMyDefis(){
+  var list = dfGetMyDefis();
+  var container = document.getElementById('dfRoomsList');
+  if(!container) return;
+  function sortScore(d){
+    if(d.invite_pseudo && !d.resultat) return 0;
+    if(d.status==='en_cours' && !d.resultat) return 1;
+    if(!d.resultat) return 2;
+    return 3;
+  }
+  list = list.slice().sort(function(a,b){ return sortScore(a)-sortScore(b); });
+  if(list.length===0){
+    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:rgba(255,255,255,.4);font-size:14px">⚔️<br><br>Aucun défi pour l\'instant.<br><span style="font-size:12px">Crée-en un dans le Lobby !</span></div>';
+    return;
+  }
+  var tEmoji = {roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️',pse:'🩺'};
+  container.innerHTML = list.map(function(d){
+    var isWin = d.resultat==='gagne', isLoss = d.resultat==='perdu', isDone = !!d.resultat;
+    var hasAdv = !!d.invite_pseudo && !isDone;
+    var isWaiting = !isDone && d.status!=='en_cours';
+    var cardBg,cardBorder,statusBg,statusColor,statusLabel;
+    if(hasAdv){
+      cardBg='rgba(34,201,160,.1)';cardBorder='rgba(34,201,160,.4)';
+      statusBg='rgba(34,201,160,.2)';statusColor='#22C9A0';statusLabel='⚔️ Adversaire prêt !';
+    } else if(isWin){
+      cardBg='rgba(34,197,94,.07)';cardBorder='rgba(34,197,94,.25)';
+      statusBg='rgba(34,197,94,.2)';statusColor='#4ade80';statusLabel='🏆 Gagné';
+    } else if(isLoss){
+      cardBg='rgba(239,68,68,.07)';cardBorder='rgba(239,68,68,.2)';
+      statusBg='rgba(239,68,68,.15)';statusColor='#f87171';statusLabel='😅 Perdu';
+    } else {
+      cardBg='rgba(255,255,255,.05)';cardBorder='rgba(255,255,255,.1)';
+      statusBg='rgba(255,255,255,.1)';statusColor='rgba(255,255,255,.55)';statusLabel='⏳ En attente';
+    }
+    var html = '<div style="background:'+cardBg+';border-radius:16px;padding:14px 16px;margin-bottom:10px;border:1.5px solid '+cardBorder+'">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
+    html += '<div style="font-size:15px;font-weight:800;color:#fff">'+(tEmoji[d.theme]||'🎯')+' '+d.name+'</div>';
+    html += '<div style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:'+statusBg+';color:'+statusColor+'">'+statusLabel+'</div>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:12px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px">';
+    html += '<span>💰 '+d.mise+' pts</span>';
+    html += '<span>📅 '+(d.ts?new Date(d.ts).toLocaleDateString('fr-FR'):'—')+'</span>';
+    html += '<span>'+(d.role==='createur'?'👑 Créateur':'🎮 Invité')+'</span>';
+    html += '</div>';
+    if(hasAdv){
+      html += '<div style="font-size:13px;font-weight:700;color:#22C9A0;margin-bottom:10px">👤 '+d.invite_pseudo+' t\'attend !</div>';
+      html += '<button onclick="dfGoToMyRoom("+d.id+")" style="width:100%;background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">⚔️ Jouer maintenant</button>';
+    } else if(d.status==='en_cours' && !isDone){
+      html += '<div style="font-size:12px;color:rgba(176,108,228,.9);font-style:italic">⏳ Tu as joué — en attente du score de ton adversaire…</div>';
+    } else if(isWaiting){
+      html += '<div style="font-size:12px;color:rgba(255,255,255,.35);font-style:italic">En attente que quelqu\'un accepte…</div>';
+    } else if(isDone){
+      html += '<div style="font-size:14px;font-weight:700;color:'+(isWin?'#4ade80':'#f87171')+'">'+(isWin?'+' +(d.gain||0):'−'+d.mise)+' pts</div>';
+      if(isLoss) html += '<button onclick="dfReplayById(this)" data-id="'+d.id+'" data-mise="'+d.mise+'" data-theme="'+d.theme+'" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#7B4FBF,#9B6FDF);color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer">🔄 Revanche</button>';
+    }
+    html += '</div>';
+    return html;
+  }).join('');
+  dfUpdateMyDefisBadge();
+}
+
+function dfUpdateMyDefisBadge(){
+  var list = dfGetMyDefis();
+  var urgent = list.filter(function(d){ return d.invite_pseudo && !d.resultat; }).length;
+  var tab = document.getElementById('dfTabMy');
+  if(!tab) return;
+  var badge = tab.querySelector('.df-tab-badge');
+  if(urgent > 0){
+    if(!badge){ badge = document.createElement('span'); badge.className='df-tab-badge'; tab.appendChild(badge); }
+    badge.textContent = urgent;
+    badge.style.cssText = 'display:inline-block;background:#EF4444;color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 5px;margin-left:4px;vertical-align:middle;min-width:16px;text-align:center;line-height:14px';
+  } else { if(badge) badge.remove(); }
+}
+
+async function dfGoToMyRoom(roomId){
+  var room = await dfLoadRoomFromSupabase(roomId);
+  if(!room){ alert('Room introuvable.'); return; }
+  if(room.status==='termine'){
+    alert('⚔️ Ce défi est déjà terminé. Lance une revanche !');
+    try { window.history.replaceState(null,'',window.location.pathname); } catch(e){}
+    switchMode('defis'); return;
+  }
+  room.isMine=true; room.isPrivate=true;
+  DF_CURRENT=room;
+  switchMode('defis');
+  dfShowBilletCreateur(room);
+  dfStartPresencePing(roomId,true);
+  dfStartPollingParticipants(roomId);
+}
+
+var DF_PENDING_CHECK_INT = null;
+async function checkMyPendingDefis(){
+  if(!SB_ENABLED||!userProfile) return;
+  var myName = userProfile.pseudo||userProfile.prenom||'';
+  if(!myName) return;
+  try {
+    var hdrs = {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+    var r = await fetch(SUPABASE_URL+'/rest/v1/defis?createur=eq.'+encodeURIComponent(myName)+'&status=eq.waiting&invite=not.is.null&select=id,nom,invite,mise,theme',{headers:hdrs});
+    if(!r.ok) return;
+    var rows = await r.json();
+    if(!Array.isArray(rows)||rows.length===0) return;
+    rows.forEach(function(row){ dfUpdateMyDefi(row.id,{invite_pseudo:row.invite,status:'waiting'}); });
+    if(!DF_CURRENT||DF_CURRENT.status==='termine'){
+      rows.forEach(function(row){
+        var toastId = 'defi-notif-'+row.id.replace(/[^a-z0-9]/gi,'_');
+        if(document.getElementById(toastId)) return;
+        var toast = document.createElement('div');
+        toast.id = toastId;
+        toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;padding:12px 20px;border-radius:16px;font-weight:800;font-size:14px;z-index:99999;box-shadow:0 4px 24px rgba(34,201,160,.5);cursor:pointer;max-width:90%;text-align:center';
+        toast.innerHTML = '⚔️ '+row.invite+' a rejoint ton défi !<br><span style="font-size:12px;font-weight:600;opacity:.9">Tape pour jouer maintenant</span>';
+        toast.onclick = function(){ toast.remove(); dfGoToMyRoom(row.id); };
+        document.body.appendChild(toast);
+        setTimeout(function(){ if(toast.parentNode) toast.remove(); },8000);
+      });
+    }
+    dfUpdateMyDefisBadge();
+  } catch(e){}
+}
+
+function dfStartPendingCheck(){
+  if(DF_PENDING_CHECK_INT) clearInterval(DF_PENDING_CHECK_INT);
+  checkMyPendingDefis();
+  DF_PENDING_CHECK_INT = setInterval(checkMyPendingDefis, 20000);
+  setTimeout(function(){ clearInterval(DF_PENDING_CHECK_INT); }, 3600000);
+}
+
+// ── PROFIL : menu flottant créé par JS dans le body ──
 function showGlobalUserMenu(p){
-  var wrap = document.getElementById('userMenuWrap');
-  if(wrap) wrap.style.display = 'block';
-  var pseudo = document.getElementById('userMenuPseudo');
-  var ecole  = document.getElementById('userMenuEcole');
-  var avatar = document.getElementById('welcomeAvatar');
-  if(p){
-    if(pseudo) pseudo.textContent = p.pseudo || p.prenom || '';
-    if(ecole)  ecole.textContent  = p.ecole || '';
-    if(avatar){ var n = p.pseudo || p.prenom || 'FL'; avatar.textContent = n.slice(0,2).toUpperCase(); }
+  var avatar = document.getElementById('profilAvatar');
+  if(p && avatar){
+    var name = p.pseudo||p.prenom||'FL';
+    avatar.textContent = name.slice(0,2).toUpperCase();
   }
 }
-function hideGlobalUserMenu(){
-  var wrap = document.getElementById('userMenuWrap');
-  if(wrap) wrap.style.display = 'none';
-}
-</script>
+function hideGlobalUserMenu(){}
 
+function openProfilMenu(){
+  // Supprimer menu existant
+  var old = document.getElementById('flowin-pmenu');
+  if(old){ old.remove(); return; }
+  var p = userProfile || {};
+  var menu = document.createElement('div');
+  menu.id = 'flowin-pmenu';
+  menu.style.cssText = 'position:fixed;top:64px;right:10px;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999';
+  var pseudo = p.pseudo||p.prenom||'';
+  var ecole  = p.ecole||'';
+  menu.innerHTML =
+    '<div style="padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px">'
+    + '<div style="font-size:14px;font-weight:800;color:#fff">'+pseudo+'</div>'
+    + '<div style="font-size:11px;color:#9A8FBF;margin-top:2px">'+ecole+'</div>'
+    + '</div>'
+    + '<button onclick="switchMode(&quot;app&quot;);document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📖 Mes fiches</button>'
+    + '<button onclick="switchMode(&quot;stats&quot;);document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">📊 Ma progression</button>'
+    + '<button onclick="openShare();document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🎁 Parrainer</button>'
+    + '<button onclick="switchMode(&quot;profil&quot;);document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:rgba(255,255,255,.85);font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">👤 Mon profil</button>'
+    + '<button onclick="logoutUser();document.getElementById(&quot;flowin-pmenu&quot;).remove()" style="width:100%;padding:9px 12px;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px">🚪 Déconnexion</button>';
+  document.body.appendChild(menu);
+  // Fermer si clic hors menu
+  setTimeout(function(){
+    document.addEventListener('click', function handler(e){
+      if(!menu.contains(e.target)){
+        menu.remove();
+        document.removeEventListener('click', handler);
+      }
+    });
+  }, 10);
+}
+
+</script>
