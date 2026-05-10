@@ -8538,36 +8538,23 @@ function showGlobalUserMenu(p){
 function hideGlobalUserMenu(){}
 
 function openProfilMenu(){
-  var old = document.getElementById('flowin-pmenu');
-  if(old){ old.remove(); return; }
-  var p = userProfile || {};
-  var menu = document.createElement('div');
-  menu.id = 'flowin-pmenu';
-  menu.style.cssText = 'position:fixed;top:64px;right:10px;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999';
-  var header = document.createElement('div');
-  header.style.cssText = 'padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
-  header.innerHTML = '<div style="font-size:14px;font-weight:800;color:#fff">' + (p.pseudo||p.prenom||'') + '</div><div style="font-size:11px;color:#9A8FBF;margin-top:2px">' + (p.email||p.ecole||'') + '</div>';
-  menu.appendChild(header);
-  var items = [
-    {icon:'📖', label:'Mes fiches', fn:function(){ switchMode('app'); }},
-    {icon:'📊', label:'Ma progression', fn:function(){ switchMode('stats'); }},
-    {icon:'🎁', label:'Parrainer', fn:function(){ openShare(); }},
-    {icon:'👤', label:'Mon profil', fn:function(){ switchMode('profil'); }},
-    {icon:'🚪', label:'Déconnexion', fn:function(){ logoutUser(); }, color:'#EF4444'}
-  ];
-  items.forEach(function(item){
-    var btn = document.createElement('button');
-    btn.style.cssText = 'width:100%;padding:9px 12px;background:transparent;border:none;color:'+(item.color||'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px';
-    btn.textContent = item.icon+' '+item.label;
-    btn.addEventListener('click', function(){ menu.remove(); item.fn(); });
+  var o=document.getElementById('flowin-pmenu');if(o){o.remove();return;}
+  var p=userProfile||{};
+  var menu=document.createElement('div');
+  menu.id='flowin-pmenu';
+  menu.style.cssText='position:fixed;top:64px;right:10px;background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:8px;min-width:200px;box-shadow:0 16px 48px rgba(0,0,0,.7);z-index:9999';
+  var h=document.createElement('div');
+  h.style.cssText='padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px';
+  h.innerHTML='<div style="font-size:14px;font-weight:800;color:#fff">'+(p.pseudo||p.prenom||'')+'</div><div style="font-size:11px;color:#9A8FBF">'+(p.email||p.ecole||'')+'</div>';
+  menu.appendChild(h);
+  [{icon:'📖',label:'Mes fiches',fn:function(){switchMode('app');}},{icon:'📊',label:'Ma progression',fn:function(){switchMode('stats');}},{icon:'🎁',label:'Parrainer',fn:function(){openShare();}},{icon:'👤',label:'Mon profil',fn:function(){switchMode('profil');}},{icon:'🚪',label:'Deconnexion',fn:function(){logoutUser();},color:'#EF4444'}].forEach(function(item){
+    var btn=document.createElement('button');
+    btn.style.cssText='width:100%;padding:9px 12px;background:transparent;border:none;color:'+(item.color||'rgba(255,255,255,.85)')+';font-family:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;border-radius:7px';
+    btn.textContent=item.icon+' '+item.label;
+    btn.addEventListener('click',function(){menu.remove();item.fn();});
     menu.appendChild(btn);
   });
   document.body.appendChild(menu);
-  setTimeout(function(){
-    document.addEventListener('click', function handler(e){
-      if(!menu.contains(e.target)){ menu.remove(); document.removeEventListener('click', handler); }
-    });
-  }, 10);
+  setTimeout(function(){document.addEventListener('click',function h(e){if(!menu.contains(e.target)){menu.remove();document.removeEventListener('click',h);}});},10);
 }
-
 </script>
