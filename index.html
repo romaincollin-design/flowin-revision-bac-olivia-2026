@@ -4135,8 +4135,7 @@ function endRound(){
     QS.roundPts = QS.score;
   }
 
-  QS.totalScore += QS.score;
-  QS.totalPts = QS.totalScore;
+  addPts(QS.score, 'quiz');
   QS.corrects = QS.correctCount;
   QS.streak = QS.bestStreak;
   QS.roundsPlayed++;
@@ -5350,14 +5349,39 @@ function dfGetBalance(){
     return parsed;
   } catch(e){ return 500; }
 }
+// ── POINTS : fonction centrale ──
+// Toute mutation de points doit passer par addPts(montant, source).
+// Met à jour QS.totalScore + QS.totalPts + localStorage flowin_balance + DOM #dfBalance
+// + PATCH Supabase joueurs.pts_total. Le wallet reste >= 0 (Math.max).
+function addPts(montant, source) {
+  QS.totalScore = (QS.totalScore||0) + montant;
+  QS.totalPts = QS.totalScore;
+  var newBal = Math.max(0, QS.totalScore);
+  try { localStorage.setItem('flowin_balance', String(newBal)); } catch(e){}
+  var el = document.getElementById('dfBalance');
+  if(el) el.textContent = newBal.toLocaleString('fr');
+  var pseudo = userProfile && (userProfile.pseudo || userProfile.prenom);
+  if(pseudo && SB_ENABLED) {
+    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        pts_total: newBal,
+        updated_at: new Date().toISOString()
+      })
+    }).catch(function(){});
+  }
+}
+// dfSetBalance(v) : compatibilité — set absolu du wallet, calcule le delta et délègue à addPts.
 function dfSetBalance(v){
   var val = Math.max(0, Math.round(v));
-  try { localStorage.setItem('flowin_balance', String(val)); } catch(e){}
-  // NE PAS toucher QS.totalScore — les deux compteurs sont indépendants
-  // QS.totalScore = score quiz, géré uniquement par le quiz
-  // flowin_balance = wallet défis, géré uniquement ici
-  var el = document.getElementById('dfBalance');
-  if(el) el.textContent = val.toLocaleString('fr');
+  var current = QS.totalScore || 0;
+  addPts(val - current, 'set');
 }
 
 // Pool de faux joueurs IA pour peupler le lobby
@@ -5873,7 +5897,7 @@ function dfCancelRoom(){
   if(!confirm('Annuler la room ? Ta mise te sera remboursée.')) return;
   if(DF_CURRENT){
     var roomId = DF_CURRENT.id;
-    dfSetBalance(dfGetBalance() + DF_CURRENT.mise);
+    addPts(DF_CURRENT.mise, 'remboursement');
     DF_ROOMS = DF_ROOMS.filter(r => r.id !== DF_CURRENT.id);
     // MAJ Supabase : passer le status à annule pour nettoyer la lobby
     if(typeof SB_ENABLED !== 'undefined' && SB_ENABLED) {
@@ -5999,7 +6023,7 @@ function dfCreateRoom() {
     showToast('⚠️ Solde insuffisant. Tu as ' + bal + ' pts, il en faut ' + DF_FORM.mise + '.', 'error');
     return;
   }
-  dfSetBalance(bal - DF_FORM.mise);
+  addPts(-DF_FORM.mise, 'mise');
   var roomNameInput = document.getElementById('dfRoomName');
   var roomName = (roomNameInput && roomNameInput.value.trim()) || ('Défi de ' + (userProfile.pseudo || userProfile.prenom || 'Toi'));
   var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
@@ -6106,7 +6130,7 @@ function dfJoinRoom(roomId) {
   if(room.isBot){
     var bal=dfGetBalance();
     if(room.mise>bal){showToast('Solde insuffisant. Tu as '+bal+' pts, il en faut '+room.mise+'.', 'error');return;}
-    dfSetBalance(bal-room.mise);
+    addPts(-room.mise, 'mise');
     var myName=userProfile.pseudo||userProfile.prenom||'Toi';
     var myAva=((userProfile.prenom||'T').charAt(0)+(userProfile.nom||'').charAt(0)).toUpperCase()||'TO';
     var botNames=['Emma D.','Lucas M.','Éloïse B.','Théo V.','Inès M.','Noah C.'];
@@ -6150,7 +6174,7 @@ function diConfirmJoin() {
   if(!room) return;
   var bal = dfGetBalance();
   if(room.mise > bal) return;
-  dfSetBalance(bal - room.mise);
+  addPts(-room.mise, 'mise');
   var myName = userProfile.pseudo || userProfile.prenom || 'Toi';
   var myAva = ((userProfile.prenom || 'T').charAt(0) + (userProfile.nom || '').charAt(0)).toUpperCase() || 'TO';
   room.players.push({name: myName, ava: myAva, color: '#22C9A0', isMe: true});
@@ -6823,7 +6847,7 @@ function dfEndGame(){
   var finalWinner = sorted[0];
   var meWon = finalWinner.isMe;
   var gain = meWon ? cagnotte : 0;
-  if(meWon){ dfSetBalance(dfGetBalance() + cagnotte); }
+  if(meWon){ addPts(cagnotte, 'gain'); }
   dfUpdateMyDefi(room.id, {
     resultat: meWon ? 'gagne' : 'perdu', gain: gain,
     status: 'termine', score: myScore,
@@ -6842,15 +6866,7 @@ function dfEndGame(){
     id: room.id, status: 'termine',
     gagnant: finalWinner.name, score_moi: myScore, score_max: topScore
   });
-  var pseudo = userProfile.pseudo || userProfile.prenom || '';
-  if(pseudo && SB_ENABLED){
-    var newBal = dfGetBalance();
-    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
-      method: 'PATCH',
-      headers: {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
-      body: JSON.stringify({pts_total: newBal, updated_at: new Date().toISOString()})
-    }).catch(function(){});
-  }
+  // PATCH joueurs.pts_total déjà fait par addPts ci-dessus si meWon
   document.getElementById('dfEndEmoji').textContent = meWon ? '🏆' : '😅';
   document.getElementById('dfEndTtl').textContent = meWon ? 'Tu as gagné !' : 'Pas cette fois…';
   document.getElementById('dfEndSub').textContent = tieMsg || (meWon ? 'Bien joué, tu remportes la cagnotte' : 'C\'est ' + finalWinner.name + ' qui rafle la mise');
@@ -6925,9 +6941,9 @@ function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversai
   // Départager à l'égalité : le créateur gagne (règle simple)
   if(egalite) meWon = !!isCreateur;
 
-  // Créditer/débiter la balance
+  // Créditer la cagnotte si on a gagné (mise déjà débitée à l'inscription)
   if(meWon) {
-    dfSetBalance(dfGetBalance() + cagnotte);
+    addPts(cagnotte, 'gain');
   }
   // Mettre à jour localStorage défis
   dfUpdateMyDefi(roomId, {
@@ -6941,14 +6957,7 @@ function dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversai
   var hdrs = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'};
   fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId || ''), {method:'PATCH',headers:hdrs,body:JSON.stringify({status:'termine',gagnant:meWon?myName:adversaireName})}).catch(function(){});
 
-  // Mettre à jour pts_total joueur
-  var pseudo = userProfile.pseudo || userProfile.prenom || '';
-  if(pseudo && SB_ENABLED) {
-    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
-      method:'PATCH', headers:hdrs,
-      body: JSON.stringify({pts_total: dfGetBalance(), updated_at: new Date().toISOString()})
-    }).catch(function(){});
-  }
+  // PATCH joueurs.pts_total déjà fait par addPts ci-dessus si meWon
 
   try { window.history.replaceState(null,'',window.location.pathname); } catch(e){}
   switchMode('defis');
