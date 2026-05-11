@@ -3,6 +3,7 @@
 <head>
 <meta name="theme-color" content="#2D1B6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1252,62 +1253,147 @@ window.addEventListener('unhandledrejection', function(e){
 </div>
 <!-- ═══ INSCRIPTION ═══ -->
 <div class="view" id="v-inscription">
-  <div class="insc-view">
-    <div class="insc-modal">
-      <div class="insc-header">
+  <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-size:40px;margin-bottom:10px">🌊</div>
+      <div style="font-size:26px;font-weight:800;color:#fff">Flowin</div>
+      <div style="font-size:14px;color:#9A8FBF;margin-top:4px">Révise. Défie. Progresse.</div>
+    </div>
+
+    <!-- Carte auth -->
+    <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:24px;padding:28px 24px;width:100%;max-width:380px">
+
+      <!-- Titre -->
+      <div style="font-size:20px;font-weight:800;color:#fff;text-align:center;margin-bottom:6px">Connexion</div>
+      <div style="font-size:13px;color:#9A8FBF;text-align:center;margin-bottom:24px">Entre ton email — on t'envoie un lien magique</div>
+
+      <!-- Google OAuth -->
+      <button id="btnGoogleAuth" style="width:100%;background:#fff;color:#1E1048;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuer avec Google
+      </button>
+
+      <!-- Séparateur -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
+        <div style="font-size:12px;color:#9A8FBF;font-weight:600">ou</div>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
+      </div>
+
+      <!-- Email Magic Link -->
+      <div style="margin-bottom:12px">
+        <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ton email</label>
+        <input id="authEmail" type="email" inputmode="email" autocomplete="email"
+          placeholder="prenom.nom@email.fr"
+          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+      </div>
+
+      <button id="btnMagicLink" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px">
+        ✉️ Recevoir mon lien de connexion
+      </button>
+
+      <!-- Message confirmation -->
+      <div id="authConfirmMsg" style="display:none;background:rgba(34,201,160,.1);border:1px solid rgba(34,201,160,.3);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:24px;margin-bottom:6px">📬</div>
+        <div style="font-size:14px;font-weight:800;color:#22C9A0;margin-bottom:4px">Lien envoyé !</div>
+        <div style="font-size:12px;color:#9A8FBF">Vérifie ta boite mail et clique sur le lien. Il expire dans 1h.</div>
+      </div>
+
+      <!-- Retour -->
+      <button id="btnAuthBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:600;padding:8px;cursor:pointer;margin-top:8px">
+        ← Retour
+      </button>
+
+    </div>
+
+    <!-- RGPD -->
+    <div style="margin-top:16px;font-size:11px;color:#7A7AAA;text-align:center;max-width:320px;line-height:1.6">
+      En continuant, tu acceptes nos <a href="#" style="color:#B06CE4">conditions d'utilisation</a> et notre <a href="#" style="color:#B06CE4">politique de confidentialité</a>.
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ VUE COMPLÉTER PROFIL (après connexion OAuth) ═══ -->
+<div class="view" id="v-complete-profil">
+  <div style="min-height:100vh;background:#0F0E1A;padding:24px 20px">
+    <div style="max-width:400px;margin:0 auto;padding-top:40px">
+
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="font-size:36px;margin-bottom:10px">👋</div>
+        <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">Bienvenue !</div>
+        <div style="font-size:14px;color:#9A8FBF">Complète ton profil pour commencer</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+
         <div>
-          <div class="insc-title">Créer mon profil</div>
-          <div class="insc-sub">Résultats sauvegardés · 30 secondes</div>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Pseudo * <span style="color:rgba(176,108,228,.6);font-weight:400;text-transform:none">(affiché dans la ligue)</span></label>
+          <input id="cpPseudo" class="finput" placeholder="Ex : SuperRévise06…" maxlength="20" autocomplete="off">
         </div>
-        <button class="insc-close" onclick="switchMode('landing')">✕</button>
-      </div>
-      <div class="form-full2">
-        <div class="flabel">Pseudo * <span style="font-size:12px;font-weight:400;color:rgba(108,63,196,.55);text-transform:none;letter-spacing:0">(affiché dans la league 🏆)</span></div>
-        <input class="finput" id="finscPseudo" placeholder="Ex : SuperRévise06…" maxlength="20" autocomplete="off" style="border-color:var(--pink);background:rgba(176,108,228,.06)">
-      </div>
-      <div class="form-row2">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Prénom *</label>
+            <input id="cpPrenom" class="finput" placeholder="">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Nom *</label>
+            <input id="cpNom" class="finput" placeholder="">
+          </div>
+        </div>
+
         <div>
-          <div class="flabel">Mon école *</div>
-          <div class="ios-picker-wrap" id="pickerEcoleWrap" onclick="iosPicker('ecole')">
-            <div class="ios-picker-display" id="pickerEcoleDisplay"><span class="ios-placeholder" id="pickerEcoleLabel">Sélectionner…</span><span class="ios-arrow">▼</span></div>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mon école *</label>
+          <input id="cpEcole" class="finput" placeholder="Commence à taper le nom de ton lycée..." autocomplete="off">
+          <div id="cpEcoleResults" style="display:none;background:#1A1730;border:1px solid rgba(176,108,228,.3);border-radius:10px;margin-top:4px;overflow:hidden;max-height:180px;overflow-y:auto"></div>
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ma classe *</label>
+          <div class="ios-picker-wrap" id="cpClasseWrap">
+            <div class="ios-picker-display" id="cpClasseDisplay"><span class="ios-placeholder" id="cpClasseLabel">Sélectionner…</span><span class="ios-arrow">▼</span></div>
           </div>
-          <input type="hidden" id="finscEcole" value="">
+          <input type="hidden" id="cpClasse" value="">
         </div>
-        <div id="insc-classe-row">
-          <div class="flabel">Ma classe *</div>
-          <div class="ios-picker-wrap" id="pickerClasseWrap" onclick="iosPicker('classe')">
-            <div class="ios-picker-display" id="pickerClasseDisplay"><span class="ios-placeholder" id="pickerClasseLabel">Sélectionner…</span><span class="ios-arrow">▼</span></div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Genre</label>
+          <div class="genre-row">
+            <div class="g-btn sel" id="cpGF">Fille</div>
+            <div class="g-btn" id="cpGH">Garçon</div>
           </div>
-          <input type="hidden" id="finscClasse" value="">
         </div>
-      </div>
-      <div class="form-row2">
-        <div><div class="flabel">Prénom *</div><input class="finput" id="finscPrenom" placeholder=""></div>
-        <div><div class="flabel">Nom *</div><input class="finput" id="finscNom" placeholder=""></div>
-      </div>
-      <div class="form-full2">
-        <div class="flabel">Genre</div>
-        <div class="genre-row">
-          <div class="g-btn sel" id="gF" onclick="selG('F')">Fille</div>
-          <div class="g-btn" id="gH" onclick="selG('H')">Garçon</div>
-        </div>
-      </div>
-      <div class="form-full2"><div class="flabel">Email *</div><input class="finput" id="finscEmail" inputmode="email" autocomplete="email" placeholder=""></div>
-      <div class="form-row2">
-        <div><div class="flabel">Code postal *</div><input class="finput" id="finscCP" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder=""></div>
-        <div id="insc-ddn-row">
-          <div class="flabel">Date de naissance</div>
-          <div class="ios-picker-wrap" id="pickerDdnWrap" onclick="iosPicker('ddn')">
-            <div class="ios-picker-display" id="pickerDdnDisplay"><span class="ios-placeholder" id="pickerDdnLabel">Jour / Mois / Année</span><span class="ios-arrow">▼</span></div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Date de naissance</label>
+          <div class="ios-picker-wrap" id="cpDdnWrap">
+            <div class="ios-picker-display" id="cpDdnDisplay"><span class="ios-placeholder">Jour / Mois / Année</span><span class="ios-arrow">▼</span></div>
           </div>
-          <input type="hidden" id="finscDdn" value="">
+          <input type="hidden" id="cpDdn" value="">
         </div>
+
+        <div id="cpAccordRow" style="display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:12px 14px">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+            <input type="checkbox" id="cpAccord" style="margin-top:2px;flex-shrink:0">
+            <span style="font-size:12px;color:#F87171;line-height:1.5">J'ai l'accord de mes parents pour utiliser Flowin (obligatoire si moins de 15 ans)</span>
+          </label>
+        </div>
+
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:10px 14px">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+            <input type="checkbox" id="cpRgpd" checked style="margin-top:2px;flex-shrink:0">
+            <span style="font-size:11px;color:#9A8FBF;line-height:1.5">J'accepte que mes données soient utilisées pour personnaliser ma progression.</span>
+          </label>
+        </div>
+
+        <button id="cpSaveBtn" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:8px">
+          🚀 C'est parti !
+        </button>
+
       </div>
-      <div class="rgpd-row">
-        <input type="checkbox" id="rgpd" checked>
-        <label for="rgpd">J'accepte que mes données soient utilisées pour personnaliser ma progression. <a href="#">Politique de confidentialité</a></label>
-      </div>
-      <button class="btn-submit" onclick="submitFlowinSignup()">🚀 Lancer le quiz !</button>
     </div>
   </div>
 </div>
@@ -2919,6 +3005,22 @@ function switchMode(m){
   if(m==='profil') {
     renderProfil();
   }
+  if(m==='complete-profil') {
+    setTimeout(function(){
+      var btn = document.getElementById('cpSaveBtn');
+      if(btn && !btn._bound){ btn._bound = true; btn.addEventListener('click', saveCompleteProfile); }
+      var classeWrap = document.getElementById('cpClasseWrap');
+      if(classeWrap && !classeWrap._bound){ classeWrap._bound = true; classeWrap.addEventListener('click', function(){ iosPicker('classe'); }); }
+      var ddnWrap = document.getElementById('cpDdnWrap');
+      if(ddnWrap && !ddnWrap._bound){ ddnWrap._bound = true; ddnWrap.addEventListener('click', function(){ iosPicker('ddn'); }); }
+      var ecoleInput = document.getElementById('cpEcole');
+      if(ecoleInput && !ecoleInput._bound){ ecoleInput._bound = true; ecoleInput.addEventListener('input', function(){ searchEcoles(this.value); }); }
+      var gf = document.getElementById('cpGF');
+      var gh = document.getElementById('cpGH');
+      if(gf && !gf._bound){ gf._bound = true; gf.addEventListener('click', function(){ gf.classList.add('sel'); if(gh) gh.classList.remove('sel'); }); }
+      if(gh && !gh._bound){ gh._bound = true; gh.addEventListener('click', function(){ gh.classList.add('sel'); if(gf) gf.classList.remove('sel'); }); }
+    }, 100);
+  }
   // Pour le quiz, la navigation interne (qGo) gère ses propres sous-écrans
   window.scrollTo(0,0);
 }
@@ -3263,6 +3365,244 @@ let userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' 
 const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
 const SB_ENABLED = true; // ← mettre false pour mode démo/offline
+
+// ── SUPABASE JS CLIENT (Auth) ──
+var sbClient = null;
+try {
+  sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+} catch(e) { console.error('[sbClient]', e); }
+
+// ── AUTH STATE : détecter connexion/déconnexion ──
+if (sbClient) {
+  sbClient.auth.onAuthStateChange(function(event, session) {
+    if (session && session.user) {
+      // Utilisateur connecté
+      var u = session.user;
+      // Mettre à jour userProfile depuis les metadata OAuth
+      if (u.user_metadata) {
+        var meta = u.user_metadata;
+        if (!userProfile.prenom && meta.given_name) userProfile.prenom = meta.given_name;
+        if (!userProfile.nom && meta.family_name) userProfile.nom = meta.family_name;
+        if (!userProfile.email) userProfile.email = u.email || '';
+      }
+      // Charger le profil depuis Supabase profils
+      sbLoadProfil(u.id, u.email);
+    } else if (event === 'SIGNED_OUT') {
+      userInscribed = false;
+      userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
+    }
+  });
+  // Vérifier session au chargement
+  sbClient.auth.getSession().then(function(res) {
+    if (!res.data.session) {
+      // Pas de session — rester sur landing
+    }
+  });
+}
+
+async function sbLoadProfil(userId, email) {
+  if (!sbClient || !SB_ENABLED) return;
+  try {
+    var r = await sbClient.from('profils').select('*').eq('id', userId).single();
+    if (r.data) {
+      var p = r.data;
+      userProfile.pseudo  = p.pseudo  || userProfile.pseudo  || '';
+      userProfile.prenom  = p.prenom  || userProfile.prenom  || '';
+      userProfile.nom     = p.nom     || userProfile.nom     || '';
+      userProfile.email   = p.email   || email || '';
+      userProfile.ecole   = p.ecole   || '';
+      userProfile.classe  = p.classe  || '';
+      userProfile.genre   = p.genre   || '';
+      try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e) {}
+      if (!p.profil_complet) {
+        // Profil incomplet → écran completion
+        sbPrefillCompleteForm(p, email);
+        switchMode('complete-profil');
+      } else {
+        // Profil complet → app
+        userInscribed = true;
+        QS.playerName = userProfile.pseudo || userProfile.prenom;
+        showWelcomeBack();
+      }
+    }
+  } catch(e) {
+    console.error('[sbLoadProfil]', e);
+    // Profil pas encore créé → écran completion
+    sbPrefillCompleteForm({}, email);
+    switchMode('complete-profil');
+  }
+}
+
+function sbPrefillCompleteForm(p, email) {
+  var el = function(id){ return document.getElementById(id); };
+  if (el('cpPrenom') && p.prenom) el('cpPrenom').value = p.prenom;
+  if (el('cpNom') && p.nom) el('cpNom').value = p.nom;
+  if (el('cpPseudo') && p.pseudo) el('cpPseudo').value = p.pseudo;
+  if (el('cpEcole') && p.ecole) el('cpEcole').value = p.ecole;
+}
+
+// ── AUTH : Magic Link ──
+async function sendMagicLink() {
+  var btn = document.getElementById('btnMagicLink');
+  var email = (document.getElementById('authEmail').value || '').trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    showToast('Entre un email valide', 'error');
+    return;
+  }
+  if (!sbClient) { showToast('Erreur de connexion', 'error'); return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Envoi...'; }
+  try {
+    var r = await sbClient.auth.signInWithOtp({
+      email: email,
+      options: { emailRedirectTo: 'https://flowrevis.vercel.app' }
+    });
+    if (r.error) {
+      showToast('Erreur : ' + r.error.message, 'error');
+    } else {
+      var msg = document.getElementById('authConfirmMsg');
+      if (msg) msg.style.display = 'block';
+      if (btn) btn.style.display = 'none';
+      showToast('Lien envoyé ! Vérifie ta boite mail.', 'success');
+    }
+  } catch(e) {
+    showToast('Erreur de connexion', 'error');
+    console.error('[sendMagicLink]', e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✉️ Recevoir mon lien de connexion'; }
+  }
+}
+
+// ── AUTH : Google OAuth ──
+async function signInWithGoogle() {
+  if (!sbClient) { showToast('Erreur de connexion', 'error'); return; }
+  try {
+    await sbClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: 'https://flowrevis.vercel.app' }
+    });
+  } catch(e) {
+    showToast('Erreur Google', 'error');
+    console.error('[signInWithGoogle]', e);
+  }
+}
+
+// ── PROFIL : sauvegarder le profil complété ──
+async function saveCompleteProfile() {
+  var btn = document.getElementById('cpSaveBtn');
+  var pseudo  = (document.getElementById('cpPseudo')?.value || '').trim();
+  var prenom  = (document.getElementById('cpPrenom')?.value || '').trim();
+  var nom     = (document.getElementById('cpNom')?.value || '').trim();
+  var ecole   = (document.getElementById('cpEcole')?.value || '').trim();
+  var classe  = (document.getElementById('cpClasse')?.value || '').trim();
+  var genre   = document.querySelector('.g-btn.sel')?.textContent?.trim() || '';
+  var ddn     = document.getElementById('cpDdn')?.value || '';
+  var accord  = document.getElementById('cpAccord')?.checked || false;
+  var rgpd    = document.getElementById('cpRgpd')?.checked || false;
+
+  if (!prenom) { showToast('Le prénom est obligatoire', 'error'); return; }
+  if (!pseudo) pseudo = prenom;
+  if (!classe) { showToast('Choisis ta classe', 'error'); return; }
+
+  // Vérifier accord parental si mineur (< 15 ans)
+  if (ddn) {
+    var age = (Date.now() - new Date(ddn).getTime()) / (365.25 * 24 * 3600 * 1000);
+    var accordRow = document.getElementById('cpAccordRow');
+    if (accordRow) accordRow.style.display = age < 15 ? 'block' : 'none';
+    if (age < 15 && !accord) {
+      showToast('L accord parental est obligatoire pour les moins de 15 ans', 'error');
+      return;
+    }
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Sauvegarde...'; }
+
+  var session = await sbClient.auth.getSession();
+  if (!session.data.session) {
+    showToast('Session expirée — reconnecte-toi', 'error');
+    switchMode('inscription');
+    return;
+  }
+  var userId = session.data.session.user.id;
+  var email  = session.data.session.user.email;
+
+  var profil = {
+    id: userId,
+    email: email,
+    pseudo: pseudo,
+    prenom: prenom,
+    nom: nom,
+    ecole: ecole,
+    classe: classe,
+    genre: genre,
+    ddn: ddn || null,
+    accord_parental: accord,
+    rgpd_accepted: rgpd,
+    rgpd_at: new Date().toISOString(),
+    profil_complet: true,
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    var r = await sbClient.from('profils').upsert(profil);
+    if (r.error) throw r.error;
+
+    // Ajouter l'école à la base si nouvelle
+    if (ecole) {
+      sbClient.rpc('upsert_ecole', { p_nom: ecole }).catch(function(){});
+    }
+
+    // Mettre à jour l'état local
+    userProfile = { pseudo, prenom, nom, ecole, classe, email, genre };
+    userInscribed = true;
+    QS.playerName = pseudo || prenom;
+    try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+
+    saveProfileToSheets(userProfile);
+    logConnexion(pseudo || prenom);
+    showToast('Bienvenue ' + (pseudo || prenom) + ' !', 'success');
+    showWelcomeBack();
+
+  } catch(e) {
+    console.error('[saveCompleteProfile]', e);
+    showToast('Erreur lors de la sauvegarde', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 C est parti !'; }
+  }
+}
+
+// ── AUTOCOMPLÉTION ÉCOLES ──
+var _ecoleTimer = null;
+function searchEcoles(query) {
+  clearTimeout(_ecoleTimer);
+  var results = document.getElementById('cpEcoleResults');
+  if (!query || query.length < 2) {
+    if (results) results.style.display = 'none';
+    return;
+  }
+  _ecoleTimer = setTimeout(async function() {
+    if (!sbClient) return;
+    try {
+      var r = await sbClient.rpc('search_ecoles', { query: query, lim: 8 });
+      if (r.data && r.data.length > 0 && results) {
+        results.innerHTML = '';
+        r.data.forEach(function(ecole) {
+          var item = document.createElement('div');
+          item.style.cssText = 'padding:10px 14px;cursor:pointer;font-size:13px;color:#fff;border-bottom:1px solid rgba(255,255,255,.06)';
+          item.textContent = ecole.nom + (ecole.ville ? ' — ' + ecole.ville : '');
+          item.addEventListener('click', function() {
+            var input = document.getElementById('cpEcole');
+            if (input) input.value = ecole.nom;
+            results.style.display = 'none';
+          });
+          results.appendChild(item);
+        });
+        results.style.display = 'block';
+      } else if (results) {
+        results.style.display = 'none';
+      }
+    } catch(e) { console.error('[searchEcoles]', e); }
+  }, 300);
+}
 
 // ── LOG CONNEXION ──
 let _lastLogTs = 0;
@@ -8810,6 +9150,30 @@ function showGlobalUserMenu(p){
     document.addEventListener('DOMContentLoaded', attachProfilBtns);
   } else {
     attachProfilBtns();
+  }
+})();
+
+// ── Listeners écran auth ──
+(function(){
+  function attachAuthBtns(){
+    var btnGoogle = document.getElementById('btnGoogleAuth');
+    var btnMagic  = document.getElementById('btnMagicLink');
+    var btnBack   = document.getElementById('btnAuthBack');
+    if(btnGoogle) btnGoogle.addEventListener('click', signInWithGoogle);
+    if(btnMagic)  btnMagic.addEventListener('click', sendMagicLink);
+    if(btnBack)   btnBack.addEventListener('click', function(){ switchMode('landing'); });
+    // Enter sur l'input email
+    var emailInput = document.getElementById('authEmail');
+    if(emailInput){
+      emailInput.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){ sendMagicLink(); }
+      });
+    }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', attachAuthBtns);
+  } else {
+    attachAuthBtns();
   }
 })();
 
