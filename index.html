@@ -3750,6 +3750,40 @@ function applyFormConfig() {
 (function restoreProfile(){
   loadConfigFromSupabase();
   loadLotsConfig();
+  // ── Vérifier d'abord la session Supabase Auth ──
+  // Si pas de session Auth valide → ignorer le localStorage et montrer la landing
+  if(sbClient && SB_ENABLED) {
+    sbClient.auth.getSession().then(function(res) {
+      if(res.data && res.data.session && res.data.session.user) {
+        // Session Auth valide → charger le profil depuis Supabase
+        sbLoadProfil(res.data.session.user.id, res.data.session.user.email);
+      } else {
+        // Pas de session Auth → vider le localStorage et montrer la landing
+        try { localStorage.removeItem('flowin_profile'); } catch(e){}
+        userInscribed = false;
+        userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
+        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+        document.getElementById('v-landing').classList.add('active');
+      }
+    }).catch(function() {
+      // Erreur réseau → fallback localStorage (mode offline)
+      try {
+        var saved = localStorage.getItem('flowin_profile');
+        if(saved) {
+          var p = JSON.parse(saved);
+          userProfile = p; userInscribed = true;
+          QS.playerName = p.pseudo || p.prenom;
+          showWelcomeBack();
+        } else {
+          document.getElementById('v-landing').classList.add('active');
+        }
+      } catch(e) {
+        document.getElementById('v-landing').classList.add('active');
+      }
+    });
+    return; // laisser le Promise gérer la suite
+  }
+  // Fallback sans sbClient (SB_ENABLED = false)
   try {
     const saved = localStorage.getItem('flowin_profile');
     if(saved) {
