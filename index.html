@@ -3510,47 +3510,52 @@ async function saveCompleteProfile() {
 
   if (btn) { btn.disabled = true; btn.textContent = 'Sauvegarde...'; }
 
-  var session = await sbClient.auth.getSession();
-  if (!session.data.session) {
-    showToast('Session expirée — reconnecte-toi', 'error');
-    switchMode('inscription');
-    return;
-  }
-  var userId = session.data.session.user.id;
-  var email  = session.data.session.user.email;
-
-  var profil = {
-    id: userId,
-    email: email,
-    pseudo: pseudo,
-    prenom: prenom,
-    nom: nom,
-    ecole: ecole,
-    classe: classe,
-    genre: genre,
-    ddn: ddn || null,
-    accord_parental: accord,
-    rgpd_accepted: rgpd,
-    rgpd_at: new Date().toISOString(),
-    profil_complet: true,
-    updated_at: new Date().toISOString()
-  };
-
+  // Récupérer la session Auth si disponible
+  var userId = null;
+  var email  = userProfile.email || '';
   try {
-    var r = await sbClient.from('profils').upsert(profil);
-    if (r.error) throw r.error;
-
-    // Ajouter l'école à la base si nouvelle
-    if (ecole) {
-      sbClient.rpc('upsert_ecole', { p_nom: ecole }).catch(function(){});
+    if (sbClient) {
+      var sessionRes = await sbClient.auth.getSession();
+      if (sessionRes.data && sessionRes.data.session) {
+        userId = sessionRes.data.session.user.id;
+        email  = sessionRes.data.session.user.email || email;
+      }
     }
+  } catch(e) { console.error('[getSession]', e); }
 
-    // Mettre à jour l'état local
-    userProfile = { pseudo, prenom, nom, ecole, classe, email, genre };
-    userInscribed = true;
-    QS.playerName = pseudo || prenom;
-    try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+  // Mettre à jour l'état local dans tous les cas
+  userProfile = { pseudo: pseudo, prenom: prenom, nom: nom, ecole: ecole, classe: classe, email: email, genre: genre };
+  userInscribed = true;
+  QS.playerName = pseudo || prenom;
+  try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
 
+  // Sauvegarder dans Supabase profils si session Auth disponible
+  if (userId && sbClient) {
+    var profil = {
+      id: userId,
+      email: email,
+      pseudo: pseudo,
+      prenom: prenom,
+      nom: nom,
+      ecole: ecole,
+      classe: classe,
+      genre: genre,
+      ddn: ddn || null,
+      accord_parental: accord,
+      rgpd_accepted: rgpd,
+      rgpd_at: new Date().toISOString(),
+      profil_complet: true,
+      updated_at: new Date().toISOString()
+    };
+    try {
+      var r = await sbClient.from('profils').upsert(profil);
+      if (r.error) console.error('[upsert profil]', r.error);
+      if (ecole) sbClient.rpc('upsert_ecole', { p_nom: ecole }).catch(function(){});
+    } catch(e) { console.error('[save profil supabase]', e); }
+  }
+
+  // Dans tous les cas → continuer vers l'app
+  try {
     saveProfileToSheets(userProfile);
     logConnexion(pseudo || prenom);
     showToast('Bienvenue ' + (pseudo || prenom) + ' !', 'success');
