@@ -3010,9 +3010,9 @@ function switchMode(m){
       var btn = document.getElementById('cpSaveBtn');
       if(btn && !btn._bound){ btn._bound = true; btn.addEventListener('click', saveCompleteProfile); }
       var classeWrap = document.getElementById('cpClasseWrap');
-      if(classeWrap && !classeWrap._bound){ classeWrap._bound = true; classeWrap.addEventListener('click', function(){ iosPicker('classe'); }); }
+      if(classeWrap && !classeWrap._bound){ classeWrap._bound = true; classeWrap.addEventListener('click', function(){ iosPicker('classe-cp'); }); }
       var ddnWrap = document.getElementById('cpDdnWrap');
-      if(ddnWrap && !ddnWrap._bound){ ddnWrap._bound = true; ddnWrap.addEventListener('click', function(){ iosPicker('ddn'); }); }
+      if(ddnWrap && !ddnWrap._bound){ ddnWrap._bound = true; ddnWrap.addEventListener('click', function(){ iosPicker('ddn-cp'); }); }
       var ecoleInput = document.getElementById('cpEcole');
       if(ecoleInput && !ecoleInput._bound){ ecoleInput._bound = true; ecoleInput.addEventListener('input', function(){ searchEcoles(this.value); }); }
       var gf = document.getElementById('cpGF');
@@ -8719,6 +8719,23 @@ function iosPicker(type) {
     iosBuildCol(colsEl, 0, PICKER_JOURS, ji);
     iosBuildCol(colsEl, 1, PICKER_MOIS, mi);
     iosBuildCol(colsEl, 2, PICKER_ANNEES, ai);
+  } else if(type === 'classe-cp') {
+    titleEl.textContent = 'Ma classe';
+    var cur = document.getElementById('cpClasse') ? document.getElementById('cpClasse').value : '';
+    var idx = PICKER_CLASSES.indexOf(cur); if(idx<0) idx=0;
+    IOS_PICKER_VALS[0] = idx;
+    iosBuildCol(colsEl, 0, PICKER_CLASSES, idx);
+  } else if(type === 'ddn-cp') {
+    titleEl.textContent = 'Date de naissance';
+    var saved2 = document.getElementById('cpDdn') ? document.getElementById('cpDdn').value : '';
+    var parts2 = saved2 ? saved2.split('/') : [];
+    var ji2 = parts2[0] ? PICKER_JOURS.indexOf(parts2[0]) : 0; if(ji2<0) ji2=0;
+    var mi2 = parts2[1] ? parseInt(parts2[1])-1 : 0; if(mi2<0) mi2=0;
+    var ai2 = parts2[2] ? PICKER_ANNEES.indexOf(parts2[2]) : 0; if(ai2<0) ai2=0;
+    IOS_PICKER_VALS[0]=ji2; IOS_PICKER_VALS[1]=mi2; IOS_PICKER_VALS[2]=ai2;
+    iosBuildCol(colsEl, 0, PICKER_JOURS, ji2);
+    iosBuildCol(colsEl, 1, PICKER_MOIS, mi2);
+    iosBuildCol(colsEl, 2, PICKER_ANNEES, ai2);
   }
 
   back.classList.add('open');
@@ -8870,6 +8887,24 @@ function iosPickerConfirm() {
     var lbl = document.getElementById('pickerDdnLabel');
     lbl.textContent = val;
     lbl.classList.remove('ios-placeholder');
+  } else if(type === 'classe-cp') {
+    var val = PICKER_CLASSES[IOS_PICKER_VALS[0]||0] || '';
+    if(document.getElementById('cpClasse')) document.getElementById('cpClasse').value = val;
+    var lbl = document.getElementById('cpClasseLabel');
+    if(lbl){ lbl.textContent = val || 'Sélectionner…'; lbl.classList.toggle('ios-placeholder', !val); }
+  } else if(type === 'ddn-cp') {
+    var j2 = PICKER_JOURS[IOS_PICKER_VALS[0]||0] || '01';
+    var m2 = String((IOS_PICKER_VALS[1]||0)+1).padStart(2,'0');
+    var a2 = PICKER_ANNEES[IOS_PICKER_VALS[2]||0] || '2006';
+    var val2 = j2+'/'+m2+'/'+a2;
+    if(document.getElementById('cpDdn')) document.getElementById('cpDdn').value = val2;
+    var lbl2 = document.getElementById('cpDdnDisplay');
+    if(lbl2){ lbl2.querySelector('span').textContent = val2; }
+    // Vérifier accord parental si mineur
+    var ddDate = new Date(a2+'-'+m2+'-'+j2);
+    var age = (Date.now() - ddDate.getTime()) / (365.25 * 24 * 3600 * 1000);
+    var accordRow = document.getElementById('cpAccordRow');
+    if(accordRow) accordRow.style.display = age < 15 ? 'block' : 'none';
   }
   iosPickerClose();
 }
