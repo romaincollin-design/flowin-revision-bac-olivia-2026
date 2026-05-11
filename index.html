@@ -6785,7 +6785,8 @@ function dfPollForGameStart(roomId) {
       if(d.status === 'en_cours' && !DF_CURRENT._gameStarted && !DF_CURRENT._countdownStarted) {
         clearInterval(DF_GAME_START_POLL);
         DF_CURRENT._gameStarted = true;
-        dfStartGame();
+        // Afficher l'écran règles avant de lancer le quiz
+        dfShowRules(DF_CURRENT);
       }
     } catch(e){}
   }, 3000);
