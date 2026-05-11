@@ -6284,10 +6284,10 @@ function dfShowBilletCreateur(room) {
   if(el('dfBilletLien'))  el('dfBilletLien').textContent = link;
   var qr2 = el('dfQRimg');
   if(qr2) { qr2.src = qrUrl; qr2.style.display='block'; }
-  if(room.isPrivate) {
-    dfTab('billet');  // room privée : montrer le billet d'abord
-  } else {
-    dfTab('waiting'); // room publique : aller directement en salle d'attente
+  // Toujours montrer le billet d'abord — public ou privé
+  dfTab('billet');
+  if(!room.isPrivate) {
+    // Room publique : démarrer le polling et les bots en arrière-plan
     dfStartPollingParticipants(room.id);
     setTimeout(function(){ dfSimulateBotJoins(); }, 1500);
   }
