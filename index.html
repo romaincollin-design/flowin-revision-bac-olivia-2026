@@ -3668,6 +3668,7 @@ function goHome(){
 }
 
 function populateWelcomeBack(){
+  showPWANudgeOnWelcome();
   const prenom = userProfile.pseudo || userProfile.prenom || 'là';
   const initials = ((userProfile.prenom||'').charAt(0) + (userProfile.nom||'').charAt(0)).toUpperCase() || (prenom.charAt(0).toUpperCase());
 
@@ -4966,10 +4967,26 @@ window.addEventListener('appinstalled', function() {
 function showPWANudge() {
   if (pwaDismissed) return;
   try { if (localStorage.getItem('pwa_installed')) return; } catch(e) {}
+  // Ne pas afficher si déjà en mode standalone (app déjà installée)
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+    try { localStorage.setItem('pwa_installed', '1'); } catch(e) {}
+    return;
+  }
   setTimeout(function() {
     var n = document.getElementById('pwaNudge');
     if (n) n.classList.add('show');
   }, 900);
+}
+
+function showPWANudgeOnWelcome() {
+  // Afficher le nudge dès l'arrivée sur welcome (iOS + Android)
+  if (pwaDismissed) return;
+  try { if (localStorage.getItem('pwa_installed')) return; } catch(e) {}
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return;
+  setTimeout(function() {
+    var n = document.getElementById('pwaNudge');
+    if (n) n.classList.add('show');
+  }, 3000); // 3s après l'arrivée sur welcome
 }
 
 function dismissPWANudge() {
