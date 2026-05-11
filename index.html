@@ -996,7 +996,7 @@ window.addEventListener('unhandledrejection', function(e){
 </form>
 
 <!-- ═══ WELCOME BACK (utilisateur déjà inscrit) ═══ -->
-<div class="view active" id="v-welcome">
+<div class="view" id="v-welcome">
   <div class="landing" style="overflow-y:auto">
     <div class="grid-bg"></div>
     <div class="orb" style="width:500px;height:500px;background:rgba(176,108,228,.18);top:-120px;left:-150px"></div>
@@ -1098,6 +1098,11 @@ window.addEventListener('unhandledrejection', function(e){
 </div>
 
 <!-- ═══ LANDING ═══ -->
+<div id="v-splash" style="position:fixed;inset:0;background:#0F0E1A;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+  <div style="font-size:48px">🌊</div>
+  <div style="font-size:22px;font-weight:800;color:#fff">Flowin</div>
+  <div style="width:32px;height:32px;border:3px solid rgba(176,108,228,.2);border-top-color:#B06CE4;border-radius:50%;animation:spin .8s linear infinite"></div>
+</div>
 <div class="view" id="v-landing">
   <div class="landing">
     <div class="grid-bg"></div>
@@ -3415,6 +3420,8 @@ async function sbLoadProfil(userId, email) {
   try {
     var r = await sbClient.from('profils').select('*').eq('id', userId).single();
     if (r.data) {
+      var splash = document.getElementById('v-splash');
+      if(splash) splash.style.display = 'none';
       var p = r.data;
       userProfile.pseudo  = p.pseudo  || userProfile.pseudo  || '';
       userProfile.prenom  = p.prenom  || userProfile.prenom  || '';
@@ -3777,6 +3784,8 @@ function applyFormConfig() {
         try { localStorage.removeItem('flowin_profile'); } catch(e){}
         userInscribed = false;
         userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
+        var splash = document.getElementById('v-splash');
+        if(splash) splash.style.display = 'none';
         document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
         document.getElementById('v-landing').classList.add('active');
       }
@@ -3793,6 +3802,8 @@ function applyFormConfig() {
           document.getElementById('v-landing').classList.add('active');
         }
       } catch(e) {
+        var splash = document.getElementById('v-splash');
+        if(splash) splash.style.display = 'none';
         document.getElementById('v-landing').classList.add('active');
       }
     });
