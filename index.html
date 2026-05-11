@@ -5015,9 +5015,20 @@ function showPWAModal() {
     return; // no modal needed
   }
 
-  // iOS Safari → show 2-step visual guide (only exit needed is Share button)
+  // iOS Safari → show 2-step visual guide
   switchPWATab(isIos ? 'ios' : 'and');
   document.getElementById('pwaOverlay').classList.add('show');
+  // Attacher les listeners à chaque ouverture (cloneNode pour reset)
+  function bindPwa(id, fn) {
+    var el = document.getElementById(id);
+    if(!el) return;
+    var clone = el.cloneNode(true);
+    el.parentNode.replaceChild(clone, el);
+    clone.addEventListener('click', fn);
+  }
+  bindPwa('posIos', function(){ switchPWATab('ios'); });
+  bindPwa('posAnd', function(){ switchPWATab('and'); });
+  bindPwa('pwaDismissBtn', function(){ document.getElementById('pwaOverlay').classList.remove('show'); });
 }
 
 function closePWAIfOutside(e) {
@@ -8260,10 +8271,10 @@ async function dfLoadPrivateRooms() {
     </div>
 
     <div style="display:flex;gap:8px;margin-top:16px">
-      <button class="pwa-os-btn act" id="posIos" onclick="switchPWATab('ios')" style="flex:1;font-size:15px;padding:12px">🍎 iPhone</button>
-      <button class="pwa-os-btn" id="posAnd" onclick="switchPWATab('and')" style="flex:1;font-size:15px;padding:12px">🤖 Android</button>
+      <button class="pwa-os-btn act" id="posIos" style="flex:1;font-size:15px;padding:12px">🍎 iPhone</button>
+      <button class="pwa-os-btn" id="posAnd" style="flex:1;font-size:15px;padding:12px">🤖 Android</button>
     </div>
-    <button class="pwa-dismiss" style="margin-top:10px;font-size:15px" onclick="document.getElementById('pwaOverlay').classList.remove('show')">Pas maintenant</button>
+    <button id="pwaDismissBtn" class="pwa-dismiss" style="margin-top:10px;font-size:15px">Pas maintenant</button>
   </div>
 
 <!-- ═══ ROULETTE iOS — BACKDROP + OVERLAYS ═══ -->
