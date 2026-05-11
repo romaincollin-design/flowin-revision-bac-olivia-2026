@@ -7478,14 +7478,35 @@ function dfPollAdversaireScore(roomId, myScore, cagnotte, myName, adversaireName
   if(DF_RESULT_POLL) clearInterval(DF_RESULT_POLL);
   var adversaireField = isCreateur ? 'score_invite' : 'score_createur';
   var startTime = Date.now();
-  var TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes max
+  var TIMEOUT_MS = 3 * 60 * 1000; // 3 minutes — forfait
+  var FORFAIT_WARN_MS = 60 * 1000; // compte a rebours apres 1 min
+  var forfaitInterval = null;
+
   DF_RESULT_POLL = setInterval(function() {
-    // Timeout : afficher résultats avec ce qu'on a
-    if(Date.now() - startTime > TIMEOUT_MS) {
+    var elapsed = Date.now() - startTime;
+
+    if(elapsed > FORFAIT_WARN_MS && !forfaitInterval) {
+      var cdBlock = document.getElementById('dfForfaitCountdown');
+      if(cdBlock) cdBlock.style.display = 'block';
+      forfaitInterval = setInterval(function() {
+        var remaining = Math.max(0, TIMEOUT_MS - (Date.now() - startTime));
+        var mins = Math.floor(remaining / 60000);
+        var secs = Math.floor((remaining % 60000) / 1000);
+        var timerEl = document.getElementById('dfForfaitTimer');
+        if(timerEl) timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+      }, 500);
+    }
+
+    if(elapsed > TIMEOUT_MS) {
       clearInterval(DF_RESULT_POLL);
+      if(forfaitInterval) clearInterval(forfaitInterval);
+      var cdBlock2 = document.getElementById('dfForfaitCountdown');
+      if(cdBlock2) cdBlock2.style.display = 'none';
+      showToast('Adversaire absent : tu gagnes par forfait !', 'success');
       dfShowResultPrivee(myScore, null, cagnotte, myName, adversaireName, isCreateur, roomId);
       return;
     }
+
     if(!SB_ENABLED) { clearInterval(DF_RESULT_POLL); return; }
     var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
     fetch(SUPABASE_URL + '/rest/v1/defis?id=eq.' + encodeURIComponent(roomId) + '&select=' + adversaireField, {headers: hdrs})
@@ -7495,11 +7516,13 @@ function dfPollAdversaireScore(roomId, myScore, cagnotte, myName, adversaireName
         var adversaireScore = rows[0][adversaireField];
         if(adversaireScore !== null && adversaireScore !== undefined) {
           clearInterval(DF_RESULT_POLL);
-          // Toast : résultats disponibles
+          if(forfaitInterval) clearInterval(forfaitInterval);
+          var cdBlock3 = document.getElementById('dfForfaitCountdown');
+          if(cdBlock3) cdBlock3.style.display = 'none';
           var t = document.createElement('div');
           t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;padding:12px 24px;border-radius:20px;font-weight:800;font-size:14px;z-index:99999;box-shadow:0 4px 24px rgba(176,108,228,.6);cursor:pointer';
-          t.textContent = '⚔️ Résultats disponibles ! Voir maintenant →';
-          t.onclick = function(){ if(t.parentNode) t.parentNode.removeChild(t); dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur, roomId); };
+          t.textContent = 'Resultats disponibles ! Voir maintenant';
+          t.addEventListener('click', function(){ if(t.parentNode) t.parentNode.removeChild(t); dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur, roomId); });
           document.body.appendChild(t);
           setTimeout(function(){ if(t.parentNode) { t.parentNode.removeChild(t); dfShowResultPrivee(myScore, adversaireScore, cagnotte, myName, adversaireName, isCreateur, roomId); } }, 4000);
         }
@@ -8377,6 +8400,13 @@ async function dfLoadPrivateRooms() {
               <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.25);min-width:50px;text-align:right">En cours…</div>
             </div>
           </div>
+        </div>
+
+        <!-- Compte à rebours forfait -->
+        <div id="dfForfaitCountdown" style="display:none;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:14px 16px;text-align:center;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:800;color:rgba(239,68,68,.7);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">⏱️ Adversaire absent</div>
+          <div style="font-size:32px;font-weight:800;color:#F87171" id="dfForfaitTimer">3:00</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600;margin-top:4px">Tu gagnes par forfait si ton adversaire ne revient pas</div>
         </div>
 
         <div style="background:rgba(34,201,160,.06);border:1px solid rgba(34,201,160,.2);border-radius:14px;padding:12px 16px;text-align:center;margin-bottom:16px">
