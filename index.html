@@ -3,6 +3,8 @@
 <head>
 <meta name="theme-color" content="#2D1B6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Flowin">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232D1B6B'/><text y='.9em' font-size='75' x='12'>🌊</text></svg>">
@@ -5040,32 +5042,16 @@ endRound = function() {
 
 
 
-// ── PWA MANIFEST (data URI - compatible GitHub Pages) ──
-// Blob URL bloque beforeinstallprompt sur Chrome. Data URI fonctionne.
-(function() {
-  var manifest = {
-    name: 'Flowin',
-    short_name: 'Flowin',
-    description: 'Révision Bac Pro Histoire-Géo-EMC',
-    start_url: './',
-    display: 'standalone',
-    background_color: '#0F0E1A',
-    theme_color: '#2D1B6B',
-    icons: [{
-      src: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>',
-      sizes: 'any',
-      type: 'image/svg+xml'
-    }]
-  };
-  // Vérifier qu'un manifest n'est pas déjà présent (ex: statique GitHub Pages)
-  if(!document.querySelector('link[rel="manifest"]')) {
-    var encoded = encodeURIComponent(JSON.stringify(manifest));
-    var link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = 'data:application/manifest+json,' + encoded;
-    document.head.appendChild(link);
-  }
-})();
+// ── PWA SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').then(function(reg) {
+      console.log('[Flowin] SW enregistré:', reg.scope);
+    }).catch(function(err) {
+      console.log('[Flowin] SW erreur:', err);
+    });
+  });
+}
 
 // ═══ SHARE & QR ═══
 // ═══ SHARE TRACKING — points par partage ═══
