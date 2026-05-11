@@ -6387,6 +6387,19 @@ function dfShowBilletCreateur(room) {
     lobbyBtn.parentNode.replaceChild(lClone, lobbyBtn);
     lClone.addEventListener('click', function(){ dfTab('lobby'); });
   }
+  // Boutons Annuler / Reset — addEventListener (ERR-01)
+  var resetBtn = document.getElementById('dfWaitResetBtn');
+  if(resetBtn){
+    var rClone = resetBtn.cloneNode(true);
+    resetBtn.parentNode.replaceChild(rClone, resetBtn);
+    rClone.addEventListener('click', function(){ dfResetRoom(); });
+  }
+  var cancelBtn = document.getElementById('dfWaitCancelBtn');
+  if(cancelBtn){
+    var cClone = cancelBtn.cloneNode(true);
+    cancelBtn.parentNode.replaceChild(cClone, cancelBtn);
+    cClone.addEventListener('click', function(){ dfCancelRoom(); });
+  }
 }
 
 function dbShareWhatsApp() {
@@ -8201,8 +8214,8 @@ async function dfLoadPrivateRooms() {
         </div>
         <!-- Message adversaire absent -->
         <div id="dfAbsentMsg" style="display:none;background:rgba(244,168,58,.08);border:1px solid rgba(244,168,58,.25);border-radius:12px;padding:12px;margin-top:10px;font-size:12px;font-weight:700;color:#F4A83A;text-align:center"></div>
-        <button onclick="dfResetRoom()" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:700;padding:8px;margin-top:2px;cursor:pointer">🔄 Remettre à 0 joueur</button>
-        <button onclick="dfCancelRoom()" style="width:100%;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:700;padding:8px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
+        <button id="dfWaitResetBtn" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:700;padding:8px;margin-top:2px;cursor:pointer">🔄 Remettre à 0 joueur</button>
+        <button id="dfWaitCancelBtn" style="width:100%;background:transparent;border:none;color:#EF4444;font-family:inherit;font-size:13px;font-weight:700;padding:8px;cursor:pointer">✕ Annuler la room (mise remboursée)</button>
       </div>
     </div>
 
