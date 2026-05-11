@@ -6650,6 +6650,15 @@ function dfShowRules(room) {
   var cagnotte = room ? (room.mise * 2) : 0;
   var el = document.getElementById('dfRulesCagnotte');
   if(el) el.textContent = cagnotte.toLocaleString('fr') + ' pts';
+  var elNom = document.getElementById('dfRulesNom');
+  if(elNom) elNom.textContent = room && room.name ? room.name : 'Défi';
+  var elTheme = document.getElementById('dfRulesTheme');
+  if(elTheme) elTheme.textContent = room && room.theme ? (DF_THEME_LABELS[room.theme] || room.theme) : '—';
+  var elAdv = document.getElementById('dfRulesAdv');
+  if(elAdv) {
+    var adversaire = room && room.players ? room.players.find(function(p){ return !p.isMe; }) : null;
+    elAdv.textContent = adversaire ? ('vs ' + adversaire.name) : 'vs ton adversaire';
+  }
   dfTab('rules');
   // Boutons Je suis pret + Passer
   function bindRules(id, fn) {
@@ -8198,49 +8207,86 @@ async function dfLoadPrivateRooms() {
 
     <!-- ÉCRAN RÈGLES DU DÉFI -->
     <div class="df-screen hidden" id="dfScreenRules">
-      <div style="padding:20px 16px 60px">
-        <div style="text-align:center;padding:16px 0 24px">
-          <div style="font-size:52px;margin-bottom:14px">&#9876;&#65039;</div>
-          <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">Les règles du défi</div>
-          <div style="font-size:13px;color:#9A8FBF">Lis bien avant de commencer</div>
+      <div style="padding:16px 16px 60px">
+
+        <!-- HEADER -->
+        <div style="text-align:center;padding:12px 0 16px">
+          <div style="font-size:9px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">&#9876;&#65039; Contrat de défi</div>
+          <div style="font-size:21px;font-weight:800;color:#fff" id="dfRulesNom">Défi</div>
+          <div style="font-size:12px;color:#9A8FBF;margin-top:3px">Lis bien — tu t'engages en cliquant</div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px">
-          <div style="background:rgba(176,108,228,.08);border:1.5px solid rgba(176,108,228,.25);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px">
-            <div style="font-size:28px;flex-shrink:0">&#9989;</div>
-            <div><div style="font-size:15px;font-weight:800;color:#fff">Réponds juste</div><div style="font-size:12px;color:#9A8FBF;margin-top:3px">Chaque bonne réponse rapporte des points</div></div>
+
+        <!-- BILLET TICKET -->
+        <div class="df-billet" style="margin-bottom:16px">
+
+          <!-- HEAD BILLET -->
+          <div class="df-billet-head">
+            <div class="df-billet-lbl">&#127903;&#65039; Enjeux de la bataille</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+              <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.55)" id="dfRulesAdv">vs adversaire</div>
+              <div style="font-size:11px;font-weight:800;color:#B06CE4" id="dfRulesTheme">—</div>
+            </div>
           </div>
-          <div style="background:rgba(244,168,58,.08);border:1.5px solid rgba(244,168,58,.25);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px">
-            <div style="font-size:28px;flex-shrink:0">&#9889;</div>
-            <div><div style="font-size:15px;font-weight:800;color:#fff">Réponds vite</div><div style="font-size:12px;color:#9A8FBF;margin-top:3px">Plus tu es rapide, plus tu marques</div></div>
+
+          <!-- STATS LIGNE -->
+          <div class="df-billet-cards">
+            <div class="df-billet-card">
+              <div class="df-billet-card-val" style="color:#B06CE4">10</div>
+              <div class="df-billet-card-lbl">Questions</div>
+            </div>
+            <div class="df-billet-card">
+              <div class="df-billet-card-val" style="color:#F4A83A">30s</div>
+              <div class="df-billet-card-lbl">Par question</div>
+            </div>
+            <div class="df-billet-card">
+              <div class="df-billet-card-val" style="color:#22C9A0" id="dfRulesCagnotte">—</div>
+              <div class="df-billet-card-lbl">Cagnotte</div>
+            </div>
           </div>
-          <div style="background:rgba(34,201,160,.08);border:1.5px solid rgba(34,201,160,.25);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px">
-            <div style="font-size:28px;flex-shrink:0">&#127942;</div>
-            <div><div style="font-size:15px;font-weight:800;color:#fff">Rafle les mises</div><div style="font-size:12px;color:#9A8FBF;margin-top:3px">Le meilleur score remporte toute la cagnotte</div></div>
+
+          <!-- RÈGLES -->
+          <div class="df-billet-rules">
+            <div class="df-billet-rule">
+              <span style="font-size:16px">&#9989;</span>
+              <span>Bonne réponse <strong style="color:#fff">= points</strong></span>
+            </div>
+            <div class="df-billet-rule">
+              <span style="font-size:16px">&#9889;</span>
+              <span>Plus tu es rapide <strong style="color:#fff">= plus tu marques</strong></span>
+            </div>
+            <div class="df-billet-rule">
+              <span style="font-size:16px">&#127942;</span>
+              <span>Meilleur score <strong style="color:#fff">remporte toute la cagnotte</strong></span>
+            </div>
           </div>
+
+          <!-- RÈGLE ABANDON — mise en évidence -->
+          <div style="padding:12px 16px;background:rgba(239,68,68,.07);border-top:1px dashed rgba(239,68,68,.25)">
+            <div style="font-size:9px;font-weight:800;color:rgba(239,68,68,.6);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">&#9888;&#65039; Règles engagement</div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:rgba(255,255,255,.75);font-weight:600">
+                <span style="font-size:14px;flex-shrink:0">&#128683;</span>
+                <span>Pas de pause — le quiz est <strong style="color:#F87171">continu</strong></span>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:rgba(255,255,255,.75);font-weight:600">
+                <span style="font-size:14px;flex-shrink:0">&#128165;</span>
+                <span>Si tu fermes l'appli ou abandonnes, <strong style="color:#F87171">ta mise est perdue</strong> et ton adversaire gagne par forfait</span>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:rgba(255,255,255,.75);font-weight:600">
+                <span style="font-size:14px;flex-shrink:0">&#8987;&#65039;</span>
+                <span>Si ton adversaire disparaît, tu gagnes la cagnotte <strong style="color:#22C9A0">après 3 minutes</strong></span>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;margin-bottom:24px;display:flex;justify-content:space-around">
-          <div style="text-align:center">
-            <div style="font-size:22px;font-weight:800;color:#B06CE4">10</div>
-            <div style="font-size:10px;color:#9A8FBF;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Questions</div>
-          </div>
-          <div style="width:1px;background:rgba(255,255,255,.1)"></div>
-          <div style="text-align:center">
-            <div style="font-size:22px;font-weight:800;color:#F4A83A">30s</div>
-            <div style="font-size:10px;color:#9A8FBF;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Par question</div>
-          </div>
-          <div style="width:1px;background:rgba(255,255,255,.1)"></div>
-          <div style="text-align:center">
-            <div style="font-size:22px;font-weight:800;color:#22C9A0" id="dfRulesCagnotte">—</div>
-            <div style="font-size:10px;color:#9A8FBF;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Cagnotte</div>
-          </div>
-        </div>
-        <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:#F87171;font-weight:700;text-align:center">
-          &#9888;&#65039; Si tu abandonnes en cours de partie, ta mise est perdue
-        </div>
-        <button id="dfRulesReadyBtn" style="width:100%;background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;border:none;border-radius:14px;padding:16px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">
-          &#9996;&#65039; Je suis prêt — Lancer le quiz !
+
+        <!-- CTA -->
+        <button id="dfRulesReadyBtn" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:16px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:.01em">
+          &#9996;&#65039; J'ai lu — Je suis prêt !
         </button>
         <div id="dfRulesSkip" style="text-align:center;color:#9A8FBF;font-size:12px;font-weight:600;padding:8px;cursor:pointer">Passer cette étape</div>
+
       </div>
     </div>
 
