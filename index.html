@@ -728,6 +728,22 @@ button, .fp, .ftab, .liste-fiche, .q-opt, .adm-item { min-height:48px; }
 .df-room-host-name{font-weight:800;font-size:14px;color:#1E1048}
 .df-room-host-sub{font-size:11px;color:#7A7AAA;font-weight:600}
 .df-room-mise{background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;font-weight:800;font-size:14px;padding:6px 12px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;gap:4px}
+.df-billet{background:rgba(255,255,255,.03);border:1.5px solid rgba(176,108,228,.35);border-radius:18px;overflow:hidden;margin-bottom:14px}
+.df-billet-head{background:linear-gradient(135deg,#2d1060,#1a0535);padding:14px 16px;border-bottom:1px dashed rgba(176,108,228,.3)}
+.df-billet-lbl{font-size:9px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.df-billet-nom{font-size:18px;font-weight:800;color:#fff}
+.df-billet-cards{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px dashed rgba(176,108,228,.2)}
+.df-billet-card{padding:12px 10px;text-align:center}
+.df-billet-card+.df-billet-card{border-left:1px dashed rgba(176,108,228,.2)}
+.df-billet-card-val{font-size:15px;font-weight:800;line-height:1.2}
+.df-billet-card-lbl{font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.df-billet-rules{padding:12px 16px;border-bottom:1px dashed rgba(176,108,228,.2);display:flex;flex-direction:column;gap:7px}
+.df-billet-rule{display:flex;align-items:center;gap:9px;font-size:12px;color:rgba(255,255,255,.7);font-weight:600}
+.df-billet-timer{display:flex;justify-content:space-around;padding:10px 16px;background:rgba(176,108,228,.06)}
+.df-billet-timer-item{text-align:center}
+.df-billet-timer-val{font-size:16px;font-weight:800}
+.df-billet-timer-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;opacity:.45}
+
 .df-room-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}
 .df-chip{background:#F0EEFF;color:#7B4FBF;font-weight:700;padding:4px 9px;border-radius:10px;display:inline-flex;align-items:center;gap:4px}
 .df-chip.green{background:rgba(34,201,160,.15);color:#0a7a55}
@@ -6265,31 +6281,70 @@ function dfCancelRoom(){
 function dfShowBilletCreateur(room) {
   var el = function(id){ return document.getElementById(id); };
   var link = dfGetInviteLink(room.id);
-  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + encodeURIComponent(link);
-  // IDs dans dfScreenBillet (billet standalone)
+  // Remplir le billet
   if(el('dbNom'))      el('dbNom').textContent      = room.name;
+  if(el('dbNomBillet'))el('dbNomBillet').textContent = room.name;
   if(el('dbCreateur')) el('dbCreateur').textContent  = room.host ? room.host.name : '';
   if(el('dbMise'))     el('dbMise').textContent      = room.mise + ' pts';
   if(el('dbTheme'))    el('dbTheme').textContent     = DF_THEME_LABELS[room.theme] || room.theme;
-  if(el('dbJoueurs'))  el('dbJoueurs').textContent   = room.cap + ' joueurs max';
   if(el('dbCagnotte')) el('dbCagnotte').textContent  = (room.mise * 2) + ' pts';
-  if(el('dbLien'))     el('dbLien').textContent      = link;
-  var qr = el('dbQR');
-  if(qr) { qr.src = qrUrl; qr.style.display='block'; }
+  var joueursEl = el('dbJoueurs');
+  if(joueursEl){
+    joueursEl.querySelector('.df-billet-timer-val').textContent = room.cap;
+  }
   // IDs dans dfScreenWaiting (billet intégré salle d'attente)
   if(el('dfBilletNom'))   el('dfBilletNom').textContent  = room.name;
   if(el('dfBilletMise'))  el('dfBilletMise').textContent = room.mise + ' pts';
   if(el('dfBilletTheme')) el('dfBilletTheme').textContent= DF_THEME_LABELS[room.theme] || room.theme;
   if(el('dfBilletJoueurs')) el('dfBilletJoueurs').textContent = room.cap + ' max';
   if(el('dfBilletLien'))  el('dfBilletLien').textContent = link;
-  var qr2 = el('dfQRimg');
-  if(qr2) { qr2.src = qrUrl; qr2.style.display='block'; }
-  // Toujours montrer le billet d'abord — public ou privé
+  // Afficher le billet
   dfTab('billet');
   if(!room.isPrivate) {
-    // Room publique : démarrer le polling et les bots en arrière-plan
     dfStartPollingParticipants(room.id);
     setTimeout(function(){ dfSimulateBotJoins(); }, 1500);
+  }
+  // Binder les boutons de partage — révèle "Voir la salle d'attente" après 1 partage
+  function revealWaiting() {
+    var ws = el('dbWaitingSection');
+    if(ws) ws.style.display = 'block';
+  }
+  function bindShare(id, fn) {
+    var node = el(id);
+    if(!node) return;
+    var clone = node.cloneNode(true);
+    node.parentNode.replaceChild(clone, node);
+    clone.addEventListener('click', function(){ fn(); revealWaiting(); });
+  }
+  bindShare('dbWABtn', function(){
+    var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
+    var cagnotte = room.mise * 2;
+    var theme = DF_THEME_LABELS[room.theme] || room.theme;
+    var msg = '⚔️ ' + myName + ' te défie sur Flowin ! Thème : ' + theme + ' | Mise : ' + room.mise + ' pts | Cagnotte : ' + cagnotte + ' pts. Rejoins : ' + link;
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  });
+  bindShare('dbSMSBtn', function(){
+    var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
+    var msg = '⚔️ ' + myName + ' te défie sur Flowin ! Mise : ' + room.mise + ' pts. Rejoins : ' + link;
+    window.open('sms:?body=' + encodeURIComponent(msg), '_blank');
+  });
+  bindShare('dbCopyBtn', function(){
+    if(navigator.clipboard){ navigator.clipboard.writeText(link); }
+    else { var ta=document.createElement('textarea');ta.value=link;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); }
+    var btn = el('dbCopyBtn');
+    if(btn){ btn.textContent='✅ Copié !'; setTimeout(function(){ btn.textContent='🔗 Copier'; },2000); }
+  });
+  var waitBtn = el('dbWaitingBtn');
+  if(waitBtn){
+    var wClone = waitBtn.cloneNode(true);
+    waitBtn.parentNode.replaceChild(wClone, waitBtn);
+    wClone.addEventListener('click', function(){ dbGoToWaiting(); });
+  }
+  var lobbyBtn = el('dbLobbyBtn');
+  if(lobbyBtn){
+    var lClone = lobbyBtn.cloneNode(true);
+    lobbyBtn.parentNode.replaceChild(lClone, lobbyBtn);
+    lClone.addEventListener('click', function(){ dfTab('lobby'); });
   }
 }
 
@@ -7930,54 +7985,71 @@ async function dfLoadPrivateRooms() {
     <div class="df-screen hidden" id="dfScreenBillet">
       <div style="padding:4px 0 60px">
 
-        <div style="text-align:center;padding:24px 0 16px">
-          <div style="font-size:52px;margin-bottom:12px">⚔️</div>
+        <div style="text-align:center;padding:20px 0 12px">
+          <div style="font-size:11px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">&#9876;&#65039; Ton défi est lancé !</div>
           <div style="font-size:20px;font-weight:800;color:#fff" id="dbNom">Défi</div>
-          <div style="font-size:13px;color:#9A8FBF;margin-top:5px">par <span id="dbCreateur" style="color:#D4AAFF;font-weight:600"></span></div>
+          <div style="font-size:13px;color:#9A8FBF;margin-top:4px">par <span id="dbCreateur" style="color:#D4AAFF;font-weight:600"></span></div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
-          <div style="background:rgba(244,168,58,.1);border:1px solid rgba(244,168,58,.3);border-radius:12px;padding:14px 10px;text-align:center">
-            <div style="font-size:18px;font-weight:800;color:#F4A83A" id="dbMise">—</div>
-            <div style="font-size:9px;font-weight:700;color:rgba(244,168,58,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Mise</div>
+        <!-- BILLET STYLE TICKET -->
+        <div class="df-billet">
+          <div class="df-billet-head">
+            <div class="df-billet-lbl">&#127903;&#65039; Billet de défi</div>
+            <div class="df-billet-nom" id="dbNomBillet">Défi Flowin</div>
           </div>
-          <div style="background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.3);border-radius:12px;padding:14px 10px;text-align:center">
-            <div style="font-size:13px;font-weight:800;color:#B06CE4;line-height:1.2" id="dbTheme">—</div>
-            <div style="font-size:9px;font-weight:700;color:rgba(176,108,228,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Thème</div>
+          <div class="df-billet-cards">
+            <div class="df-billet-card">
+              <div class="df-billet-card-val" style="color:#F4A83A" id="dbMise">—</div>
+              <div class="df-billet-card-lbl">Ta mise</div>
+            </div>
+            <div class="df-billet-card">
+              <div class="df-billet-card-val" style="color:#22C9A0" id="dbCagnotte">—</div>
+              <div class="df-billet-card-lbl">Cagnotte</div>
+            </div>
+            <div class="df-billet-card">
+              <div class="df-billet-card-val" style="color:#B06CE4;font-size:12px" id="dbTheme">—</div>
+              <div class="df-billet-card-lbl">Thème</div>
+            </div>
           </div>
-          <div style="background:rgba(34,201,160,.1);border:1px solid rgba(34,201,160,.3);border-radius:12px;padding:14px 10px;text-align:center">
-            <div style="font-size:18px;font-weight:800;color:#22C9A0" id="dbCagnotte">—</div>
-            <div style="font-size:9px;font-weight:700;color:rgba(34,201,160,.6);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Cagnotte</div>
+          <div class="df-billet-rules">
+            <div class="df-billet-rule"><span style="font-size:16px;width:20px;text-align:center">&#9989;</span><span><b style="color:#fff">Réponds juste</b> — chaque bonne réponse compte</span></div>
+            <div class="df-billet-rule"><span style="font-size:16px;width:20px;text-align:center">&#9889;</span><span><b style="color:#fff">Réponds vite</b> — la rapidité booste ton score</span></div>
+            <div class="df-billet-rule"><span style="font-size:16px;width:20px;text-align:center">&#127942;</span><span><b style="color:#fff">Rafle tout</b> — le meilleur score remporte la cagnotte</span></div>
           </div>
-        </div>
-
-        <div style="background:#1a0a30;border:1.5px solid rgba(176,108,228,.3);border-radius:16px;overflow:hidden;margin-bottom:16px">
-          <div style="padding:12px 16px;border-bottom:1px solid rgba(176,108,228,.15)">
-            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Places</div>
-            <div style="font-size:13px;color:#fff;font-weight:600" id="dbJoueurs">—</div>
-          </div>
-          <div style="padding:12px 16px;border-bottom:1px solid rgba(176,108,228,.15)">
-            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Lien d'accès direct</div>
-            <div id="dbLien" style="font-size:10px;color:#D4AAFF;word-break:break-all;line-height:1.5"></div>
-          </div>
-          <div style="padding:12px 16px;text-align:center">
-            <div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">QR Code</div>
-            <div style="background:#fff;border-radius:10px;padding:6px;display:inline-block">
-              <img id="dbQR" src="" alt="QR" style="width:100px;height:100px;display:block">
+          <div class="df-billet-timer">
+            <div class="df-billet-timer-item">
+              <div class="df-billet-timer-val" style="color:#B06CE4">10</div>
+              <div class="df-billet-timer-lbl" style="color:#B06CE4">Questions</div>
+            </div>
+            <div class="df-billet-timer-item">
+              <div class="df-billet-timer-val" style="color:#F4A83A">30s</div>
+              <div class="df-billet-timer-lbl" style="color:#F4A83A">Par question</div>
+            </div>
+            <div class="df-billet-timer-item" id="dbJoueurs">
+              <div class="df-billet-timer-val" style="color:#22C9A0">2</div>
+              <div class="df-billet-timer-lbl" style="color:#22C9A0">Joueurs max</div>
             </div>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-          <button onclick="dbShareWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">💬 WhatsApp</button>
-          <button onclick="dbShareSMS()" style="background:#5856D6;color:#fff;border:none;border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">📱 SMS</button>
-          <button onclick="dbCopyLink()" id="dbCopyBtn" style="background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:14px 4px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">🔗 Copier</button>
+        <!-- PARTAGE -->
+        <div style="font-size:10px;font-weight:800;color:#9A8FBF;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Envoie ton défi</div>
+
+        <button id="dbWABtn" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:14px;padding:15px 16px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span>&#128172;</span><span>Envoyer sur WhatsApp</span>
+        </button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+          <button id="dbSMSBtn" style="background:#5856D6;color:#fff;border:none;border-radius:14px;padding:13px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">&#128241; SMS</button>
+          <button id="dbCopyBtn" style="background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:13px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">&#128279; Copier</button>
         </div>
 
-        <button onclick="dbGoToWaiting()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px">
-          ⏳ Voir la salle d'attente
-        </button>
-        <button onclick="dfTab('lobby')" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
+        <!-- BOUTON SALLE D'ATTENTE — caché jusqu'au partage -->
+        <div id="dbWaitingSection" style="display:none">
+          <button id="dbWaitingBtn" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px">
+            &#9203; Voir la salle d'attente
+          </button>
+        </div>
+        <button id="dbLobbyBtn" style="width:100%;background:transparent;border:none;color:#7A7AAA;font-family:inherit;font-size:13px;font-weight:700;padding:10px;cursor:pointer">
           Retour au lobby
         </button>
 
