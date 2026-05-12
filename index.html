@@ -3034,24 +3034,23 @@ function switchMode(m){
     setTimeout(initRecupView, 50);
   }
   if(m==='inscription'){
-    // NE PAS rediriger vers 'app' même si un profil existe
-    // Un élève sur device partagé ou un invité doit pouvoir créer son propre profil
-    // La redirection automatique était la cause du bug "lien invitation → compte Olivia"
-    // Reset complet de tous les champs pour ne pas pré-remplir avec les données du précédent inscrit
-    ['finscPrenom','finscNom','finscEmail','finscPseudo','finscCP','finscEcole','finscClasse','finscDdn'].forEach(function(id){
+    // Rediriger vers le vrai formulaire d'inscription (v-complete-profil)
+    // La vue v-inscription (Auth email/Google) est pour les utilisateurs Auth Supabase
+    // Les élèves Flowin s'inscrivent avec pseudo/prénom/école/classe
+    m = 'complete-profil';
+    // Réinitialiser les champs
+    ['cpPseudo','cpPrenom','cpNom','cpClasse','cpEcole','cpDdn'].forEach(function(id){
       var el = document.getElementById(id);
       if(el) el.value = '';
     });
-    var pE = document.getElementById('pickerEcoleLabel');
-    if(pE){ pE.textContent = 'Sélectionner…'; pE.classList.add('ios-placeholder'); }
-    var pC = document.getElementById('pickerClasseLabel');
-    if(pC){ pC.textContent = 'Sélectionner…'; pC.classList.add('ios-placeholder'); }
-    var pD = document.getElementById('pickerDdnLabel');
-    if(pD){ pD.textContent = 'Jour / Mois / Année'; pD.classList.add('ios-placeholder'); }
-    var gF = document.getElementById('gF');
-    var gH = document.getElementById('gH');
-    if(gF) gF.classList.add('sel');
-    if(gH) gH.classList.remove('sel');
+    var ecoleRes = document.getElementById('cpEcoleResults');
+    if(ecoleRes) ecoleRes.style.display = 'none';
+    var gf = document.getElementById('cpGF');
+    var gh = document.getElementById('cpGH');
+    if(gf) { gf.classList.add('sel'); }
+    if(gh) { gh.classList.remove('sel'); }
+    var accordRow = document.getElementById('cpAccordRow');
+    if(accordRow) accordRow.style.display = 'none';
   }
   if(m==='pwa'){try{if(localStorage.getItem('pwa_installed'))m='app';}catch(e){}}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -3576,7 +3575,7 @@ async function saveCompleteProfile() {
 
   if (!prenom) { showToast('Le prénom est obligatoire', 'error'); return; }
   if (!pseudo) pseudo = prenom;
-  if (!classe) { showToast('Choisis ta classe', 'error'); return; }
+  if (!classe) classe = 'Bac Pro';
 
   // Vérifier accord parental si mineur (< 15 ans)
   if (ddn) {
@@ -3635,18 +3634,44 @@ async function saveCompleteProfile() {
     } catch(e) { console.error('[save profil supabase]', e); }
   }
 
+  // Sauvegarder dans joueurs (table principale Flowin — tous les élèves)
+  if(SB_ENABLED) {
+    var hdrs = {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'resolution=ignore-duplicates,return=minimal'
+    };
+    var joueurPayload = {
+      ts:        new Date().toISOString(),
+      pseudo:    pseudo,
+      prenom:    prenom,
+      nom:       nom,
+      email:     email,
+      ecole:     ecole,
+      classe:    classe,
+      genre:     genre,
+      pts_total: 0,
+      streak:    0,
+      ref:       (function(){ try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
+    };
+    fetch(SUPABASE_URL + '/rest/v1/joueurs', {
+      method: 'POST',
+      headers: hdrs,
+      body: JSON.stringify(joueurPayload)
+    }).catch(function(){});
+  }
+
   // Dans tous les cas → continuer vers l'app
   try {
-    saveProfileToSheets(userProfile);
     logConnexion(pseudo || prenom);
-    showToast('Bienvenue ' + (pseudo || prenom) + ' !', 'success');
+    showToast('Bienvenue ' + (pseudo || prenom) + ' ! 🎉', 'success');
     showWelcomeBack();
-
   } catch(e) {
     console.error('[saveCompleteProfile]', e);
     showToast('Erreur lors de la sauvegarde', 'error');
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '🚀 C est parti !'; }
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 C\'est parti !'; }
   }
 }
 
@@ -3659,16 +3684,25 @@ function searchEcoles(query) {
     if (results) results.style.display = 'none';
     return;
   }
-  _ecoleTimer = setTimeout(async function() {
-    if (!sbClient) return;
-    try {
-      var r = await sbClient.rpc('search_ecoles', { query: query, lim: 8 });
-      if (r.data && r.data.length > 0 && results) {
+  _ecoleTimer = setTimeout(function() {
+    // Via REST direct — fonctionne sans session Auth Supabase
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    fetch(SUPABASE_URL + '/rest/v1/rpc/search_ecoles', {
+      method: 'POST',
+      headers: Object.assign({'Content-Type': 'application/json'}, hdrs),
+      body: JSON.stringify({query: query, lim: 8})
+    })
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(data) {
+      if (!results) return;
+      if (data && data.length > 0) {
         results.innerHTML = '';
-        r.data.forEach(function(ecole) {
+        data.forEach(function(ecole) {
           var item = document.createElement('div');
           item.style.cssText = 'padding:10px 14px;cursor:pointer;font-size:13px;color:#fff;border-bottom:1px solid rgba(255,255,255,.06)';
           item.textContent = ecole.nom + (ecole.ville ? ' — ' + ecole.ville : '');
+          item.addEventListener('mouseover', function(){ item.style.background = 'rgba(176,108,228,.2)'; });
+          item.addEventListener('mouseout', function(){ item.style.background = ''; });
           item.addEventListener('click', function() {
             var input = document.getElementById('cpEcole');
             if (input) input.value = ecole.nom;
@@ -3677,11 +3711,13 @@ function searchEcoles(query) {
           results.appendChild(item);
         });
         results.style.display = 'block';
-      } else if (results) {
+      } else {
+        // Pas de résultat → laisser saisir manuellement
         results.style.display = 'none';
       }
-    } catch(e) { console.error('[searchEcoles]', e); }
-  }, 300);
+    })
+    .catch(function(){ if(results) results.style.display = 'none'; });
+  }, 350);
 }
 
 // ── LOG CONNEXION ──
@@ -3964,12 +4000,14 @@ function dismissPush(){
 }
 
 function showWelcomeBack(){
-  const vLanding = document.getElementById('v-landing');
-  const vWelcome = document.getElementById('v-welcome');
+  var vWelcome = document.getElementById('v-welcome');
   if(!vWelcome) return;
-  vLanding.classList.remove('active');
+  // Masquer TOUTES les vues avant d'afficher v-welcome
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   vWelcome.classList.add('active');
+  userInscribed = true;
   populateWelcomeBack();
+  window.scrollTo(0, 0);
 }
 
 // Retour à l'accueil (welcome si inscrit, landing sinon)
@@ -7632,7 +7670,7 @@ function saveProfileToSheets(profile) {
     email:   profile.email   || '',
     ecole:   profile.ecole   || '',
     classe:  profile.classe  || '',
-    genre:   (document.querySelector('.g-btn.sel') ? document.querySelector('.g-btn.sel').textContent.trim() : ''),
+    genre:   (userProfile && userProfile.genre) ? userProfile.genre : (document.querySelector('#cpGF.sel') ? 'Fille' : document.querySelector('#cpGH.sel') ? 'Garçon' : ''),
     pts_total: 0,
     streak: 0,
     ref: (function(){ try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; } })()
