@@ -1378,6 +1378,34 @@ window.addEventListener('unhandledrejection', function(e){
 </div>
 
 <!-- ═══ VUE COMPLÉTER PROFIL (après connexion OAuth) ═══ -->
+<!-- v-activation : création mot de passe depuis lien email -->
+<div class="view" id="v-activation">
+  <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:44px;margin-bottom:8px">🌊</div>
+      <div style="font-size:24px;font-weight:800;color:#fff;font-family:Syne,sans-serif">Flowin</div>
+      <div style="font-size:14px;color:#22C9A0;margin-top:6px;font-weight:600">Compte activé !</div>
+    </div>
+    <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:20px;padding:24px;width:100%;max-width:380px">
+      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:6px">Choisis ton mot de passe</div>
+      <div style="font-size:13px;color:#9A8FBF;margin-bottom:20px">Crée un mot de passe sécurisé pour accéder à Flowin depuis n'importe où.</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="position:relative">
+          <input id="activationPwd" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe (min. 6 car.)"
+            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 44px 13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+          <button id="toggleActivationPwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:16px">👁</button>
+        </div>
+        <input id="activationPwdConfirm" type="password" autocomplete="new-password" placeholder="Confirmer le mot de passe"
+          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+        <div id="activationError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:8px;padding:8px 12px;font-size:12px;color:#E84855;text-align:center"></div>
+        <button id="btnActivation" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px">
+          🚀 Activer et jouer !
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- v-recup : récupération compte existant -->
 <div class="view" id="v-recup">
   <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
@@ -3068,6 +3096,10 @@ let curTheme=null,curTab='rev',curFilter='all';
 
 // ═══ MODE SWITCH ═══
 function switchMode(m){
+  if(m==='activation') {
+    // Initialiser la vue activation depuis lien email
+    setTimeout(initActivationView, 50);
+  }
   if(m==='recup') {
     // Initialiser la vue récupération (addEventListener)
     setTimeout(initRecupView, 50);
@@ -3928,6 +3960,29 @@ function applyFormConfig() {
   loadConfigFromSupabase();
   loadLotsConfig();
 
+  // ── Détecter lien d'activation (email reset password) ──
+  var urlParams = new URLSearchParams(window.location.search);
+  var urlHash = window.location.hash;
+  var isActivation = urlParams.get('mode') === 'activation'
+    || urlHash.includes('access_token')
+    || urlHash.includes('type=recovery')
+    || urlHash.includes('type=signup');
+
+  if(isActivation && sbClient) {
+    // Supabase met le token dans le hash — getSession() le récupère automatiquement
+    sbClient.auth.getSession().then(function(res) {
+      if(res.data && res.data.session) {
+        var splash = document.getElementById('v-splash');
+        if(splash) splash.style.display = 'none';
+        // Afficher la vue changement de mot de passe
+        switchMode('activation');
+      } else {
+        checkLocalStorageFn();
+      }
+    }).catch(checkLocalStorageFn);
+    return;
+  }
+
   var _done = false;
 
   // Timeout de sécurité — si getSession bloque, on passe quand même après 2.5s
@@ -3954,7 +4009,7 @@ function applyFormConfig() {
     if(vl) vl.classList.add('active');
   }
 
-  function checkLocalStorage() {
+  function checkLocalStorageFn() {
     hideSplash();
     try {
       var saved = localStorage.getItem('flowin_profile');
@@ -3996,14 +4051,14 @@ function applyFormConfig() {
                 checkLocalStorage();
               }
             });
-          }).catch(function(){ finish(checkLocalStorage); });
+          }).catch(function(){ finish(checkLocalStorageFn); });
         return;
       }
-      finish(checkLocalStorage);
-    }).catch(function(){ finish(checkLocalStorage); });
+      finish(checkLocalStorageFn);
+    }).catch(function(){ finish(checkLocalStorageFn); });
     return;
   }
-  finish(checkLocalStorage);
+  finish(checkLocalStorageFn);
 })();
 
 // ── LIEN D'INVITATION ?room= ──
@@ -7862,6 +7917,64 @@ function saveSessionToSheets(qs, profile) {
 window.LOTS_ON = false; // false par défaut, activé uniquement si Supabase confirme
 window.MY_GAINS = [];
 // ── RÉCUPÉRATION DE COMPTE ──
+function initActivationView() {
+  var btn     = document.getElementById('btnActivation');
+  var errEl   = document.getElementById('activationError');
+  var toggleP = document.getElementById('toggleActivationPwd');
+
+  if(toggleP) toggleP.addEventListener('click', function() {
+    var inp = document.getElementById('activationPwd');
+    if(inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+  });
+
+  if(btn) btn.addEventListener('click', async function() {
+    var pwd     = (document.getElementById('activationPwd')        || {value:''}).value;
+    var confirm = (document.getElementById('activationPwdConfirm') || {value:''}).value;
+    if(!pwd || pwd.length < 6) {
+      errEl.textContent = 'Mot de passe trop court (min. 6 caractères).';
+      errEl.style.display = ''; return;
+    }
+    if(pwd !== confirm) {
+      errEl.textContent = 'Les mots de passe ne correspondent pas.';
+      errEl.style.display = ''; return;
+    }
+    errEl.style.display = 'none';
+    btn.disabled = true; btn.textContent = '⏳ Activation…';
+    try {
+      var res = await sbClient.auth.updateUser({ password: pwd });
+      if(res.error) {
+        errEl.textContent = res.error.message;
+        errEl.style.display = '';
+        btn.disabled = false; btn.textContent = '🚀 Activer et jouer !';
+        return;
+      }
+      // Succès — récupérer le profil
+      btn.textContent = '✅ Compte activé !';
+      var session = await sbClient.auth.getSession();
+      if(session.data && session.data.session) {
+        var u = session.data.session.user;
+        var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+        var rows = await fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrs}).then(function(r){ return r.ok ? r.json() : []; });
+        if(rows && rows.length) {
+          var j = rows[0];
+          userProfile = { pseudo:j.pseudo||'', prenom:j.prenom||'', nom:j.nom||'', ecole:j.ecole||'', classe:j.classe||'', email:j.email||u.email, genre:j.genre||'', pts:j.pts_total||0 };
+          userInscribed = true;
+          QS.playerName = userProfile.pseudo || userProfile.prenom;
+          try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+          setTimeout(function(){ showWelcomeBack(); }, 800);
+        } else {
+          // Nouveau compte — compléter le profil
+          setTimeout(function(){ switchMode('complete-profil'); }, 800);
+        }
+      }
+    } catch(e) {
+      errEl.textContent = 'Erreur réseau.';
+      errEl.style.display = '';
+      btn.disabled = false; btn.textContent = '🚀 Activer et jouer !';
+    }
+  });
+}
+
 function initRecupView() {
   var searchBtn = document.getElementById('btnRecupSearch');
   var backBtn   = document.getElementById('btnRecupBack');
@@ -8666,6 +8779,22 @@ async function dfLoadPrivateRooms() {
         <button id="profilCopyBtn" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 4px;font-size:11px;font-weight:800;cursor:pointer">🔗 Copier</button>
       </div>
     </div>
+    <!-- SÉCURITÉ / MOT DE PASSE -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:4px">🔐 Sécurité</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:12px" id="profilEmailLabel">Email : —</div>
+      <div id="profilPwdForm" style="display:flex;flex-direction:column;gap:8px">
+        <input id="profilPwdNew" type="password" placeholder="Nouveau mot de passe" autocomplete="new-password"
+          style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;box-sizing:border-box;font-family:inherit">
+        <input id="profilPwdConfirm" type="password" placeholder="Confirmer le mot de passe"
+          style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;box-sizing:border-box;font-family:inherit">
+        <div id="profilPwdError" style="display:none;font-size:12px;color:#EF4444;text-align:center;padding:4px"></div>
+        <button id="profilPwdBtn" style="width:100%;background:rgba(176,108,228,.2);border:1px solid rgba(176,108,228,.4);border-radius:12px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;color:#D4AAFF;font-family:inherit">
+          🔑 Changer mon mot de passe
+        </button>
+      </div>
+    </div>
+
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div style="font-size:13px;font-weight:800;color:#fff">🏅 Mes récompenses</div>
@@ -9399,6 +9528,51 @@ function renderProfil() {
     t.textContent = '✓ Profil mis à jour';
     document.body.appendChild(t);
     setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2500);
+  });
+
+  // ── Email affiché ──
+  var emailLabel = document.getElementById('profilEmailLabel');
+  if(emailLabel) emailLabel.textContent = 'Email : ' + (p.email || '—');
+
+  // ── Changement de mot de passe ──
+  bind('profilPwdBtn', async function() {
+    var newPwd  = document.getElementById('profilPwdNew')    ? document.getElementById('profilPwdNew').value    : '';
+    var confirm = document.getElementById('profilPwdConfirm') ? document.getElementById('profilPwdConfirm').value : '';
+    var errEl   = document.getElementById('profilPwdError');
+    var btn     = document.getElementById('profilPwdBtn');
+    if(!newPwd || !confirm) {
+      if(errEl) { errEl.textContent = 'Remplis les deux champs.'; errEl.style.display = ''; }
+      return;
+    }
+    if(newPwd.length < 6) {
+      if(errEl) { errEl.textContent = 'Minimum 6 caractères.'; errEl.style.display = ''; }
+      return;
+    }
+    if(newPwd !== confirm) {
+      if(errEl) { errEl.textContent = 'Les mots de passe ne correspondent pas.'; errEl.style.display = ''; }
+      return;
+    }
+    if(errEl) errEl.style.display = 'none';
+    if(btn) { btn.disabled = true; btn.textContent = '⏳ Mise à jour…'; }
+    try {
+      var res = await sbClient.auth.updateUser({ password: newPwd });
+      if(res.error) {
+        if(errEl) { errEl.textContent = res.error.message; errEl.style.display = ''; }
+        if(btn) { btn.disabled = false; btn.textContent = '🔑 Changer mon mot de passe'; }
+        return;
+      }
+      if(btn) { btn.disabled = false; btn.textContent = '✅ Mot de passe changé !'; }
+      if(document.getElementById('profilPwdNew'))     document.getElementById('profilPwdNew').value     = '';
+      if(document.getElementById('profilPwdConfirm')) document.getElementById('profilPwdConfirm').value = '';
+      showToast('Mot de passe mis à jour ✅', 'success');
+      setTimeout(function(){
+        var b = document.getElementById('profilPwdBtn');
+        if(b) { b.disabled = false; b.textContent = '🔑 Changer mon mot de passe'; }
+      }, 3000);
+    } catch(e) {
+      if(errEl) { errEl.textContent = 'Erreur réseau.'; errEl.style.display = ''; }
+      if(btn) { btn.disabled = false; btn.textContent = '🔑 Changer mon mot de passe'; }
+    }
   });
 
   bind('profilWABtn',  function(){ try { window.open('https://wa.me/?text=' + encodeURIComponent('Rejoins Flowin ! ' + refLink), '_blank'); } catch(e){} });
