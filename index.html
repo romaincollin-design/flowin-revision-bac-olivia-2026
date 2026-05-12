@@ -1331,6 +1331,14 @@ window.addEventListener('unhandledrejection', function(e){
         ← Retour
       </button>
 
+      <!-- Récupération compte existant -->
+      <div style="border-top:1px solid rgba(255,255,255,.08);margin-top:16px;padding-top:16px;text-align:center">
+        <div style="font-size:12px;color:#9A8FBF;margin-bottom:10px">Tu avais déjà un compte Flowin ?</div>
+        <button id="btnRecupCompte" style="width:100%;background:rgba(176,108,228,.15);border:1px solid rgba(176,108,228,.3);border-radius:12px;padding:11px;font-family:inherit;font-size:13px;font-weight:700;color:#B06CE4;cursor:pointer">
+          🔍 Retrouver mon compte par pseudo
+        </button>
+      </div>
+
     </div>
 
     <!-- RGPD -->
@@ -1342,6 +1350,32 @@ window.addEventListener('unhandledrejection', function(e){
 </div>
 
 <!-- ═══ VUE COMPLÉTER PROFIL (après connexion OAuth) ═══ -->
+<!-- v-recup : récupération compte existant -->
+<div class="view" id="v-recup">
+  <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:36px;margin-bottom:8px">🔍</div>
+      <div style="font-size:22px;font-weight:800;color:#fff">Retrouve ton compte</div>
+      <div style="font-size:13px;color:#9A8FBF;margin-top:6px">Entre ton pseudo pour récupérer ton profil</div>
+    </div>
+    <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:20px;padding:24px;width:100%;max-width:380px">
+      <div style="margin-bottom:14px">
+        <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ton pseudo</label>
+        <input id="recupPseudo" type="text" autocomplete="nickname" placeholder="Ex: olivia_vence"
+          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none"
+          oninput="document.getElementById('recupResult').textContent=''">
+      </div>
+      <div id="recupResult" style="min-height:20px;margin-bottom:12px;font-size:12px;text-align:center;color:#9A8FBF"></div>
+      <button id="btnRecupSearch" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:10px">
+        🔍 Rechercher mon compte
+      </button>
+      <button id="btnRecupBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:600;padding:8px;cursor:pointer">
+        ← Retour
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="view" id="v-complete-profil">
   <div style="min-height:100vh;background:#0F0E1A;padding:24px 20px">
     <div style="max-width:400px;margin:0 auto;padding-top:40px">
@@ -2995,6 +3029,10 @@ let curTheme=null,curTab='rev',curFilter='all';
 
 // ═══ MODE SWITCH ═══
 function switchMode(m){
+  if(m==='recup') {
+    // Initialiser la vue récupération (addEventListener)
+    setTimeout(initRecupView, 50);
+  }
   if(m==='inscription'){
     // NE PAS rediriger vers 'app' même si un profil existe
     // Un élève sur device partagé ou un invité doit pouvoir créer son propre profil
@@ -3413,30 +3451,25 @@ try {
 } catch(e) { console.error('[sbClient]', e); }
 
 // ── AUTH STATE : détecter connexion/déconnexion ──
+// ── Auth Supabase désactivée pour les élèves ──
+// Les élèves s'identifient par localStorage (pseudo/prénom/école)
+// Pas de Supabase Auth — onAuthStateChange SIGNED_OUT effacerait le profil localStorage
+// Le sbClient reste disponible pour les appels REST (sessions, joueurs, etc.)
 if (sbClient) {
   sbClient.auth.onAuthStateChange(function(event, session) {
-    if (session && session.user) {
-      // Utilisateur connecté
+    // IMPORTANT : ignorer SIGNED_OUT — les élèves ne sont pas dans Supabase Auth
+    // Seul SIGNED_IN via OAuth est géré (connexion Google future)
+    if (session && session.user && event === 'SIGNED_IN') {
       var u = session.user;
-      // Mettre à jour userProfile depuis les metadata OAuth
       if (u.user_metadata) {
         var meta = u.user_metadata;
         if (!userProfile.prenom && meta.given_name) userProfile.prenom = meta.given_name;
         if (!userProfile.nom && meta.family_name) userProfile.nom = meta.family_name;
         if (!userProfile.email) userProfile.email = u.email || '';
       }
-      // Charger le profil depuis Supabase profils
       sbLoadProfil(u.id, u.email);
-    } else if (event === 'SIGNED_OUT') {
-      userInscribed = false;
-      userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
     }
-  });
-  // Vérifier session au chargement
-  sbClient.auth.getSession().then(function(res) {
-    if (!res.data.session) {
-      // Pas de session — rester sur landing
-    }
+    // SIGNED_OUT ignoré — ne pas effacer le profil localStorage
   });
 }
 
@@ -3820,135 +3853,6 @@ function applyFormConfig() {
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('v-landing').classList.add('active');
   // Fallback sans sbClient (SB_ENABLED = false) — désactivé, géré ci-dessus
-  if(false) {
-  try {
-    const saved = localStorage.getItem('flowin_profile');
-    if(saved) {
-      const p = JSON.parse(saved);
-      userProfile = p; userInscribed = true;
-      QS.playerName = p.pseudo || p.prenom;
-      // Charger les vraies stats depuis Supabase
-
-// ── STATS RÉELLES DEPUIS SUPABASE ──
-async function loadPlayerStatsFromSupabase(pseudo) {
-  if(!pseudo) return;
-  try {
-    const hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-    const res = await fetch(
-      SUPABASE_URL + '/rest/v1/sessions?pseudo=eq.' + encodeURIComponent(pseudo) + '&order=ts.desc&limit=200',
-      { headers: hdrs }
-    );
-    if(!res.ok) return;
-    const sessions = await res.json();
-    if(!Array.isArray(sessions) || sessions.length === 0) return;
-
-    // Stocker globalement pour la courbe 7 jours par thème
-    USER_SESSIONS = sessions;
-    // BUG-POINTS-02 fix : lire aussi joueurs.pts_total (modifiable par admin)
-    const ptsFromSessions = Math.max(...sessions.map(s => s.pts_total||0), 0);
-    let totalPts = ptsFromSessions;
-    try {
-      const jHdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-      const jRes = await fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo) + '&select=pts_total', {headers: jHdrs});
-      if(jRes.ok) {
-        const jRows = await jRes.json();
-        if(Array.isArray(jRows) && jRows.length > 0 && jRows[0].pts_total) {
-          totalPts = Math.max(ptsFromSessions, jRows[0].pts_total);
-        }
-      }
-    } catch(e) {}
-    const nbSessions = sessions.length;
-    const maxStreak  = Math.max(...sessions.map(s => s.streak||0), 0);
-
-    // Streak journalier réel
-    const days = [...new Set(sessions.map(s => s.ts ? s.ts.slice(0,10) : null).filter(Boolean))].sort();
-    let dailyStreak = 0;
-    if(days.length > 0) {
-      const today = new Date().toISOString().slice(0,10);
-      const yest  = new Date(Date.now()-86400000).toISOString().slice(0,10);
-      const lastDay = days[days.length-1];
-      if(lastDay === today || lastDay === yest) {
-        dailyStreak = 1;
-        for(let i = days.length-2; i >= 0; i--) {
-          const diff = Math.round((new Date(days[i+1]) - new Date(days[i])) / 86400000);
-          if(diff === 1) dailyStreak++;
-          else break;
-        }
-      }
-    }
-
-    // Ligue automatique (depuis LIGUES_CONFIG chargé via Supabase)
-    const lgMap = LIGUES_CONFIG.map(l => ({k: l.key, min: l.min}));
-    const lg = lgMap.slice().reverse().find(l => totalPts >= l.min) || lgMap[0];
-
-    // Mettre à jour QS
-    QS.totalScore   = totalPts;
-    QS.totalPts     = totalPts;
-    QS.roundsPlayed = nbSessions;
-    QS.dailyStreak  = dailyStreak;
-    QS.league       = lg.k;
-
-    // PLAYERS[me]
-    const me = PLAYERS.find(p => p.me);
-    if(me) { me.pts = totalPts; me.streak = dailyStreak; me.rounds = nbSessions; }
-
-    // Affichage bienvenue
-    const ptsEl    = document.getElementById('welcomePts');
-    const strkEl   = document.getElementById('welcomeStreak');
-    const quizEl   = document.getElementById('welcomeQuiz');
-    if(ptsEl)  ptsEl.textContent  = totalPts.toLocaleString('fr');
-    if(strkEl) strkEl.textContent = dailyStreak;
-    if(quizEl) quizEl.textContent = nbSessions;
-
-    // Streak assiduité locale en sync
-    try {
-      const assid = getAssiduity();
-      assid.streak = dailyStreak;
-      assid.lastDay = days[days.length-1] || '';
-      saveAssiduity(assid);
-    } catch(e){}
-
-    console.log('[Flowin] Stats Supabase:', { totalPts, nbSessions, dailyStreak, league: lg.k });
-
-    // Sync flowin_balance avec pts Supabase
-    // Règle : on prend le MAX entre la balance locale et les pts Supabase
-    // (si le joueur a gagné des défis hors-ligne, on ne les écrase pas)
-    try {
-      var localBal = localStorage.getItem('flowin_balance');
-      var localVal = localBal !== null && localBal !== 'undefined' ? parseInt(localBal) : -1;
-      if(localVal < totalPts) {
-        // Supabase a plus de pts → mettre à jour la balance locale
-        localStorage.setItem('flowin_balance', String(totalPts));
-        var balEl = document.getElementById('dfBalance');
-        if(balEl) balEl.textContent = totalPts.toLocaleString('fr');
-      }
-    } catch(e) {}
-
-    // Re-render la page progression si elle est ouverte
-    var statsView = document.getElementById('v-stats');
-    if(statsView && statsView.classList.contains('active')) renderStats();
-  } catch(err) {
-    console.warn('[Flowin] Stats Supabase indisponible:', err);
-  }
-}
-
-      loadPlayerStatsFromSupabase(p.pseudo || p.prenom);
-      setTimeout(function(){ if(typeof dfStartPendingCheck==='function') dfStartPendingCheck(); }, 3000);
-      loadLeaderboardFromSupabase();
-      loadLotsConfig();
-      // Bascule vers la vue welcome au lieu de la landing
-      if(document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-          showWelcomeBack();
-          setTimeout(checkEndOfDayPush, 1500);
-        });
-      } else {
-        showWelcomeBack();
-        setTimeout(checkEndOfDayPush, 1500);
-      }
-    }
-  } catch(e){}
-  } // fin if(false)
 })();
 
 // ── LIEN D'INVITATION ?room= ──
@@ -7803,6 +7707,63 @@ function saveSessionToSheets(qs, profile) {
 // ════════════════════════
 window.LOTS_ON = false; // false par défaut, activé uniquement si Supabase confirme
 window.MY_GAINS = [];
+// ── RÉCUPÉRATION DE COMPTE ──
+function initRecupView() {
+  var searchBtn = document.getElementById('btnRecupSearch');
+  var backBtn   = document.getElementById('btnRecupBack');
+  var inp       = document.getElementById('recupPseudo');
+  var result    = document.getElementById('recupResult');
+
+  if(backBtn) backBtn.addEventListener('click', function(){ switchMode('inscription'); });
+
+  if(searchBtn) searchBtn.addEventListener('click', function() {
+    var pseudo = inp ? inp.value.trim() : '';
+    if(!pseudo){ result.textContent = 'Entre ton pseudo.'; result.style.color = '#E84855'; return; }
+    result.textContent = 'Recherche en cours…';
+    result.style.color = '#9A8FBF';
+    searchBtn.disabled = true;
+
+    var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo) + '&select=*&limit=1', {headers:hdrs})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows) {
+        searchBtn.disabled = false;
+        if(!rows || !rows.length) {
+          result.textContent = '❌ Pseudo introuvable. Vérifie l\'orthographe.';
+          result.style.color = '#E84855';
+          return;
+        }
+        var j = rows[0];
+        // Reconstruire le profil depuis les données Supabase
+        var profil = {
+          pseudo:   j.pseudo || pseudo,
+          prenom:   j.prenom || '',
+          nom:      j.nom    || '',
+          ecole:    j.ecole  || '',
+          classe:   j.classe || '',
+          email:    j.email  || '',
+          pts:      j.pts_total || 0
+        };
+        // Sauvegarder dans localStorage
+        try { localStorage.setItem('flowin_profile', JSON.stringify(profil)); } catch(e){}
+        userProfile   = profil;
+        userInscribed = true;
+        QS.playerName = profil.pseudo || profil.prenom;
+
+        result.textContent = '✅ Compte trouvé ! Connexion en cours…';
+        result.style.color = '#22C9A0';
+        setTimeout(function() { showWelcomeBack(); }, 800);
+      })
+      .catch(function() {
+        searchBtn.disabled = false;
+        result.textContent = 'Erreur réseau. Réessaie.';
+        result.style.color = '#E84855';
+      });
+  });
+
+  if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter') searchBtn.click(); });
+}
+
 function copyCode(code) {
   if(navigator.clipboard) {
     navigator.clipboard.writeText(code).then(function() {
@@ -9560,8 +9521,10 @@ function showGlobalUserMenu(p){
     var btnGoogle = document.getElementById('btnGoogleAuth');
     var btnMagic  = document.getElementById('btnMagicLink');
     var btnBack   = document.getElementById('btnAuthBack');
+    var btnRecup  = document.getElementById('btnRecupCompte');
     if(btnGoogle) btnGoogle.addEventListener('click', signInWithGoogle);
     if(btnMagic)  btnMagic.addEventListener('click', sendMagicLink);
+    if(btnRecup)  btnRecup.addEventListener('click', function(){ switchMode('recup'); });
     if(btnBack)   btnBack.addEventListener('click', function(){ switchMode('landing'); });
     // Enter sur l'input email
     var emailInput = document.getElementById('authEmail');
