@@ -3799,42 +3799,28 @@ function applyFormConfig() {
   loadLotsConfig();
   // ── Vérifier d'abord la session Supabase Auth ──
   // Si pas de session Auth valide → ignorer le localStorage et montrer la landing
-  if(sbClient && SB_ENABLED) {
-    sbClient.auth.getSession().then(function(res) {
-      if(res.data && res.data.session && res.data.session.user) {
-        // Session Auth valide → charger le profil depuis Supabase
-        sbLoadProfil(res.data.session.user.id, res.data.session.user.email);
-      } else {
-        // Pas de session Auth → vider le localStorage et montrer la landing
-        try { localStorage.removeItem('flowin_profile'); } catch(e){}
-        userInscribed = false;
-        userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
-        var splash = document.getElementById('v-splash');
-        if(splash) splash.style.display = 'none';
-        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-        document.getElementById('v-landing').classList.add('active');
+  // ── Pas de Supabase Auth pour les élèves — identification par localStorage ──
+  // L'inscription élève utilise un formulaire simple (pseudo/prénom/école)
+  // Pas de magic link ni OAuth → on lit directement le localStorage
+  try {
+    var saved = localStorage.getItem('flowin_profile');
+    if(saved) {
+      var p = JSON.parse(saved);
+      if(p && (p.pseudo || p.prenom)) {
+        userProfile = p; userInscribed = true;
+        QS.playerName = p.pseudo || p.prenom;
+        showWelcomeBack();
+        return;
       }
-    }).catch(function() {
-      // Erreur réseau → fallback localStorage (mode offline)
-      try {
-        var saved = localStorage.getItem('flowin_profile');
-        if(saved) {
-          var p = JSON.parse(saved);
-          userProfile = p; userInscribed = true;
-          QS.playerName = p.pseudo || p.prenom;
-          showWelcomeBack();
-        } else {
-          document.getElementById('v-landing').classList.add('active');
-        }
-      } catch(e) {
-        var splash = document.getElementById('v-splash');
-        if(splash) splash.style.display = 'none';
-        document.getElementById('v-landing').classList.add('active');
-      }
-    });
-    return; // laisser le Promise gérer la suite
-  }
-  // Fallback sans sbClient (SB_ENABLED = false)
+    }
+  } catch(e) {}
+  // Pas de profil → landing
+  var splash = document.getElementById('v-splash');
+  if(splash) splash.style.display = 'none';
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('v-landing').classList.add('active');
+  // Fallback sans sbClient (SB_ENABLED = false) — désactivé, géré ci-dessus
+  if(false) {
   try {
     const saved = localStorage.getItem('flowin_profile');
     if(saved) {
@@ -3962,6 +3948,7 @@ async function loadPlayerStatsFromSupabase(pseudo) {
       }
     }
   } catch(e){}
+  } // fin if(false)
 })();
 
 // ── LIEN D'INVITATION ?room= ──
