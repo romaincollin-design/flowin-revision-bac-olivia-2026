@@ -1378,34 +1378,115 @@ window.addEventListener('unhandledrejection', function(e){
 </div>
 
 <!-- ═══ VUE COMPLÉTER PROFIL (après connexion OAuth) ═══ -->
-<!-- v-activation : création mot de passe depuis lien email -->
+<!-- v-activation : parcours 3 étapes depuis lien email -->
 <div class="view" id="v-activation">
-  <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
-    <div style="text-align:center;margin-bottom:28px">
-      <div style="font-size:44px;margin-bottom:8px">🌊</div>
-      <div style="font-size:24px;font-weight:800;color:#fff;font-family:Syne,sans-serif">Flowin</div>
-      <div style="font-size:14px;color:#22C9A0;margin-top:6px;font-weight:600">Compte activé !</div>
-    </div>
-    <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:20px;padding:24px;width:100%;max-width:380px">
-      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:6px">Choisis ton mot de passe</div>
-      <div style="font-size:13px;color:#9A8FBF;margin-bottom:20px">Crée un mot de passe sécurisé pour accéder à Flowin depuis n'importe où.</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="position:relative">
-          <input id="activationPwd" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe (min. 6 car.)"
-            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 44px 13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
-          <button id="toggleActivationPwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:16px">👁</button>
+  <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;font-family:'Calibri','Trebuchet MS',Arial,sans-serif">
+
+    <!-- Étape 1 : Identification du profil -->
+    <div id="act-step1" style="width:100%;max-width:380px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:40px;margin-bottom:8px">🌊</div>
+        <div style="font-size:22px;font-weight:800;color:#fff;font-family:Syne,sans-serif">Ton compte t'attend !</div>
+        <div style="font-size:13px;color:#9A8FBF;margin-top:6px">Vérifions ton identité avant de créer ton mot de passe</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:12px">
+          <div style="width:28px;height:4px;border-radius:2px;background:#B06CE4"></div>
+          <div style="width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div>
+          <div style="width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div>
         </div>
-        <input id="activationPwdConfirm" type="password" autocomplete="new-password" placeholder="Confirmer le mot de passe"
-          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
-        <div id="activationError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:8px;padding:8px 12px;font-size:12px;color:#E84855;text-align:center"></div>
-        <button id="btnActivation" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px">
-          🚀 Activer et jouer !
-        </button>
+      </div>
+
+      <!-- Profil trouvé -->
+      <div id="act-profil-found" style="display:none;background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.25);border-radius:16px;padding:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div id="act-avatar" style="width:44px;height:44px;border-radius:50%;background:#B06CE4;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0">?</div>
+          <div><div id="act-name" style="font-size:16px;font-weight:800;color:#fff">Chargement…</div><div id="act-ecole" style="font-size:11px;color:#9A8FBF;margin-top:2px"></div></div>
+          <div style="margin-left:auto;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:rgba(34,201,160,.15);color:#22C9A0">trouvé ✓</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:8px;text-align:center"><div id="act-pts" style="font-size:18px;font-weight:800;color:#22C9A0">—</div><div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">pts</div></div>
+          <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:8px;text-align:center"><div id="act-ligue" style="font-size:18px;font-weight:800;color:#F4A83A">—</div><div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">ligue</div></div>
+          <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:8px;text-align:center"><div id="act-quiz" style="font-size:18px;font-weight:800;color:#B06CE4">—</div><div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">quiz</div></div>
+        </div>
+      </div>
+
+      <!-- Profil non trouvé -->
+      <div id="act-profil-notfound" style="display:none;background:rgba(232,72,85,.08);border:1px solid rgba(232,72,85,.25);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center;font-size:13px;color:#E84855">
+        Profil non trouvé. Tu peux quand même créer ton mot de passe.
+      </div>
+
+      <!-- Chargement -->
+      <div id="act-loading" style="text-align:center;padding:20px;color:#9A8FBF;font-size:13px">Récupération de ton profil…</div>
+
+      <div id="act-step1-btns" style="display:none">
+        <button id="act-confirm-btn" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">Oui, c'est bien moi !</button>
+        <button id="act-other-btn" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:600;padding:8px;cursor:pointer">Non, chercher un autre compte</button>
       </div>
     </div>
+
+    <!-- Étape 2 : Créer mot de passe -->
+    <div id="act-step2" style="display:none;width:100%;max-width:380px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:40px;margin-bottom:8px">🔐</div>
+        <div style="font-size:22px;font-weight:800;color:#fff;font-family:Syne,sans-serif">Crée ton mot de passe</div>
+        <div style="font-size:13px;color:#9A8FBF;margin-top:6px">Il te servira à te connecter depuis n'importe quel appareil</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:12px">
+          <div style="width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div>
+          <div style="width:28px;height:4px;border-radius:2px;background:#B06CE4"></div>
+          <div style="width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div>
+        </div>
+      </div>
+      <div style="background:#1A1730;border:1px solid rgba(176,108,228,.2);border-radius:16px;padding:16px">
+        <div id="act-email-display" style="background:rgba(34,201,160,.08);border:1px solid rgba(34,201,160,.2);border-radius:10px;padding:10px 12px;font-size:12px;color:#22C9A0;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">✉️</span> <span id="act-email-label" style="flex:1">email</span> <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;background:rgba(34,201,160,.2)">vérifié</span>
+        </div>
+        <div style="position:relative;margin-bottom:10px">
+          <input id="act-pwd" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe (min. 6 car.)"
+            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 44px 13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+          <button id="act-toggle-pwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:16px">👁</button>
+        </div>
+        <!-- Indicateur de force -->
+        <div style="margin-bottom:12px">
+          <div style="height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden"><div id="act-strength-bar" style="height:100%;width:0%;border-radius:2px;transition:all .3s;background:#E84855"></div></div>
+          <div id="act-strength-label" style="font-size:10px;color:#9A8FBF;margin-top:4px">Saisis un mot de passe</div>
+        </div>
+        <input id="act-pwd-confirm" type="password" autocomplete="new-password" placeholder="Confirmer le mot de passe"
+          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none;margin-bottom:12px">
+        <div id="act-pwd-error" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:8px;padding:8px 12px;font-size:12px;color:#E84855;text-align:center;margin-bottom:10px"></div>
+        <button id="act-create-btn" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer">🚀 Activer mon compte</button>
+      </div>
+    </div>
+
+    <!-- Étape 3 : Bienvenue -->
+    <div id="act-step3" style="display:none;width:100%;max-width:380px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:48px;margin-bottom:8px">🎉</div>
+        <div style="font-size:24px;font-weight:800;color:#fff;font-family:Syne,sans-serif">Compte activé !</div>
+        <div style="font-size:13px;color:#22C9A0;margin-top:6px;font-weight:600">Tu es maintenant connecté en permanence</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:12px">
+          <div style="width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div>
+          <div style="width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div>
+          <div style="width:28px;height:4px;border-radius:2px;background:#22C9A0"></div>
+        </div>
+      </div>
+      <div style="background:rgba(34,201,160,.08);border:1px solid rgba(34,201,160,.2);border-radius:16px;padding:16px;margin-bottom:16px;text-align:center">
+        <div id="act-welcome-pts" style="font-size:32px;font-weight:800;color:#22C9A0">—</div>
+        <div id="act-welcome-ligue" style="font-size:13px;color:#9A8FBF;margin-top:4px">—</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:24px;margin-bottom:4px">🎯</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6)">Faire un quiz</div>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:14px;text-align:center">
+          <div style="font-size:24px;margin-bottom:4px">⚔️</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6)">Défier un ami</div>
+        </div>
+      </div>
+      <button id="act-play-btn" style="width:100%;background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;border:none;border-radius:14px;padding:16px;font-family:inherit;font-size:17px;font-weight:800;cursor:pointer">Jouer maintenant !</button>
+    </div>
+
   </div>
 </div>
-
 <!-- v-recup : récupération compte existant -->
 <div class="view" id="v-recup">
   <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
@@ -7926,62 +8007,172 @@ window.LOTS_ON = false; // false par défaut, activé uniquement si Supabase con
 window.MY_GAINS = [];
 // ── RÉCUPÉRATION DE COMPTE ──
 function initActivationView() {
-  var btn     = document.getElementById('btnActivation');
-  var errEl   = document.getElementById('activationError');
-  var toggleP = document.getElementById('toggleActivationPwd');
+  var step1 = document.getElementById('act-step1');
+  var step2 = document.getElementById('act-step2');
+  var step3 = document.getElementById('act-step3');
+  var loading = document.getElementById('act-loading');
+  var profilFound = document.getElementById('act-profil-found');
+  var profilNotFound = document.getElementById('act-profil-notfound');
+  var step1Btns = document.getElementById('act-step1-btns');
 
-  if(toggleP) toggleP.addEventListener('click', function() {
-    var inp = document.getElementById('activationPwd');
+  var _joueur = null;
+
+  function showStep(n) {
+    if(step1) step1.style.display = n===1 ? '' : 'none';
+    if(step2) step2.style.display = n===2 ? '' : 'none';
+    if(step3) step3.style.display = n===3 ? '' : 'none';
+  }
+
+  // ── Étape 1 : charger le profil depuis joueurs via email Auth ──
+  if(sbClient) {
+    sbClient.auth.getSession().then(function(res) {
+      if(!res.data || !res.data.session) {
+        if(loading) loading.style.display = 'none';
+        if(profilNotFound) profilNotFound.style.display = '';
+        if(step1Btns) step1Btns.style.display = '';
+        return;
+      }
+      var u = res.data.session.user;
+      var email = u.email || '';
+      var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(email) + '&select=*&limit=1', {headers:hdrs})
+        .then(function(r){ return r.ok ? r.json() : []; })
+        .then(function(rows) {
+          if(loading) loading.style.display = 'none';
+          if(rows && rows.length) {
+            _joueur = rows[0];
+            var prenom = _joueur.prenom || _joueur.pseudo || '?';
+            var initials = (prenom.charAt(0) + (_joueur.nom||'').charAt(0)).toUpperCase() || prenom.charAt(0).toUpperCase();
+            var pts = _joueur.pts_total || 0;
+            var ligue = pts>=5000?'👑':pts>=3000?'💎':pts>=1500?'🥇':pts>=500?'🥈':'🥉';
+
+            var el = function(id){ return document.getElementById(id); };
+            if(el('act-avatar')) el('act-avatar').textContent = initials;
+            if(el('act-name'))   el('act-name').textContent   = prenom + ' ' + (_joueur.nom||'');
+            if(el('act-ecole'))  el('act-ecole').textContent  = (_joueur.ecole||'') + (_joueur.classe?' · '+_joueur.classe:'');
+            if(el('act-pts'))    el('act-pts').textContent    = pts.toLocaleString('fr');
+            if(el('act-ligue'))  el('act-ligue').textContent  = ligue;
+            if(el('act-email-label')) el('act-email-label').textContent = email;
+
+            // Stats quiz
+            fetch(SUPABASE_URL + '/rest/v1/sessions?pseudo=eq.' + encodeURIComponent(_joueur.pseudo||'') + '&select=id&limit=1000', {headers:hdrs})
+              .then(function(r){ return r.ok ? r.json() : []; })
+              .then(function(sessions){
+                if(el('act-quiz')) el('act-quiz').textContent = sessions.length;
+              }).catch(function(){});
+
+            if(profilFound)    profilFound.style.display    = '';
+            if(profilNotFound) profilNotFound.style.display = 'none';
+          } else {
+            // Pas de joueur avec cet email
+            if(profilNotFound) profilNotFound.style.display = '';
+            if(el('act-email-label')) el('act-email-label').textContent = email;
+          }
+          if(step1Btns) step1Btns.style.display = '';
+        })
+        .catch(function() {
+          if(loading) loading.style.display = 'none';
+          if(profilNotFound) profilNotFound.style.display = '';
+          if(step1Btns) step1Btns.style.display = '';
+        });
+    }).catch(function() {
+      if(loading) loading.style.display = 'none';
+      if(profilNotFound) profilNotFound.style.display = '';
+      if(step1Btns) step1Btns.style.display = '';
+    });
+  } else {
+    if(loading) loading.style.display = 'none';
+    if(profilNotFound) profilNotFound.style.display = '';
+    if(step1Btns) step1Btns.style.display = '';
+  }
+
+  // ── Bouton "Oui c'est moi" → Étape 2 ──
+  var confirmBtn = document.getElementById('act-confirm-btn');
+  if(confirmBtn) confirmBtn.addEventListener('click', function(){
+    showStep(2);
+  });
+
+  // ── Bouton "Non, autre compte" → récup par pseudo ──
+  var otherBtn = document.getElementById('act-other-btn');
+  if(otherBtn) otherBtn.addEventListener('click', function(){
+    switchMode('recup');
+  });
+
+  // ── Toggle password ──
+  var toggleBtn = document.getElementById('act-toggle-pwd');
+  if(toggleBtn) toggleBtn.addEventListener('click', function(){
+    var inp = document.getElementById('act-pwd');
     if(inp) inp.type = inp.type === 'password' ? 'text' : 'password';
   });
 
-  if(btn) btn.addEventListener('click', async function() {
-    var pwd     = (document.getElementById('activationPwd')        || {value:''}).value;
-    var confirm = (document.getElementById('activationPwdConfirm') || {value:''}).value;
-    if(!pwd || pwd.length < 6) {
-      errEl.textContent = 'Mot de passe trop court (min. 6 caractères).';
-      errEl.style.display = ''; return;
-    }
-    if(pwd !== confirm) {
-      errEl.textContent = 'Les mots de passe ne correspondent pas.';
-      errEl.style.display = ''; return;
-    }
+  // ── Indicateur de force ──
+  var pwdInp = document.getElementById('act-pwd');
+  if(pwdInp) pwdInp.addEventListener('input', function() {
+    var v = pwdInp.value;
+    var bar = document.getElementById('act-strength-bar');
+    var lbl = document.getElementById('act-strength-label');
+    if(!v) { if(bar) bar.style.width='0%'; if(lbl) lbl.textContent='Saisis un mot de passe'; return; }
+    var score = 0;
+    if(v.length >= 6)  score += 25;
+    if(v.length >= 10) score += 25;
+    if(/[A-Z]/.test(v)) score += 25;
+    if(/[0-9!@#$%]/.test(v)) score += 25;
+    var color = score<=25?'#E84855':score<=50?'#F4A83A':score<=75?'#B06CE4':'#22C9A0';
+    var label = score<=25?'Trop court':score<=50?'Faible':score<=75?'Correct':'Fort 💪';
+    if(bar) { bar.style.width = score + '%'; bar.style.background = color; }
+    if(lbl) { lbl.textContent = label; lbl.style.color = color; }
+  });
+
+  // ── Bouton "Activer mon compte" → updateUser + Étape 3 ──
+  var createBtn = document.getElementById('act-create-btn');
+  if(createBtn) createBtn.addEventListener('click', async function() {
+    var pwd     = (document.getElementById('act-pwd')         || {value:''}).value;
+    var confirm = (document.getElementById('act-pwd-confirm') || {value:''}).value;
+    var errEl   = document.getElementById('act-pwd-error');
+    if(pwd.length < 6) { errEl.textContent='Mot de passe trop court (min. 6 car.)'; errEl.style.display=''; return; }
+    if(pwd !== confirm) { errEl.textContent='Les mots de passe ne correspondent pas.'; errEl.style.display=''; return; }
     errEl.style.display = 'none';
-    btn.disabled = true; btn.textContent = '⏳ Activation…';
+    createBtn.disabled = true; createBtn.textContent = '⏳ Activation…';
     try {
       var res = await sbClient.auth.updateUser({ password: pwd });
       if(res.error) {
         errEl.textContent = res.error.message;
         errEl.style.display = '';
-        btn.disabled = false; btn.textContent = '🚀 Activer et jouer !';
+        createBtn.disabled = false; createBtn.textContent = '🚀 Activer mon compte';
         return;
       }
-      // Succès — récupérer le profil
-      btn.textContent = '✅ Compte activé !';
-      var session = await sbClient.auth.getSession();
-      if(session.data && session.data.session) {
-        var u = session.data.session.user;
-        var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-        var rows = await fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrs}).then(function(r){ return r.ok ? r.json() : []; });
-        if(rows && rows.length) {
-          var j = rows[0];
-          userProfile = { pseudo:j.pseudo||'', prenom:j.prenom||'', nom:j.nom||'', ecole:j.ecole||'', classe:j.classe||'', email:j.email||u.email, genre:j.genre||'', pts:j.pts_total||0 };
-          userInscribed = true;
-          QS.playerName = userProfile.pseudo || userProfile.prenom;
-          try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
-          setTimeout(function(){ showWelcomeBack(); }, 800);
-        } else {
-          // Nouveau compte — compléter le profil
-          setTimeout(function(){ switchMode('complete-profil'); }, 800);
-        }
+      // ── Succès → construire userProfile + Étape 3 ──
+      if(_joueur) {
+        userProfile = {
+          pseudo: _joueur.pseudo||'', prenom: _joueur.prenom||'', nom: _joueur.nom||'',
+          ecole: _joueur.ecole||'', classe: _joueur.classe||'', email: _joueur.email||'',
+          genre: _joueur.genre||'', pts: _joueur.pts_total||0
+        };
+        userInscribed = true;
+        QS.playerName = userProfile.pseudo || userProfile.prenom;
+        try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+        try { sessionStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+
+        var pts = _joueur.pts_total || 0;
+        var ligue = pts>=5000?'👑 Légende':pts>=3000?'💎 Diamant':pts>=1500?'🥇 Or':pts>=500?'🥈 Argent':'🥉 Bronze';
+        var el = function(id){ return document.getElementById(id); };
+        if(el('act-welcome-pts'))   el('act-welcome-pts').textContent   = pts.toLocaleString('fr') + ' pts';
+        if(el('act-welcome-ligue')) el('act-welcome-ligue').textContent = ligue + ' · ' + (_joueur.ecole||'');
       }
+      showStep(3);
+
+      // Bouton jouer
+      var playBtn = document.getElementById('act-play-btn');
+      if(playBtn) playBtn.addEventListener('click', function(){ showWelcomeBack(); });
+
     } catch(e) {
-      errEl.textContent = 'Erreur réseau.';
+      errEl.textContent = 'Erreur réseau. Réessaie.';
       errEl.style.display = '';
-      btn.disabled = false; btn.textContent = '🚀 Activer et jouer !';
+      createBtn.disabled = false; createBtn.textContent = '🚀 Activer mon compte';
     }
   });
 }
+
 
 function initRecupView() {
   var searchBtn = document.getElementById('btnRecupSearch');
