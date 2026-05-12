@@ -5200,30 +5200,45 @@ function renderStats(){
       sunday.setHours(23,59,59,0);
       var joursRestants = Math.ceil((sunday - now) / 86400000);
 
+      // Compter et afficher le badge
+      var lotsCount = document.getElementById('sp-lots-count');
+      if(lotsCount) lotsCount.textContent = activeLots.length + ' offre' + (activeLots.length>1?'s':'');
+
       lotsList.innerHTML = activeLots.map(function(l) {
         var dispo = (typeof window.LOTS_STOCK_CACHE!=='undefined'?window.LOTS_STOCK_CACHE:[]).filter(function(s){return s.lot_id===l.id&&s.statut==='disponible';}).length;
         var condMap = {'gold_semaine':'🥇 Être en Ligue Or 7 jours','top1_semaine':'🏆 Rester Top 1 cette semaine'};
         var condLbl = condMap[l.cond] || l.condLbl || l.cond || '';
-        // Message stimulation selon position
         var stimMsg;
-        if(myIdx===0) stimMsg = 'Tu es en tête ! Continue et remporte le lot 🔥';
-        else if(myIdx===1) stimMsg = 'Tu es 2ème — '+( sorted[0].pts - myPts)+' pts pour prendre la 1ère place !';
-        else stimMsg = 'Améliore ton score et grimpe dans le classement pour remporter ce lot !';
+        if(myIdx===0) stimMsg = '🔥 Tu es en tête ! Continue pour remporter ce lot.';
+        else if(myIdx===1) stimMsg = '⚡ Tu es 2ème — '+( sorted[0].pts - myPts)+' pts pour prendre la 1ère place !';
+        else stimMsg = '🚀 Améliore ton score et grimpe pour remporter ce lot !';
+
+        // Encart avec image si disponible
+        var imgSection = l.image_url
+          ? '<div style="border-radius:14px;overflow:hidden;height:120px;margin-bottom:12px;position:relative">'
+            + '<img src="'+l.image_url+'" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML=\'<div style=\"height:100%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:48px\">\'+l.emoji+\'</div>\'">'
+            + '<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.6))"></div>'
+            + '<div style="position:absolute;bottom:8px;left:12px;color:#fff;font-size:13px;font-weight:800">'+(l.titre||l.nom||'Offre')+'</div>'
+            + '</div>'
+          : '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+            + '<div style="font-size:44px">'+(l.emoji||'🎁')+'</div>'
+            + '<div style="flex:1"><div class="sp3-lot-stimuli-titre">'+(l.titre||l.nom||'Lot')+'</div></div>'
+            + '</div>';
 
         return '<div class="sp3-lot-stimuli">'
-          +'<div style="display:flex;align-items:flex-start;gap:12px">'
-            +'<div class="sp3-lot-emoji-xl">'+(l.emoji||'🎁')+'</div>'
+          + imgSection
+          + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
             +'<div style="flex:1">'
-              +'<div class="sp3-lot-stimuli-titre">'+(l.titre||l.nom||'Lot')+'</div>'
+              +(l.promo_text?'<div style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:8px">'+l.promo_text+'</div>':'')
               +'<div class="sp3-lot-stimuli-msg">'+stimMsg+'</div>'
-              +'<div class="sp3-lot-countdown">'
-                +'<div><div class="sp3-lot-countdown-n">'+joursRestants+'</div><div class="sp3-lot-countdown-l">jours restants</div></div>'
-                +'<div style="width:1px;height:30px;background:rgba(255,255,255,.1)"></div>'
-                +'<div><div class="sp3-lot-countdown-n">'+dispo+'</div><div class="sp3-lot-countdown-l">lots dispos</div></div>'
-              +'</div>'
-              +'<div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px">'+condLbl+'</div>'
             +'</div>'
           +'</div>'
+          +'<div class="sp3-lot-countdown" style="margin-bottom:10px">'
+            +'<div><div class="sp3-lot-countdown-n">'+joursRestants+'</div><div class="sp3-lot-countdown-l">jours restants</div></div>'
+            +'<div style="width:1px;height:30px;background:rgba(255,255,255,.1)"></div>'
+            +'<div><div class="sp3-lot-countdown-n">'+dispo+'</div><div class="sp3-lot-countdown-l">lots dispos</div></div>'
+          +'</div>'
+          +'<div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:10px">Condition : '+condLbl+'</div>'
           +'<button class="sp3-lot-cta-btn" onclick="switchMode(\'app\')">⚡ Jouer maintenant</button>'
           +'</div>';
       }).join('');
@@ -5252,12 +5267,28 @@ function renderStats(){
   var gainsList=document.getElementById('sp-gains-list');
   if(gainsEl&&gainsList&&typeof window.MY_GAINS!=='undefined'&&window.MY_GAINS.length){
     gainsEl.style.display='block';
+    var gainsCount = document.getElementById('sp-gains-count');
+    if(gainsCount) gainsCount.textContent = window.MY_GAINS.length + ' code' + (window.MY_GAINS.length>1?'s':'');
     gainsList.innerHTML=window.MY_GAINS.map(function(g){
-      return '<div class="sp3-gain-row">'+
-        '<div class="sp3-gain-emoji">'+(g.lot_emoji||g.emoji||'🎁')+'</div>'+
-        '<div style="flex:1"><div class="sp3-gain-nom">'+(g.lot_nom||g.nom||'Récompense')+'</div><div class="sp3-gain-date">'+(g.created_at?new Date(g.created_at).toLocaleDateString('fr'):g.date||'')+'</div></div>'+
-        '<div class="sp3-gain-code">'+(g.code||'—')+'</div>'+
-        '</div>';
+      var isUsed = g.utilise;
+      return '<div style="background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;margin-bottom:8px">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+
+          '<div style="font-size:28px;flex-shrink:0">'+(g.lot_emoji||g.emoji||'🎁')+'</div>'+
+          '<div style="flex:1">'+
+            '<div style="font-size:13px;font-weight:800;color:#fff">'+(g.lot_nom||g.nom||'Récompense')+'</div>'+
+            '<div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:2px">'+
+              'Obtenu le '+(g.created_at?new Date(g.created_at).toLocaleDateString('fr',{day:'numeric',month:'short'}):g.date||'—')+
+            '</div>'+
+          '</div>'+
+          '<div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:'+(isUsed?'rgba(255,255,255,.1)':'rgba(34,201,160,.15)')+';color:'+(isUsed?'rgba(255,255,255,.35)':'#22C9A0')+'">'+
+            (isUsed?'✓ Utilisé':'⚡ Actif')+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.2);border-radius:10px;padding:8px 12px">'+
+          '<div style="font-family:monospace;font-size:16px;font-weight:800;letter-spacing:.1em;color:#fff;flex:1">'+(g.code||'—')+'</div>'+
+          (!isUsed?'<button onclick="copyCode(\''+g.code+'\')" style="background:rgba(34,201,160,.2);border:1px solid rgba(34,201,160,.3);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:700;color:#22C9A0;cursor:pointer;font-family:inherit">📋 Copier</button>':'')+
+        '</div>'+
+      '</div>';
     }).join('');
   } else if(gainsEl){
     gainsEl.style.display='none';
@@ -7752,6 +7783,22 @@ function saveSessionToSheets(qs, profile) {
 // ════════════════════════
 window.LOTS_ON = false; // false par défaut, activé uniquement si Supabase confirme
 window.MY_GAINS = [];
+function copyCode(code) {
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(code).then(function() {
+      showToast('Code copié ! ' + code);
+    });
+  } else {
+    var el = document.createElement('textarea');
+    el.value = code;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast('Code copié ! ' + code);
+  }
+}
+
 window.LOTS_DB_CACHE = [];  // vide par défaut - chargé depuis Supabase
 
 async function loadLotsConfig() {
@@ -8699,7 +8746,10 @@ async function dfLoadPrivateRooms() {
 
     <!-- LOTS À GAGNER + STIMULI -->
     <div id="sp-lots-encart" style="display:none">
-      <div class="sp3-themes-title">🎁 Lots à gagner</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="sp3-themes-title" style="margin-bottom:0">🎁 Lots à gagner</div>
+        <span style="font-size:10px;color:#9B7ED4;font-weight:600;background:#F0ECFF;padding:3px 8px;border-radius:20px" id="sp-lots-count"></span>
+      </div>
       <div id="sp-lots-list"></div>
     </div>
 
@@ -8736,7 +8786,11 @@ async function dfLoadPrivateRooms() {
 
     <!-- Gains obtenus -->
     <div id="sp-gains" style="display:none" class="sp3-gains-card">
-      <div class="sp3-gains-title">🎁 Mes récompenses</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="sp3-gains-title" style="margin-bottom:0">🏅 Mes récompenses</div>
+        <span style="font-size:10px;color:#22C9A0;font-weight:600;background:rgba(34,201,160,.1);padding:3px 8px;border-radius:20px" id="sp-gains-count"></span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:12px">Présente le code au partenaire pour profiter de ton offre</div>
       <div id="sp-gains-list"></div>
     </div>
 
