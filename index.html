@@ -5916,8 +5916,8 @@ async function dfFetchRooms(){
         isMine: !!(myName && d.createur === myName)
       };
     });
-    // Garder mes rooms locales non encore en base
-    var myLocalRooms = DF_ROOMS.filter(function(r){ return r.isMine && !supaRooms.find(function(rb){ return rb.id === r.id; }); });
+    // Garder mes rooms locales non encore en base (PUBLIQUES seulement dans le lobby)
+    var myLocalRooms = DF_ROOMS.filter(function(r){ return r.isMine && !r.isPrivate && !r.is_private && !supaRooms.find(function(rb){ return rb.id === r.id; }); });
     // Ajouter bot rooms si peu de vraies rooms
     var bots = dfGetBotRooms();
     var allRooms = myLocalRooms.concat(supaRooms);
@@ -9373,9 +9373,15 @@ function dfRenderMyDefis(){
     html += '<div style="display:flex;gap:12px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px">';
     html += '<span>💰 '+d.mise+' pts</span>';
     html += '<span>📅 '+(d.ts?new Date(d.ts).toLocaleDateString('fr-FR'):'—')+'</span>';
-    html += '<span>'+(d.role==='createur'?'👑 Créateur':'🎮 Invité')+'</span>';
+    if(d.role==='createur') html += '<span>👑 Créateur</span>';
+    else if(d.role==='invite') html += '<span style="color:rgba(244,168,58,.8)">🎟️ Invitation</span>';
+    else html += '<span>🎮 Participant</span>';
     html += '</div>';
-    if(hasAdv){
+    // Afficher l'expéditeur si invitation reçue
+    if(d.role==='invite' && d.invite_from) {
+      html += '<div style="background:rgba(244,168,58,.12);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;font-weight:700;color:rgba(244,168,58,.9)">🎟️ '+d.invite_from+' t\'a défié !</div>';
+      html += '<button onclick="dfGoToMyRoom(this.dataset.id)" data-id="'+d.id+'" style="width:100%;background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">⚔️ Relever le défi</button>';
+    } else if(hasAdv){
       html += '<div style="font-size:13px;font-weight:700;color:#22C9A0;margin-bottom:10px">👤 '+d.invite_pseudo+' t\'attend !</div>';
       html += '<button onclick="dfGoToMyRoom(this.dataset.id)" data-id="'+d.id+'" style="width:100%;background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">⚔️ Jouer maintenant</button>';
     } else if(d.status==='en_cours' && !isDone){
@@ -9429,9 +9435,41 @@ async function checkMyPendingDefis(){
   if(!myName) return;
   try {
     var hdrs = {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
-    var r = await fetch(SUPABASE_URL+'/rest/v1/defis?createur=eq.'+encodeURIComponent(myName)+'&status=eq.waiting&invite=not.is.null&select=id,nom,invite,mise,theme',{headers:hdrs});
+
+    // 1. Défis que j'ai créés avec un invité qui a rejoint
+    var r = await fetch(SUPABASE_URL+'/rest/v1/defis?createur=eq.'+encodeURIComponent(myName)+'&status=eq.waiting&invite=not.is.null&select=id,nom,invite,mise,theme,ts,is_private',{headers:hdrs});
     if(!r.ok) return;
     var rows = await r.json();
+    if(Array.isArray(rows) && rows.length > 0) {
+      rows.forEach(function(row){ dfUpdateMyDefi(row.id,{invite_pseudo:row.invite,status:'waiting'}); });
+    }
+
+    // 2. Défis privés où je suis invité (invite=eq.myName) — pas encore joués
+    var r2 = await fetch(SUPABASE_URL+'/rest/v1/defis?invite=eq.'+encodeURIComponent(myName)+'&status=in.(waiting,en_cours)&select=id,nom,createur,mise,theme,ts,is_private',{headers:hdrs});
+    if(r2.ok) {
+      var invitations = await r2.json();
+      if(Array.isArray(invitations)) {
+        invitations.forEach(function(d) {
+          var existing = dfGetMyDefis().find(function(x){ return x.id === d.id; });
+          if(!existing) {
+            dfAddToMyDefis({
+              id: d.id,
+              name: d.nom || ('Défi de ' + (d.createur||'?')),
+              role: 'invite',
+              mise: d.mise||0,
+              theme: d.theme||'roulette',
+              status: d.status||'waiting',
+              ts: d.ts||new Date().toISOString(),
+              resultat: null,
+              isPrivate: true,
+              invite_from: d.createur
+            });
+          }
+        });
+      }
+    }
+
+    // Fusionner pour n'avoir que les rows créateur
     if(!Array.isArray(rows)||rows.length===0) return;
     rows.forEach(function(row){ dfUpdateMyDefi(row.id,{invite_pseudo:row.invite,status:'waiting'}); });
     if(!DF_CURRENT||DF_CURRENT.status==='termine'){
