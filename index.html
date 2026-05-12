@@ -1280,72 +1280,81 @@ window.addEventListener('unhandledrejection', function(e){
   </div>
 </div>
 </div>
-<!-- ═══ INSCRIPTION ═══ -->
+<!-- ═══ CONNEXION / INSCRIPTION ═══ -->
 <div class="view" id="v-inscription">
   <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
 
-    <!-- Logo -->
-    <div style="text-align:center;margin-bottom:32px">
-      <div style="font-size:40px;margin-bottom:10px">🌊</div>
-      <div style="font-size:26px;font-weight:800;color:#fff">Flowin</div>
-      <div style="font-size:14px;color:#9A8FBF;margin-top:4px">Révise. Défie. Progresse.</div>
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:44px;margin-bottom:8px">🌊</div>
+      <div style="font-size:26px;font-weight:800;color:#fff;font-family:Syne,sans-serif">Flowin</div>
+      <div style="font-size:13px;color:#9A8FBF;margin-top:4px">Révise. Défie. Progresse.</div>
     </div>
 
-    <!-- Carte auth -->
     <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:24px;padding:28px 24px;width:100%;max-width:380px">
 
-      <!-- Titre -->
-      <div style="font-size:20px;font-weight:800;color:#fff;text-align:center;margin-bottom:6px">Connexion</div>
-      <div style="font-size:13px;color:#9A8FBF;text-align:center;margin-bottom:24px">Entre ton email — on t'envoie un lien magique</div>
-
-      <!-- Google OAuth -->
-      <button id="btnGoogleAuth" style="width:100%;background:#fff;color:#1E1048;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px">
-        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        Continuer avec Google
-      </button>
-
-      <!-- Séparateur -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
-        <div style="font-size:12px;color:#9A8FBF;font-weight:600">ou</div>
-        <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
-      </div>
-
-      <!-- Email Magic Link -->
-      <div style="margin-bottom:12px">
-        <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ton email</label>
-        <input id="authEmail" type="email" inputmode="email" autocomplete="email"
-          placeholder="prenom.nom@email.fr"
-          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
-      </div>
-
-      <button id="btnMagicLink" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:14px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px">
-        ✉️ Recevoir mon lien de connexion
-      </button>
-
-      <!-- Message confirmation -->
-      <div id="authConfirmMsg" style="display:none;background:rgba(34,201,160,.1);border:1px solid rgba(34,201,160,.3);border-radius:12px;padding:14px;text-align:center">
-        <div style="font-size:24px;margin-bottom:6px">📬</div>
-        <div style="font-size:14px;font-weight:800;color:#22C9A0;margin-bottom:4px">Lien envoyé !</div>
-        <div style="font-size:12px;color:#9A8FBF">Vérifie ta boite mail et clique sur le lien. Il expire dans 1h.</div>
-      </div>
-
-      <!-- Retour -->
-      <button id="btnAuthBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:600;padding:8px;cursor:pointer;margin-top:8px">
-        ← Retour
-      </button>
-
-      <!-- Récupération compte existant -->
-      <div style="border-top:1px solid rgba(255,255,255,.08);margin-top:16px;padding-top:16px;text-align:center">
-        <div style="font-size:12px;color:#9A8FBF;margin-bottom:10px">Tu avais déjà un compte Flowin ?</div>
-        <button id="btnRecupCompte" style="width:100%;background:rgba(176,108,228,.15);border:1px solid rgba(176,108,228,.3);border-radius:12px;padding:11px;font-family:inherit;font-size:13px;font-weight:700;color:#B06CE4;cursor:pointer">
-          🔍 Retrouver mon compte par pseudo
+      <!-- Tabs Connexion / Créer un compte -->
+      <div style="display:flex;background:rgba(255,255,255,.06);border-radius:12px;padding:4px;margin-bottom:24px">
+        <button id="tab-login" style="flex:1;padding:9px;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;transition:all .2s">
+          Se connecter
+        </button>
+        <button id="tab-signup" style="flex:1;padding:9px;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#9A8FBF;transition:all .2s">
+          Créer un compte
         </button>
       </div>
 
+      <!-- ── CONNEXION ── -->
+      <div id="panel-login">
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
+          <input id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
+            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+        </div>
+        <div style="margin-bottom:6px">
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe</label>
+          <div style="position:relative">
+            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••"
+              style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+            <button id="toggleLoginPwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:16px">👁</button>
+          </div>
+        </div>
+        <div style="text-align:right;margin-bottom:16px">
+          <button id="btnForgotPwd" style="background:none;border:none;color:#B06CE4;font-family:inherit;font-size:12px;cursor:pointer">Mot de passe oublié ?</button>
+        </div>
+        <div id="loginError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:10px 12px;font-size:12px;color:#E84855;margin-bottom:12px;text-align:center"></div>
+        <button id="btnLogin" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer">
+          🔑 Se connecter
+        </button>
+      </div>
+
+      <!-- ── CRÉER UN COMPTE ── -->
+      <div id="panel-signup" style="display:none">
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
+          <input id="signupEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
+            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe (min. 6 caractères)</label>
+          <div style="position:relative">
+            <input id="signupPassword" type="password" autocomplete="new-password" placeholder="••••••••"
+              style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+            <button id="toggleSignupPwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:16px">👁</button>
+          </div>
+        </div>
+        <div id="signupError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:10px 12px;font-size:12px;color:#E84855;margin-bottom:12px;text-align:center"></div>
+        <button id="btnSignup" style="width:100%;background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer">
+          ✨ Créer mon compte
+        </button>
+        <div style="font-size:11px;color:#9A8FBF;text-align:center;margin-top:10px">Un lien de confirmation sera envoyé à ton email</div>
+      </div>
+
+      <!-- Retour -->
+      <button id="btnAuthBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:12px;font-weight:600;padding:10px;cursor:pointer;margin-top:12px">
+        ← Retour
+      </button>
+
     </div>
 
-    <!-- RGPD -->
     <div style="margin-top:16px;font-size:11px;color:#7A7AAA;text-align:center;max-width:320px;line-height:1.6">
       En continuant, tu acceptes nos <a href="#" style="color:#B06CE4">conditions d'utilisation</a> et notre <a href="#" style="color:#B06CE4">politique de confidentialité</a>.
     </div>
@@ -3467,13 +3476,35 @@ if (sbClient) {
     // Seul SIGNED_IN via OAuth est géré (connexion Google future)
     if (session && session.user && event === 'SIGNED_IN') {
       var u = session.user;
-      if (u.user_metadata) {
-        var meta = u.user_metadata;
-        if (!userProfile.prenom && meta.given_name) userProfile.prenom = meta.given_name;
-        if (!userProfile.nom && meta.family_name) userProfile.nom = meta.family_name;
-        if (!userProfile.email) userProfile.email = u.email || '';
-      }
-      sbLoadProfil(u.id, u.email);
+      // Chercher le profil dans joueurs par email
+      var hdrsAuth = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+      fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrsAuth})
+        .then(function(r){ return r.ok ? r.json() : []; })
+        .then(function(rows) {
+          if(rows && rows.length) {
+            var j = rows[0];
+            userProfile = {
+              pseudo: j.pseudo || '', prenom: j.prenom || '',
+              nom: j.nom || '', ecole: j.ecole || '',
+              classe: j.classe || '', email: j.email || u.email,
+              genre: j.genre || '', pts: j.pts_total || 0
+            };
+            userInscribed = true;
+            QS.playerName = userProfile.pseudo || userProfile.prenom;
+            try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+            showWelcomeBack();
+          } else {
+            // Nouveau compte Auth sans profil joueur → compléter le profil
+            if(u.user_metadata) {
+              var meta = u.user_metadata;
+              if(meta.given_name) userProfile.prenom = meta.given_name;
+              if(meta.family_name) userProfile.nom = meta.family_name;
+              userProfile.email = u.email || '';
+            }
+            switchMode('complete-profil');
+          }
+        })
+        .catch(function(){ sbLoadProfil(u.id, u.email); });
     }
     // SIGNED_OUT ignoré — ne pas effacer le profil localStorage
   });
@@ -3873,29 +3904,62 @@ function applyFormConfig() {
 (function restoreProfile(){
   loadConfigFromSupabase();
   loadLotsConfig();
-  // ── Vérifier d'abord la session Supabase Auth ──
-  // Si pas de session Auth valide → ignorer le localStorage et montrer la landing
-  // ── Pas de Supabase Auth pour les élèves — identification par localStorage ──
-  // L'inscription élève utilise un formulaire simple (pseudo/prénom/école)
-  // Pas de magic link ni OAuth → on lit directement le localStorage
-  try {
-    var saved = localStorage.getItem('flowin_profile');
-    if(saved) {
-      var p = JSON.parse(saved);
-      if(p && (p.pseudo || p.prenom)) {
-        userProfile = p; userInscribed = true;
-        QS.playerName = p.pseudo || p.prenom;
-        showWelcomeBack();
+
+  // ── 1. Vérifier session Supabase Auth (auto-login signet/PWA) ──
+  if(sbClient && SB_ENABLED) {
+    sbClient.auth.getSession().then(function(res) {
+      if(res.data && res.data.session && res.data.session.user) {
+        // Session Auth valide → chercher le profil dans joueurs
+        var u = res.data.session.user;
+        var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+        fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrs})
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .then(function(rows) {
+            if(rows && rows.length) {
+              var j = rows[0];
+              userProfile = {
+                pseudo: j.pseudo||'', prenom: j.prenom||'', nom: j.nom||'',
+                ecole: j.ecole||'', classe: j.classe||'', email: j.email||u.email,
+                genre: j.genre||'', pts: j.pts_total||0
+              };
+              userInscribed = true;
+              QS.playerName = userProfile.pseudo || userProfile.prenom;
+              try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+              showWelcomeBack();
+            } else {
+              // Compte Auth sans profil → fallback localStorage
+              checkLocalStorage();
+            }
+          }).catch(checkLocalStorage);
         return;
       }
-    }
-  } catch(e) {}
-  // Pas de profil → landing
-  var splash = document.getElementById('v-splash');
-  if(splash) splash.style.display = 'none';
-  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-  document.getElementById('v-landing').classList.add('active');
-  // Fallback sans sbClient (SB_ENABLED = false) — désactivé, géré ci-dessus
+      // Pas de session Auth → localStorage
+      checkLocalStorage();
+    }).catch(checkLocalStorage);
+    return;
+  }
+  checkLocalStorage();
+
+  function checkLocalStorage() {
+    // ── 2. Fallback : localStorage ──
+    try {
+      var saved = localStorage.getItem('flowin_profile');
+      if(saved) {
+        var p = JSON.parse(saved);
+        if(p && (p.pseudo || p.prenom)) {
+          userProfile = p; userInscribed = true;
+          QS.playerName = p.pseudo || p.prenom;
+          showWelcomeBack();
+          return;
+        }
+      }
+    } catch(e) {}
+    // ── 3. Rien → landing ──
+    var splash = document.getElementById('v-splash');
+    if(splash) splash.style.display = 'none';
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+    document.getElementById('v-landing').classList.add('active');
+  }
 })();
 
 // ── LIEN D'INVITATION ?room= ──
@@ -9568,22 +9632,97 @@ function showGlobalUserMenu(p){
 // ── Listeners écran auth ──
 (function(){
   function attachAuthBtns(){
-    var btnGoogle = document.getElementById('btnGoogleAuth');
-    var btnMagic  = document.getElementById('btnMagicLink');
-    var btnBack   = document.getElementById('btnAuthBack');
-    var btnRecup  = document.getElementById('btnRecupCompte');
-    if(btnGoogle) btnGoogle.addEventListener('click', signInWithGoogle);
-    if(btnMagic)  btnMagic.addEventListener('click', sendMagicLink);
-    if(btnRecup)  btnRecup.addEventListener('click', function(){ switchMode('recup'); });
-    if(btnBack)   btnBack.addEventListener('click', function(){ switchMode('landing'); });
-    // Enter sur l'input email
-    var emailInput = document.getElementById('authEmail');
-    if(emailInput){
-      emailInput.addEventListener('keydown', function(e){
-        if(e.key === 'Enter'){ sendMagicLink(); }
-      });
-    }
+  var tabLogin  = document.getElementById('tab-login');
+  var tabSignup = document.getElementById('tab-signup');
+  var panLogin  = document.getElementById('panel-login');
+  var panSignup = document.getElementById('panel-signup');
+
+  function showLoginTab() {
+    if(tabLogin)  { tabLogin.style.background='linear-gradient(135deg,#B06CE4,#7B4FBF)'; tabLogin.style.color='#fff'; }
+    if(tabSignup) { tabSignup.style.background='transparent'; tabSignup.style.color='#9A8FBF'; }
+    if(panLogin)  panLogin.style.display  = '';
+    if(panSignup) panSignup.style.display = 'none';
   }
+  function showSignupTab() {
+    if(tabSignup) { tabSignup.style.background='linear-gradient(135deg,#22C9A0,#16A37B)'; tabSignup.style.color='#fff'; }
+    if(tabLogin)  { tabLogin.style.background='transparent'; tabLogin.style.color='#9A8FBF'; }
+    if(panLogin)  panLogin.style.display  = 'none';
+    if(panSignup) panSignup.style.display = '';
+  }
+
+  if(tabLogin)  tabLogin.addEventListener('click',  showLoginTab);
+  if(tabSignup) tabSignup.addEventListener('click', showSignupTab);
+
+  // Toggle password
+  var tLP = document.getElementById('toggleLoginPwd');
+  var tSP = document.getElementById('toggleSignupPwd');
+  if(tLP) tLP.addEventListener('click', function(){ var i=document.getElementById('loginPassword'); if(i) i.type=i.type==='password'?'text':'password'; });
+  if(tSP) tSP.addEventListener('click', function(){ var i=document.getElementById('signupPassword'); if(i) i.type=i.type==='password'?'text':'password'; });
+
+  // ── Connexion ──
+  var btnLogin = document.getElementById('btnLogin');
+  if(btnLogin) btnLogin.addEventListener('click', async function() {
+    var email = (document.getElementById('loginEmail').value||'').trim();
+    var pwd   = (document.getElementById('loginPassword').value||'');
+    var errEl = document.getElementById('loginError');
+    if(!email||!pwd){ errEl.textContent='Remplis email et mot de passe.'; errEl.style.display=''; return; }
+    btnLogin.disabled=true; btnLogin.textContent='⏳ Connexion…'; errEl.style.display='none';
+    try {
+      var res = await sbClient.auth.signInWithPassword({email:email, password:pwd});
+      if(res.error){
+        errEl.textContent = res.error.message.includes('Invalid')||res.error.message.includes('credentials') ? '❌ Email ou mot de passe incorrect.' : res.error.message;
+        errEl.style.display=''; btnLogin.disabled=false; btnLogin.textContent='🔑 Se connecter';
+        return;
+      }
+      btnLogin.textContent='✅ Connecté !';
+      // onAuthStateChange SIGNED_IN va prendre le relai
+    } catch(e){
+      errEl.textContent='Erreur réseau. Réessaie.'; errEl.style.display='';
+      btnLogin.disabled=false; btnLogin.textContent='🔑 Se connecter';
+    }
+  });
+  var loginPwd = document.getElementById('loginPassword');
+  if(loginPwd) loginPwd.addEventListener('keydown', function(e){ if(e.key==='Enter'&&btnLogin) btnLogin.click(); });
+  var loginEmail = document.getElementById('loginEmail');
+  if(loginEmail) loginEmail.addEventListener('keydown', function(e){ if(e.key==='Enter') { var p=document.getElementById('loginPassword'); if(p) p.focus(); }});
+
+  // ── Créer un compte ──
+  var btnSignup = document.getElementById('btnSignup');
+  if(btnSignup) btnSignup.addEventListener('click', async function() {
+    var email = (document.getElementById('signupEmail').value||'').trim();
+    var pwd   = (document.getElementById('signupPassword').value||'');
+    var errEl = document.getElementById('signupError');
+    if(!email||!pwd){ errEl.textContent='Remplis email et mot de passe.'; errEl.style.display=''; return; }
+    if(pwd.length<6){ errEl.textContent='Mot de passe trop court (min. 6 caractères).'; errEl.style.display=''; return; }
+    btnSignup.disabled=true; btnSignup.textContent='⏳ Création…'; errEl.style.display='none';
+    try {
+      var res = await sbClient.auth.signUp({email:email, password:pwd});
+      if(res.error){
+        errEl.textContent = res.error.message.includes('already') ? '❌ Email déjà utilisé — connecte-toi.' : res.error.message;
+        errEl.style.display=''; btnSignup.disabled=false; btnSignup.textContent='✨ Créer mon compte';
+        return;
+      }
+      btnSignup.textContent='✅ Compte créé !';
+      setTimeout(function(){ switchMode('complete-profil'); }, 600);
+    } catch(e){
+      errEl.textContent='Erreur réseau.'; errEl.style.display='';
+      btnSignup.disabled=false; btnSignup.textContent='✨ Créer mon compte';
+    }
+  });
+
+  // ── Mot de passe oublié ──
+  var btnForgot = document.getElementById('btnForgotPwd');
+  if(btnForgot) btnForgot.addEventListener('click', async function(){
+    var email=(document.getElementById('loginEmail').value||'').trim();
+    if(!email){ var e=document.getElementById('loginError'); e.textContent='Entre ton email d'abord.'; e.style.display=''; return; }
+    await sbClient.auth.resetPasswordForEmail(email, {redirectTo:'https://flowrevis.vercel.app/'});
+    showToast('Email de réinitialisation envoyé 📬', 'success');
+  });
+
+  // ── Retour ──
+  var btnBack = document.getElementById('btnAuthBack');
+  if(btnBack) btnBack.addEventListener('click', function(){ switchMode('landing'); });
+}
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', attachAuthBtns);
   } else {
