@@ -1348,8 +1348,23 @@ window.addEventListener('unhandledrejection', function(e){
         <div style="font-size:11px;color:#9A8FBF;text-align:center;margin-top:10px">Un lien de confirmation sera envoyé à ton email</div>
       </div>
 
+      <!-- Aide comptes sans password -->
+      <div id="panel-no-pwd" style="border-top:1px solid rgba(255,255,255,.08);margin-top:16px;padding-top:14px">
+        <div style="font-size:12px;color:#9A8FBF;text-align:center;margin-bottom:10px">
+          Inscrit avant sans mot de passe ?
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="btnGoSignup2" style="flex:1;background:rgba(34,201,160,.12);border:1px solid rgba(34,201,160,.25);border-radius:10px;padding:9px;font-family:inherit;font-size:12px;font-weight:700;color:#22C9A0;cursor:pointer">
+            ✨ Créer un mot de passe
+          </button>
+          <button onclick="switchMode('recup')" style="flex:1;background:rgba(176,108,228,.1);border:1px solid rgba(176,108,228,.25);border-radius:10px;padding:9px;font-family:inherit;font-size:12px;font-weight:700;color:#B06CE4;cursor:pointer">
+            🔍 Par pseudo
+          </button>
+        </div>
+      </div>
+
       <!-- Retour -->
-      <button id="btnAuthBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:12px;font-weight:600;padding:10px;cursor:pointer;margin-top:12px">
+      <button id="btnAuthBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:12px;font-weight:600;padding:8px;cursor:pointer;margin-top:8px">
         ← Retour
       </button>
 
@@ -9752,6 +9767,16 @@ function showGlobalUserMenu(p){
   // ── Retour ──
   var btnBack = document.getElementById('btnAuthBack');
   if(btnBack) btnBack.addEventListener('click', function(){ switchMode('landing'); });
+
+  // ── Créer un password (comptes anciens) ──
+  var btnGoSignup2 = document.getElementById('btnGoSignup2');
+  if(btnGoSignup2) btnGoSignup2.addEventListener('click', function(){
+    showSignupTab();
+    // Pré-remplir l'email si déjà saisi
+    var loginMail = document.getElementById('loginEmail');
+    var signupMail = document.getElementById('signupEmail');
+    if(loginMail && signupMail && loginMail.value) signupMail.value = loginMail.value;
+  });
 }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', attachAuthBtns);
