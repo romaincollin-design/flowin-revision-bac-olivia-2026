@@ -6346,6 +6346,7 @@ function dfShowBilletCreateur(room) {
   if(el('dbCreateur')) el('dbCreateur').textContent  = room.host ? room.host.name : '';
   if(el('dbMise'))     el('dbMise').textContent      = room.mise + ' pts';
   if(el('dbTheme'))    el('dbTheme').textContent     = DF_THEME_LABELS[room.theme] || room.theme;
+  if(el('dbThemeEmoji')) el('dbThemeEmoji').textContent = {roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️',pse:'🩺'}[room.theme] || '🎯';
   if(el('dbCagnotte')) el('dbCagnotte').textContent  = (room.mise * 2) + ' pts';
   var joueursEl = el('dbJoueurs');
   if(joueursEl){
@@ -6379,12 +6380,23 @@ function dfShowBilletCreateur(room) {
     var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
     var cagnotte = room.mise * 2;
     var theme = DF_THEME_LABELS[room.theme] || room.theme;
-    var msg = '⚔️ ' + myName + ' te défie sur Flowin ! Thème : ' + theme + ' | Mise : ' + room.mise + ' pts | Cagnotte : ' + cagnotte + ' pts. Rejoins : ' + link;
+    var themeEmoji = {roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️',pse:'🩺'}[room.theme] || '🎯';
+    var msg = '⚔️ ' + myName + ' te lance un défi Flowin !\n\n'
+      + themeEmoji + ' Theme : ' + theme + '\n'
+      + 'Mise : ' + room.mise + ' pts\n'
+      + 'Cagnotte : ' + cagnotte + ' pts\n\n'
+      + 'Rejoins : ' + link + '\n\n'
+      + 'Tu as 24h pour jouer — le meilleur score remporte tout !';
+
+
+
     window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
   });
   bindShare('dbSMSBtn', function(){
     var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
-    var msg = '⚔️ ' + myName + ' te défie sur Flowin ! Mise : ' + room.mise + ' pts. Rejoins : ' + link;
+    var theme = DF_THEME_LABELS[room.theme] || room.theme;
+    var cagnotte = room.mise * 2;
+    var msg = '⚔️ ' + myName + ' te défie sur Flowin ! Thème : ' + theme + ' | Mise : ' + room.mise + ' pts | Cagnotte : ' + cagnotte + ' pts. Rejoins : ' + link;
     window.open('sms:?body=' + encodeURIComponent(msg), '_blank');
   });
   bindShare('dbCopyBtn', function(){
@@ -6427,7 +6439,16 @@ function dbShareWhatsApp() {
   var myName = userProfile.pseudo || userProfile.prenom || 'Un ami';
   var cagnotte = room.mise * 2;
   var theme = DF_THEME_LABELS[room.theme] || room.theme;
-  var msg = 'Defi Flowin de ' + myName + ' ! Theme : ' + theme + ' | Mise : ' + room.mise + ' pts | Cagnotte : ' + cagnotte + ' pts. Rejoins : ' + link;
+  var themeEmoji = {roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️',pse:'🩺'}[room.theme] || '🎯';
+    var msg = '⚔️ ' + myName + ' te lance un défi Flowin !\n\n'
+      + themeEmoji + ' Theme : ' + theme + '\n'
+      + 'Mise : ' + room.mise + ' pts\n'
+      + 'Cagnotte : ' + cagnotte + ' pts\n\n'
+      + 'Rejoins : ' + link + '\n\n'
+      + 'Tu as 24h pour jouer — le meilleur score remporte tout !';
+
+
+
   window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
@@ -6462,7 +6483,7 @@ function dbGoToWaiting() {
 
 // ── LIEN INVITATION ──
 function dfGetInviteLink(roomId) {
-  var base = 'https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026/';
+  var base = 'https://flowrevis.vercel.app/';
   return base + '?room=' + encodeURIComponent(roomId || (DF_CURRENT && DF_CURRENT.id) || '');
 }
 
@@ -6470,8 +6491,20 @@ function dfShareWhatsApp() {
   var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
   var link = dfGetInviteLink();
   var room = DF_CURRENT;
-  var msg = encodeURIComponent('⚔️ ' + myName + ' te défie sur Flowin ! Rejoins ma room : ' + link);
-  window.open('https://wa.me/?text=' + msg, '_blank');
+  var theme = room ? (DF_THEME_LABELS[room.theme] || room.theme) : 'Quiz';
+  var themeEmoji = room ? ({roulette:'🎡',hist:'📘',geo:'🌍',emc:'⚖️',pse:'🩺'}[room.theme] || '🎯') : '🎯';
+  var mise = room ? room.mise : 0;
+  var cagnotte = mise * 2;
+    var msg = '⚔️ ' + myName + ' te lance un défi Flowin !\n\n'
+      + themeEmoji + ' Theme : ' + theme + '\n'
+      + 'Mise : ' + room.mise + ' pts\n'
+      + 'Cagnotte : ' + cagnotte + ' pts\n\n'
+      + 'Rejoins : ' + link + '\n\n'
+      + 'Tu as 24h pour jouer — le meilleur score remporte tout !';
+
+
+
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 function dfShareSMS() {
   var myName = (userProfile && (userProfile.pseudo || userProfile.prenom)) || 'Un ami';
@@ -8114,7 +8147,7 @@ async function dfLoadPrivateRooms() {
         <!-- BILLET STYLE TICKET -->
         <div class="df-billet">
           <div class="df-billet-head">
-            <div class="df-billet-lbl">&#127903;&#65039; Billet de défi</div>
+            <div class="df-billet-lbl">🎟️ Billet de défi · <span id="dbThemeEmoji">🎯</span></div>
             <div class="df-billet-nom" id="dbNomBillet">Défi Flowin</div>
           </div>
           <div class="df-billet-cards">
@@ -8258,9 +8291,10 @@ async function dfLoadPrivateRooms() {
       <div style="padding:4px 0 60px">
 
         <div style="text-align:center;padding:16px 0 12px">
-          <div style="font-size:11px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🎟️ Invitation reçue</div>
+          <div style="font-size:36px;margin-bottom:8px">⚔️</div>
+          <div style="font-size:11px;font-weight:800;color:rgba(244,168,58,.8);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">🎟️ Tu as reçu un défi !</div>
           <div style="font-size:20px;font-weight:800;color:#fff" id="diBilletNom">Défi</div>
-          <div style="font-size:13px;color:#9A8FBF;margin-top:4px">Créé par <span id="diBilletHost" style="color:#D4AAFF;font-weight:600"></span></div>
+          <div style="font-size:14px;color:#9A8FBF;margin-top:6px">lancé par <span id="diBilletHost" style="color:#F4A83A;font-weight:800;font-size:16px"></span></div>
         </div>
 
         <!-- BILLET -->
@@ -8295,8 +8329,8 @@ async function dfLoadPrivateRooms() {
           Mon solde : <span id="diBilletSoldeVal" style="color:#22C9A0;font-weight:800">—</span>
         </div>
         <!-- BOUTON REJOINDRE -->
-        <button id="diBilletBtn" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:17px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">
-          ⚔️ Rejoindre le défi !
+        <button id="diBilletBtn" style="width:100%;background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;border:none;border-radius:14px;padding:17px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px;box-shadow:0 4px 18px rgba(244,168,58,.4)">
+          ⚔️ Relever le défi !
         </button>
         <button id="diBilletRefuseBtn" style="width:100%;background:transparent;border:1px solid rgba(239,68,68,.3);color:#EF4444;border-radius:14px;padding:12px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">
           ✕ Refuser le défi
