@@ -3905,43 +3905,34 @@ function applyFormConfig() {
   loadConfigFromSupabase();
   loadLotsConfig();
 
-  // ── 1. Vérifier session Supabase Auth (auto-login signet/PWA) ──
-  if(sbClient && SB_ENABLED) {
-    sbClient.auth.getSession().then(function(res) {
-      if(res.data && res.data.session && res.data.session.user) {
-        // Session Auth valide → chercher le profil dans joueurs
-        var u = res.data.session.user;
-        var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-        fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrs})
-          .then(function(r){ return r.ok ? r.json() : []; })
-          .then(function(rows) {
-            if(rows && rows.length) {
-              var j = rows[0];
-              userProfile = {
-                pseudo: j.pseudo||'', prenom: j.prenom||'', nom: j.nom||'',
-                ecole: j.ecole||'', classe: j.classe||'', email: j.email||u.email,
-                genre: j.genre||'', pts: j.pts_total||0
-              };
-              userInscribed = true;
-              QS.playerName = userProfile.pseudo || userProfile.prenom;
-              try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
-              showWelcomeBack();
-            } else {
-              // Compte Auth sans profil → fallback localStorage
-              checkLocalStorage();
-            }
-          }).catch(checkLocalStorage);
-        return;
-      }
-      // Pas de session Auth → localStorage
-      checkLocalStorage();
-    }).catch(checkLocalStorage);
-    return;
+  var _done = false;
+
+  // Timeout de sécurité — si getSession bloque, on passe quand même après 2.5s
+  var _timeout = setTimeout(function() {
+    if(!_done) { _done = true; checkLocalStorage(); }
+  }, 2500);
+
+  function finish(fn) {
+    if(_done) return;
+    _done = true;
+    clearTimeout(_timeout);
+    fn();
   }
-  checkLocalStorage();
+
+  function hideSplash() {
+    var splash = document.getElementById('v-splash');
+    if(splash) splash.style.display = 'none';
+  }
+
+  function goLanding() {
+    hideSplash();
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+    var vl = document.getElementById('v-landing');
+    if(vl) vl.classList.add('active');
+  }
 
   function checkLocalStorage() {
-    // ── 2. Fallback : localStorage ──
+    hideSplash();
     try {
       var saved = localStorage.getItem('flowin_profile');
       if(saved) {
@@ -3954,12 +3945,42 @@ function applyFormConfig() {
         }
       }
     } catch(e) {}
-    // ── 3. Rien → landing ──
-    var splash = document.getElementById('v-splash');
-    if(splash) splash.style.display = 'none';
-    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-    document.getElementById('v-landing').classList.add('active');
+    goLanding();
   }
+
+  // Vérifier session Supabase Auth (auto-login)
+  if(sbClient && SB_ENABLED) {
+    sbClient.auth.getSession().then(function(res) {
+      if(res.data && res.data.session && res.data.session.user) {
+        var u = res.data.session.user;
+        var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+        fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrs})
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .then(function(rows) {
+            finish(function() {
+              if(rows && rows.length) {
+                var j = rows[0];
+                userProfile = {
+                  pseudo: j.pseudo||'', prenom: j.prenom||'', nom: j.nom||'',
+                  ecole: j.ecole||'', classe: j.classe||'', email: j.email||u.email,
+                  genre: j.genre||'', pts: j.pts_total||0
+                };
+                userInscribed = true;
+                QS.playerName = userProfile.pseudo || userProfile.prenom;
+                try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+                showWelcomeBack();
+              } else {
+                checkLocalStorage();
+              }
+            });
+          }).catch(function(){ finish(checkLocalStorage); });
+        return;
+      }
+      finish(checkLocalStorage);
+    }).catch(function(){ finish(checkLocalStorage); });
+    return;
+  }
+  finish(checkLocalStorage);
 })();
 
 // ── LIEN D'INVITATION ?room= ──
@@ -4071,9 +4092,10 @@ function dismissPush(){
 }
 
 function showWelcomeBack(){
+  var splash = document.getElementById('v-splash');
+  if(splash) splash.style.display = 'none';
   var vWelcome = document.getElementById('v-welcome');
   if(!vWelcome) return;
-  // Masquer TOUTES les vues avant d'afficher v-welcome
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   vWelcome.classList.add('active');
   userInscribed = true;
