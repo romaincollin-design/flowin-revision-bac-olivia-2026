@@ -3105,10 +3105,8 @@ function switchMode(m){
     setTimeout(initRecupView, 50);
   }
   if(m==='inscription'){
-    // v-inscription = connexion email+password
-    // (pas de redirection — on affiche bien la vue connexion)
     setTimeout(function(){
-      // Forcer l'onglet "Se connecter" par défaut
+      // Forcer onglet Se connecter
       var tabL = document.getElementById('tab-login');
       var tabS = document.getElementById('tab-signup');
       var panL = document.getElementById('panel-login');
@@ -3118,9 +3116,10 @@ function switchMode(m){
         if(tabS) { tabS.style.background = 'transparent'; tabS.style.color = '#9A8FBF'; }
         panL.style.display = ''; if(panS) panS.style.display = 'none';
       }
-      // Focus email
+      // Re-binder si nécessaire (mobile Safari)
+      if(typeof attachAuthBtns === 'function') attachAuthBtns();
       var em = document.getElementById('loginEmail'); if(em) em.focus();
-    }, 50);
+    }, 80);
   }
 
   if(m==='pwa'){try{if(localStorage.getItem('pwa_installed'))m='app';}catch(e){}}
@@ -3960,46 +3959,42 @@ function applyFormConfig() {
   loadConfigFromSupabase();
   loadLotsConfig();
 
-  // ── Détecter lien d'activation (email reset password) ──
-  var urlParams = new URLSearchParams(window.location.search);
-  var urlHash = window.location.hash;
-  var isActivation = urlParams.get('mode') === 'activation'
+  // ── Détecter lien d'activation (hash Supabase dans l'URL) ──
+  var urlHash = window.location.hash || '';
+  var urlSearch = window.location.search || '';
+  var isActivation = urlSearch.includes('mode=activation')
     || urlHash.includes('access_token')
     || urlHash.includes('type=recovery')
     || urlHash.includes('type=signup');
 
   if(isActivation && sbClient) {
-    // Supabase met le token dans le hash — getSession() le récupère automatiquement
     sbClient.auth.getSession().then(function(res) {
+      hideSplash();
       if(res.data && res.data.session) {
-        var splash = document.getElementById('v-splash');
-        if(splash) splash.style.display = 'none';
-        // Afficher la vue changement de mot de passe
         switchMode('activation');
       } else {
-        checkLocalStorageFn();
+        checkLS();
       }
-    }).catch(checkLocalStorageFn);
+    }).catch(function(){ hideSplash(); checkLS(); });
     return;
   }
 
+  // ── Timeout de sécurité 2s — jamais de spinner infini ──
   var _done = false;
+  var _timer = setTimeout(function(){
+    if(!_done){ _done = true; checkLS(); }
+  }, 2000);
 
-  // Timeout de sécurité — si getSession bloque, on passe quand même après 2.5s
-  var _timeout = setTimeout(function() {
-    if(!_done) { _done = true; checkLocalStorage(); }
-  }, 2500);
-
-  function finish(fn) {
+  function done(fn) {
     if(_done) return;
     _done = true;
-    clearTimeout(_timeout);
+    clearTimeout(_timer);
     fn();
   }
 
   function hideSplash() {
-    var splash = document.getElementById('v-splash');
-    if(splash) splash.style.display = 'none';
+    var s = document.getElementById('v-splash');
+    if(s) s.style.display = 'none';
   }
 
   function goLanding() {
@@ -4009,16 +4004,24 @@ function applyFormConfig() {
     if(vl) vl.classList.add('active');
   }
 
-  function checkLocalStorageFn() {
+  // ── Vérification localStorage (priorité — fonctionne même sans réseau) ──
+  function checkLS() {
     hideSplash();
     try {
-      var saved = localStorage.getItem('flowin_profile');
+      // Chercher d'abord localStorage, puis sessionStorage
+      var saved = localStorage.getItem('flowin_profile')
+               || sessionStorage.getItem('flowin_profile');
       if(saved) {
         var p = JSON.parse(saved);
         if(p && (p.pseudo || p.prenom)) {
-          userProfile = p; userInscribed = true;
+          userProfile   = p;
+          userInscribed = true;
           QS.playerName = p.pseudo || p.prenom;
+          // Toujours écrire dans les deux storages pour la persistance PWA
+          try { localStorage.setItem('flowin_profile', JSON.stringify(p)); } catch(e){}
+          try { sessionStorage.setItem('flowin_profile', JSON.stringify(p)); } catch(e){}
           showWelcomeBack();
+          if(sbClient) sbClient.auth.getSession().catch(function(){});
           return;
         }
       }
@@ -4026,16 +4029,19 @@ function applyFormConfig() {
     goLanding();
   }
 
-  // Vérifier session Supabase Auth (auto-login)
+  // ── Vérifier session Supabase Auth ──
+  // Sur mobile Safari, cette vérification peut être lente ou échouer
+  // Le timeout de 2s garantit qu'on ne reste jamais bloqué
   if(sbClient && SB_ENABLED) {
     sbClient.auth.getSession().then(function(res) {
       if(res.data && res.data.session && res.data.session.user) {
         var u = res.data.session.user;
         var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
-        fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrs})
+        fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.'
+          + encodeURIComponent(u.email) + '&select=*&limit=1', {headers:hdrs})
           .then(function(r){ return r.ok ? r.json() : []; })
           .then(function(rows) {
-            finish(function() {
+            done(function() {
               if(rows && rows.length) {
                 var j = rows[0];
                 userProfile = {
@@ -4048,19 +4054,19 @@ function applyFormConfig() {
                 try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
                 showWelcomeBack();
               } else {
-                checkLocalStorage();
+                checkLS();
               }
             });
-          }).catch(function(){ finish(checkLocalStorageFn); });
-        return;
+          }).catch(function(){ done(checkLS); });
+      } else {
+        done(checkLS);
       }
-      finish(checkLocalStorageFn);
-    }).catch(function(){ finish(checkLocalStorageFn); });
+    }).catch(function(){ done(checkLS); });
     return;
   }
-  finish(checkLocalStorageFn);
-})();
 
+  done(checkLS);
+})();
 // ── LIEN D'INVITATION ?room= ──
 // Placé ici, APRÈS restoreProfile(), donc userProfile est déjà chargé depuis localStorage.
 // Pas besoin de setTimeout : restoreProfile est synchrone.
@@ -4239,6 +4245,8 @@ function populateWelcomeBack(){
 function logoutUser(){
   if(!confirm('Te déconnecter de Flowin ? Tes scores resteront sauvegardés sur ce navigateur.')) return;
   try { localStorage.removeItem('flowin_profile'); } catch(e){}
+  try { sessionStorage.removeItem('flowin_profile'); } catch(e){}
+  if(sbClient) sbClient.auth.signOut().catch(function(){});
   try { localStorage.removeItem('flowin_balance'); } catch(e){}
   userInscribed = false;
   userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
@@ -9514,6 +9522,7 @@ function renderProfil() {
     userProfile.ecole  = ecole;
     userProfile.classe = classe;
     try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+    try { sessionStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
     var psv = userProfile.pseudo || userProfile.prenom;
     if(typeof SB_ENABLED !== 'undefined' && SB_ENABLED && psv) {
       fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(psv), {
