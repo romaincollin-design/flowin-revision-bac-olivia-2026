@@ -2053,7 +2053,7 @@ window.addEventListener('unhandledrejection', function(e){
 
 <script>
 // ═══ DATA ═══
-const THEMES=[
+let THEMES=[
 {id:'t1',num:1,color:'#E63946',mat:`📘 Histoire`,title:`Le jeu des puissances depuis 1945`,emoji:`🌍`,score:75,essentiel:`Depuis 1945, le monde a connu <b>trois grandes périodes</b> dans le jeu des puissances : d'abord un monde <b>bipolaire</b> dominé par les États-Unis et l'URSS (guerre froide 1947-1991), puis une <b>hyperpuissance américaine</b> après la chute de l'URSS (1991), enfin un monde <b>multipolaire</b> où émergent de nouvelles puissances (Chine, UE, BRICS).`,chrono:[[`1945–1991`,`<b>Monde bipolaire :</b> les États-Unis (bloc de l'Ouest, capitaliste, démocratique) et l'URSS (bloc de l'Est, communiste) se font face. L'Europe est coupée par le <b>« rideau de fer »</b>. C'est la guerre froide, un <b>« équilibre de la terreur »</b> grâce à l'arme nucléaire.`],[`1991`,`<b>Fin de la guerre froide :</b> chute du mur de Berlin (9 nov. 1989) et démission de Gorbatchev (25 déc. 1991). Les USA deviennent la seule <b>« hyperpuissance »</b> mondiale. Dès les années 2000, cette hégémonie est contestée (11 septembre 2001, guerres en Irak et en Afghanistan).`],[`Aujourd'hui`,`<b>Monde multipolaire :</b> cinq grands pôles s'affirment — États-Unis, Chine, Union européenne, Russie, et les <b>BRICS</b> (Brésil, Russie, Inde, Chine, Afrique du Sud). La Chine est devenue la <b>deuxième puissance économique mondiale</b>.`]],dates:[[`1945`,`Fin 2e Guerre / Création ONU`],[`1947–91`,`La guerre froide`],[`1949`,`Création de l'OTAN`],[`1955`,`Pacte de Varsovie (bloc Est)`],[`1962`,`Crise missiles de Cuba`],[`1989`,`Chute du mur de Berlin`],[`1991`,`Fin de l'URSS`],[`2001`,`Attentats du 11 septembre`]],vocab:[[`Superpuissance`,`État qui dépasse en importance les autres puissances mondiales.`],[`Puissance régionale`,`État qui possède des leviers de puissance à l'échelle de son continent.`],[`Multipolarité`,`Présence de plusieurs pôles de puissances dans le monde.`],[`Équilibre de la terreur`,`Équilibre de l'arme nucléaire entre les deux blocs pendant la guerre froide.`],[`ONU`,`Organisation des Nations Unies (1945), pour le maintien de la paix mondiale.`],[`OTAN`,`Organisation du Traité de l'Atlantique Nord (1949), alliance militaire du bloc de l'Ouest.`],[`Non-alignement`,`Attitude d'un État qui refuse d'aligner sa politique sur celle des deux blocs.`],[`Décolonisation`,`Processus par lequel un pays colonisé accède à l'indépendance.`]],photos:[{src:`images/image_01.jpg`,cap:`Carte : le monde bipolaire`},{src:`images/image_02.jpg`,cap:`Document cours`},{src:`images/image_03.jpg`,cap:`Document cours`},{src:`images/image_04.jpg`,cap:`Document cours`}],visuel:`<div class="visual-block">
 <div class="visual-label" style="background:#E63946">🌍 Les 3 âges du monde depuis 1945</div>
 <svg style="background:#FFFAF0" viewbox="0 0 760 340" xmlns="http://www.w3.org/2000/svg">
@@ -2944,6 +2944,63 @@ questions:[ // Bioéthique (RARE)
     {q:'À quelle fréquence les lois de bioéthique sont-elles révisées ?',opts:['Tous les ans','Régulièrement (1994, 2004, 2011, 2021...)','Jamais','Tous les 20 ans'],bon:1,expl:'Révision régulière pour s\'adapter aux progrès scientifiques et à l\'évolution des mentalités.'},
   ]}
 ];
+
+
+// ── SYNC CONTENU SUPABASE → THEMES (override hardcodé si Supabase répond) ──
+async function syncContentFromSupabase() {
+  if(typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_KEY === 'undefined') return;
+  try {
+    const hdrs = {apikey: SUPABASE_KEY, Authorization: 'Bearer '+SUPABASE_KEY};
+    const [tR, fR, vR, qR] = await Promise.all([
+      fetch(SUPABASE_URL+'/rest/v1/themes?order=num.asc&limit=200',     {headers:hdrs}).then(r=>r.ok?r.json():null).catch(()=>null),
+      fetch(SUPABASE_URL+'/rest/v1/fiches?select=*&limit=200',          {headers:hdrs}).then(r=>r.ok?r.json():null).catch(()=>null),
+      fetch(SUPABASE_URL+'/rest/v1/visuels?select=*&actif=eq.true',     {headers:hdrs}).then(r=>r.ok?r.json():null).catch(()=>null),
+      fetch(SUPABASE_URL+'/rest/v1/questions?select=*&actif=eq.true&statut=eq.valid%C3%A9', {headers:hdrs}).then(r=>r.ok?r.json():null).catch(()=>null),
+    ]);
+
+    if(!tR || !Array.isArray(tR) || tR.length === 0) {
+      console.log('[SyncContent] Supabase vide ou indispo, fallback sur THEMES local');
+      return;
+    }
+
+    // Construire la nouvelle structure THEMES à partir de Supabase
+    const newThemes = tR.map(t => {
+      const fiche = (fR||[]).find(f => f.theme_id === t.id) || {};
+      const visuel = (vR||[]).find(v => v.theme_id === t.id);
+      const themeQ = (qR||[]).filter(q => q.theme_id === t.id);
+      // Garder couleur/emoji/color d'origine si manquants
+      const original = THEMES.find(x => x.id === t.id) || {};
+      return {
+        id: t.id,
+        num: t.num || original.num || 0,
+        color: t.color || original.color || '#7B4FBF',
+        mat: t.mat_emoji ? `${t.mat_emoji} ${t.mat}` : (original.mat || t.mat),
+        title: t.title || original.title,
+        emoji: t.emoji || original.emoji || '📄',
+        score: original.score || 0,
+        essentiel: fiche.essentiel || original.essentiel || '',
+        chrono: fiche.chrono || original.chrono || [],
+        dates:  fiche.dates  || original.dates  || [],
+        vocab:  fiche.vocab  || original.vocab  || [],
+        photos: fiche.photos || original.photos || [],
+        visuel: visuel ? visuel.contenu : (original.visuel||''),
+        questions: themeQ.length ? themeQ.map(q => ({q:q.q, opts:q.opts, bon:q.bon, expl:q.expl, difficulte:q.difficulte})) : (original.questions||[])
+      };
+    });
+
+    THEMES = newThemes;
+    console.log('[SyncContent] '+newThemes.length+' thèmes synchronisés depuis Supabase');
+    // Recharger la vue thèmes si elle est affichée
+    if(typeof renderThemeList === 'function') {
+      try { renderThemeList(); } catch(e){}
+    }
+  } catch(e) {
+    console.warn('[SyncContent] échec, on garde THEMES local:', e.message);
+  }
+}
+
+// Lancer la sync au démarrage (non-bloquant)
+setTimeout(() => { if(typeof syncContentFromSupabase === 'function') syncContentFromSupabase(); }, 1500);
 
 
 // Ajout PSE après chargement THEMES
@@ -7953,6 +8010,105 @@ function saveProfileToSheets(profile) {
 }
 
 // Sauvegarde session quiz (à la fin de chaque round)
+window.loadPlayerStatsFromSupabase = async function loadPlayerStatsFromSupabase(pseudo) {
+  if (!SB_ENABLED || !pseudo) return;
+  try {
+    var h = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+    var jr = await fetch(SUPABASE_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo) + '&select=pts_total,streak,ligue&limit=1', {headers: h});
+    if (jr.ok) {
+      var rows = await jr.json();
+      if (rows && rows[0]) {
+        var j = rows[0];
+        var spPts = document.getElementById('sp-pts-total');
+        if (spPts) spPts.textContent = (j.pts_total||0).toLocaleString('fr');
+        var spStreak = document.getElementById('sp-streak');
+        if (spStreak) spStreak.textContent = (j.streak||0) + 'j';
+        if (typeof QS !== 'undefined') {
+          QS.totalScore = j.pts_total||0;
+          QS.dailyStreak = j.streak||0;
+        }
+        if (typeof userProfile !== 'undefined' && userProfile) {
+          userProfile.pts_total = j.pts_total||0;
+          userProfile.streak = j.streak||0;
+        }
+      }
+    }
+  } catch(e) { console.warn('loadPlayerStatsFromSupabase:', e); }
+};
+
+window.checkPalierAndClaimLot = async function checkPalierAndClaimLot(pseudo, oldPts, newPts) {
+  if (!SB_ENABLED || !pseudo || !window.LOTS_ON) return;
+  if (newPts <= oldPts) return;
+  var seuils = [
+    {pts:0, nom:'Bronze'},
+    {pts:500, nom:'Argent'},
+    {pts:1500, nom:'Or'},
+    {pts:3500, nom:'Platine'},
+    {pts:7500, nom:'Diamant'}
+  ];
+  if (window.BAREME_CONFIG && window.BAREME_CONFIG.ligues_seuils) {
+    seuils = window.BAREME_CONFIG.ligues_seuils;
+  }
+  var crossed = seuils.filter(function(s){ return s.pts > oldPts && s.pts <= newPts && s.pts > 0; });
+  if (!crossed.length) return;
+  var hdrs = {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
+  for (var i = 0; i < crossed.length; i++) {
+    var seuil = crossed[i];
+    try {
+      var r1 = await fetch(SUPABASE_URL + '/rest/v1/lots_stock?statut=eq.disponible&condition=ilike.*' + encodeURIComponent(seuil.nom) + '*&limit=1&order=created_at.asc', {headers:hdrs});
+      if (!r1.ok) continue;
+      var stockRows = await r1.json();
+      if (!stockRows.length) continue;
+      var lot = stockRows[0];
+      var r2 = await fetch(SUPABASE_URL + '/rest/v1/lots_stock?id=eq.' + lot.id, {
+        method: 'PATCH',
+        headers: Object.assign({}, hdrs, {'Prefer':'return=minimal'}),
+        body: JSON.stringify({statut:'attribué', pseudo:pseudo, attribued_at:new Date().toISOString()})
+      });
+      if (!r2.ok) continue;
+      await fetch(SUPABASE_URL + '/rest/v1/gains', {
+        method: 'POST',
+        headers: Object.assign({}, hdrs, {'Prefer':'return=minimal'}),
+        body: JSON.stringify({
+          ts: new Date().toISOString(),
+          pseudo: pseudo,
+          lot_id: lot.id,
+          lot_nom: lot.lot_nom || lot.nom || 'Lot',
+          lot_emoji: lot.lot_emoji || lot.emoji || '🎁',
+          code: lot.code,
+          condition: 'Ligue ' + seuil.nom,
+          partenaire_id: lot.partenaire_id || null,
+          utilise: false
+        })
+      });
+      if (typeof window.showLotUnlockedToast === 'function') {
+        window.showLotUnlockedToast(lot.lot_emoji || '🎁', lot.lot_nom || 'Lot', lot.code, seuil.nom);
+      }
+    } catch(e) { console.warn('checkPalierAndClaimLot:', e); }
+  }
+};
+
+window.showLotUnlockedToast = function showLotUnlockedToast(emoji, nom, code, ligue) {
+  var existing = document.getElementById('lot-unlocked-modal');
+  if (existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'lot-unlocked-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = '<div style="background:linear-gradient(135deg,#22C9A0,#16A37B);border-radius:20px;padding:28px 24px;max-width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)">'
+    + '<div style="font-size:64px;margin-bottom:12px">' + emoji + '</div>'
+    + '<div style="font-size:11px;font-weight:700;color:#fff;opacity:.85;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">🏆 Ligue ' + ligue + ' atteinte !</div>'
+    + '<div style="font-size:20px;font-weight:800;color:#fff;font-family:Syne,sans-serif;margin-bottom:14px">' + nom + '</div>'
+    + '<div style="background:rgba(255,255,255,.18);border-radius:12px;padding:14px 16px;margin-bottom:18px"><div style="font-size:10px;color:#fff;opacity:.8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Ton code promo</div><div style="font-family:monospace;font-size:22px;font-weight:800;color:#fff;letter-spacing:.08em">' + code + '</div></div>'
+    + '<button id="lot-unlocked-copy" style="width:100%;background:#fff;color:#16A37B;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px">📋 Copier le code</button>'
+    + '<button id="lot-unlocked-close" style="width:100%;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:12px;padding:11px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">Plus tard</button>'
+    + '</div>';
+  document.body.appendChild(modal);
+  document.getElementById('lot-unlocked-copy').addEventListener('click', function(){
+    try { navigator.clipboard.writeText(code); this.textContent = '✅ Copié !'; } catch(e){}
+  });
+  document.getElementById('lot-unlocked-close').addEventListener('click', function(){ modal.remove(); });
+};
+
 function saveSessionToSheets(qs, profile) {
   // pts_total = score cumulé réel (chargé depuis Supabase + round actuel)
   const realTotalPts = qs.totalScore || qs.totalPts || 0;
@@ -7996,11 +8152,16 @@ function saveSessionToSheets(qs, profile) {
     }).catch(function(){});
   }
 
-  // Recharger les stats après sauvegarde
+  // Recharger les stats + vérifier déblocage lot après sauvegarde
   setTimeout(() => {
     var p = profile.pseudo || profile.prenom;
+    var oldPts = profile.pts_total || 0;
     loadPlayerStatsFromSupabase(p);
-    if (window.LOTS_ON) loadMyGains(p);
+    if (window.LOTS_ON) {
+      loadMyGains(p);
+      // Vérifier si un palier a été franchi → débloquer un lot
+      checkPalierAndClaimLot(p, oldPts, realTotalPts);
+    }
   }, 1500);
 }
 
