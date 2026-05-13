@@ -1280,7 +1280,7 @@ window.addEventListener('unhandledrejection', function(e){
   </div>
 </div>
 </div>
-<!-- ═══ CONNEXION / INSCRIPTION ═══ -->
+<!-- ═══ CONNEXION / INSCRIPTION — MAGIC LINK ═══ -->
 <div class="view" id="v-inscription">
   <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
 
@@ -1292,75 +1292,61 @@ window.addEventListener('unhandledrejection', function(e){
 
     <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:24px;padding:28px 24px;width:100%;max-width:380px">
 
-      <!-- Tabs Connexion / Créer un compte -->
-      <div style="display:flex;background:rgba(255,255,255,.06);border-radius:12px;padding:4px;margin-bottom:24px">
-        <button id="tab-login" style="flex:1;padding:9px;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;transition:all .2s">
-          Se connecter
-        </button>
-        <button id="tab-signup" style="flex:1;padding:9px;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#9A8FBF;transition:all .2s">
-          Créer un compte
-        </button>
-      </div>
+      <div id="ml-step-email">
+        <div style="text-align:center;margin-bottom:22px">
+          <div style="font-size:18px;font-weight:800;color:#fff;font-family:Syne,sans-serif;margin-bottom:6px">Connexion sans mot de passe</div>
+          <div style="font-size:12px;color:#9A8FBF;line-height:1.5">Reçois un lien magique par email.<br>Pas besoin de retenir un mot de passe ! ✨</div>
+        </div>
 
-      <!-- ── CONNEXION ── -->
-      <div id="panel-login">
         <div style="margin-bottom:14px">
           <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
           <input id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
             style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
         </div>
-        <div style="margin-bottom:6px">
-          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe</label>
-          <div style="position:relative">
-            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••"
-              style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
-            <button id="toggleLoginPwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:16px">👁</button>
-          </div>
-        </div>
-        <div style="text-align:right;margin-bottom:16px">
-          <button id="btnForgotPwd" style="background:none;border:none;color:#B06CE4;font-family:inherit;font-size:12px;cursor:pointer">Mot de passe oublié ?</button>
-        </div>
-        <div id="loginError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:10px 12px;font-size:12px;color:#E84855;margin-bottom:12px;text-align:center"></div>
-        <button id="btnLogin" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer">
-          🔑 Se connecter
+
+        <div id="mlError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:10px 12px;font-size:12px;color:#E84855;margin-bottom:12px;text-align:center"></div>
+
+        <button id="btnMagicLink" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">
+          🔗 Recevoir un lien magique
         </button>
+
+        <!-- IDs cachés pour compat avec ancien code (signInWithPassword, signUp etc) -->
+        <input type="hidden" id="loginPassword" value="">
+        <input type="hidden" id="signupEmail" value="">
+        <input type="hidden" id="signupPassword" value="">
+        <button id="tab-login" style="display:none"></button>
+        <button id="tab-signup" style="display:none"></button>
+        <button id="btnLogin" style="display:none"></button>
+        <button id="btnSignup" style="display:none"></button>
+        <button id="btnForgotPwd" style="display:none"></button>
+        <button id="toggleLoginPwd" style="display:none"></button>
+        <button id="toggleSignupPwd" style="display:none"></button>
+        <div id="loginError" style="display:none"></div>
+        <div id="signupError" style="display:none"></div>
       </div>
 
-      <!-- ── CRÉER UN COMPTE ── -->
-      <div id="panel-signup" style="display:none">
-        <div style="margin-bottom:12px">
-          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
-          <input id="signupEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
-            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+      <!-- Étape 2 : confirmation envoi -->
+      <div id="ml-step-sent" style="display:none;text-align:center">
+        <div style="font-size:54px;margin-bottom:12px">📬</div>
+        <div style="font-size:18px;font-weight:800;color:#fff;font-family:Syne,sans-serif;margin-bottom:8px">Vérifie tes emails !</div>
+        <div style="font-size:13px;color:#9A8FBF;line-height:1.6;margin-bottom:18px">
+          Un lien magique a été envoyé à<br>
+          <strong style="color:#B06CE4" id="ml-email-recap"></strong>
         </div>
-        <div style="margin-bottom:12px">
-          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe (min. 6 caractères)</label>
-          <div style="position:relative">
-            <input id="signupPassword" type="password" autocomplete="new-password" placeholder="••••••••"
-              style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
-            <button id="toggleSignupPwd" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:16px">👁</button>
-          </div>
+        <div style="font-size:11px;color:#9A8FBF;line-height:1.6;padding:12px;background:rgba(176,108,228,.08);border-radius:10px;margin-bottom:14px">
+          1. Ouvre l'email de Flowin<br>
+          2. Clique sur le bouton "Se connecter"<br>
+          3. Tu reviens automatiquement ici, connecté !
         </div>
-        <div id="signupError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:10px 12px;font-size:12px;color:#E84855;margin-bottom:12px;text-align:center"></div>
-        <button id="btnSignup" style="width:100%;background:linear-gradient(135deg,#22C9A0,#16A37B);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer">
-          ✨ Créer mon compte
-        </button>
-        <div style="font-size:11px;color:#9A8FBF;text-align:center;margin-top:10px">Un lien de confirmation sera envoyé à ton email</div>
+        <button id="ml-resend" style="background:transparent;border:1px solid rgba(176,108,228,.3);color:#B06CE4;border-radius:10px;padding:10px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;width:100%">↩ Renvoyer ou changer d'email</button>
       </div>
 
-
-
-      <!-- Retour -->
-      <button id="btnAuthBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:12px;font-weight:600;padding:8px;cursor:pointer;margin-top:8px">
-        ← Retour
-      </button>
+      <!-- RGPD compact -->
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);font-size:10px;color:rgba(255,255,255,.5);line-height:1.6;text-align:center">
+        🔒 Tes données restent confidentielles. En continuant, tu acceptes les <strong style="color:rgba(255,255,255,.7)">conditions d'utilisation</strong> de Flowin.
+      </div>
 
     </div>
-
-    <div style="margin-top:16px;font-size:11px;color:#7A7AAA;text-align:center;max-width:320px;line-height:1.6">
-      En continuant, tu acceptes nos <a href="#" style="color:#B06CE4">conditions d'utilisation</a> et notre <a href="#" style="color:#B06CE4">politique de confidentialité</a>.
-    </div>
-
   </div>
 </div>
 
@@ -1535,6 +1521,11 @@ window.addEventListener('unhandledrejection', function(e){
             <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Nom *</label>
             <input id="cpNom" class="finput" placeholder="">
           </div>
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Téléphone *</label>
+          <input id="cpTel" type="tel" class="finput" placeholder="+33 6 12 34 56 78">
         </div>
 
         <div>
@@ -3249,6 +3240,32 @@ function switchMode(m){
   }
 
   if(m==='pwa'){try{if(localStorage.getItem('pwa_installed'))m='app';}catch(e){}}
+
+  // ── GUARD : profil complet obligatoire pour accéder aux quiz/app ──
+  if(m === 'app' || m === 'theme' || m === 'quiz' || m === 'fiche') {
+    // Vérifier que userProfile est complet
+    var prof = userProfile || {};
+    var profCompletLocal = prof.pseudo && prof.prenom && prof.nom && prof.ecole && prof.classe && prof.genre;
+    if(!profCompletLocal) {
+      // Tenter de récupérer depuis localStorage
+      try {
+        var saved = JSON.parse(localStorage.getItem('flowin_profile') || '{}');
+        if(saved.pseudo && saved.prenom && saved.nom && saved.ecole && saved.classe && saved.genre) {
+          userProfile = saved;
+          profCompletLocal = true;
+        }
+      } catch(e) {}
+    }
+    if(!profCompletLocal) {
+      console.log('[guard] Profil incomplet — redirect complete-profil');
+      m = 'complete-profil';
+      // Afficher toast d'info
+      setTimeout(function(){
+        if(typeof showToast === 'function') showToast('Complète ton profil pour accéder aux quiz', 'info');
+      }, 300);
+    }
+  }
+
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const target = document.getElementById('v-'+m);
   if(!target) return;
@@ -3790,6 +3807,7 @@ async function saveCompleteProfile() {
   var pseudo  = (document.getElementById('cpPseudo')?.value || '').trim();
   var prenom  = (document.getElementById('cpPrenom')?.value || '').trim();
   var nom     = (document.getElementById('cpNom')?.value || '').trim();
+  var tel     = (document.getElementById('cpTel')?.value || '').trim();
   var ecole   = (document.getElementById('cpEcole')?.value || '').trim();
   var classe  = (document.getElementById('cpClasse')?.value || '').trim();
   var genre   = document.querySelector('.g-btn.sel')?.textContent?.trim() || '';
@@ -3797,9 +3815,27 @@ async function saveCompleteProfile() {
   var accord  = document.getElementById('cpAccord')?.checked || false;
   var rgpd    = document.getElementById('cpRgpd')?.checked || false;
 
-  if (!prenom) { showToast('Le prénom est obligatoire', 'error'); return; }
-  if (!pseudo) pseudo = prenom;
-  if (!classe) classe = 'Bac Pro';
+  // ── VALIDATION STRICTE — tous les champs obligatoires ──
+  var missing = [];
+  if (!pseudo) missing.push('Pseudo');
+  if (!prenom) missing.push('Prénom');
+  if (!nom)    missing.push('Nom');
+  if (!ecole)  missing.push('École');
+  if (!classe) missing.push('Classe');
+  if (!genre)  missing.push('Genre');
+  if (!ddn)    missing.push('Date de naissance');
+  if (!rgpd)   missing.push('Accord RGPD');
+
+  if (missing.length > 0) {
+    showToast('⚠️ Champs obligatoires : ' + missing.join(', '), 'error');
+    // Marquer visuellement les champs manquants
+    ['cpPseudo','cpPrenom','cpNom','cpEcole','cpClasse','cpDdn'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if(el && !el.value.trim()) el.style.borderColor = '#E84855';
+      else if(el) el.style.borderColor = '';
+    });
+    return;
+  }
 
   // Vérifier accord parental si mineur (< 15 ans)
   if (ddn) {
@@ -3872,9 +3908,13 @@ async function saveCompleteProfile() {
       prenom:    prenom,
       nom:       nom,
       email:     email,
+      tel:       tel,
       ecole:     ecole,
       classe:    classe,
       genre:     genre,
+      ddn:       ddn || null,
+      rgpd_at:   new Date().toISOString(),
+      profil_complet: true,
       pts_total: 0,
       streak:    0,
       ref:       (function(){ try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
@@ -10515,7 +10555,60 @@ if (typeof window.SB_ENABLED !== 'undefined') {
   var btnBack = document.getElementById('btnAuthBack');
   if(btnBack) btnBack.addEventListener('click', function(){ switchMode('landing'); });
 
+  // ── MAGIC LINK ── (nouveau parcours sans mot de passe)
+  var btnML = document.getElementById('btnMagicLink');
+  if(btnML) btnML.addEventListener('click', async function() {
+    var email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
+    var errEl = document.getElementById('mlError');
+    if(!email || email.indexOf('@') < 0 || email.indexOf('.') < 0) {
+      if(errEl) { errEl.textContent = '❌ Entre un email valide.'; errEl.style.display = ''; }
+      return;
+    }
+    btnML.disabled = true; btnML.textContent = '⏳ Envoi en cours...'; if(errEl) errEl.style.display = 'none';
+    try {
+      var redirectTo = window.location.origin + window.location.pathname + '?mode=login';
+      var res = await sbClient.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: redirectTo, shouldCreateUser: true }
+      });
+      if(res.error) {
+        if(errEl) { errEl.textContent = '❌ ' + res.error.message; errEl.style.display = ''; }
+        btnML.disabled = false; btnML.textContent = '🔗 Recevoir un lien magique';
+        return;
+      }
+      // Stocker email pour la suite (sera utilisé après auth)
+      userProfile.email = email;
+      try { localStorage.setItem('flowin_pending_email', email); } catch(e) {}
+      // UI : afficher étape "email envoyé"
+      var stepEmail = document.getElementById('ml-step-email');
+      var stepSent  = document.getElementById('ml-step-sent');
+      var recap     = document.getElementById('ml-email-recap');
+      if(stepEmail) stepEmail.style.display = 'none';
+      if(stepSent)  stepSent.style.display  = '';
+      if(recap)     recap.textContent = email;
+    } catch(e) {
+      console.error('[magic link]', e);
+      if(errEl) { errEl.textContent = 'Erreur réseau. Réessaie.'; errEl.style.display = ''; }
+      btnML.disabled = false; btnML.textContent = '🔗 Recevoir un lien magique';
+    }
+  });
 
+  // Bouton "Renvoyer / changer d'email" sur l'étape 2
+  var btnResend = document.getElementById('ml-resend');
+  if(btnResend) btnResend.addEventListener('click', function() {
+    var stepEmail = document.getElementById('ml-step-email');
+    var stepSent  = document.getElementById('ml-step-sent');
+    if(stepEmail) stepEmail.style.display = '';
+    if(stepSent)  stepSent.style.display  = 'none';
+    var btnML = document.getElementById('btnMagicLink');
+    if(btnML) { btnML.disabled = false; btnML.textContent = '🔗 Recevoir un lien magique'; }
+  });
+
+  // Press Enter dans le champ email = clic Magic Link
+  var loginEmailEl = document.getElementById('loginEmail');
+  if(loginEmailEl) loginEmailEl.addEventListener('keydown', function(e) {
+    if(e.key === 'Enter' && btnML) { e.preventDefault(); btnML.click(); }
+  });
 }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', window.attachAuthBtns);
