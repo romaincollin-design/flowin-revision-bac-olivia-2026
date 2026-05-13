@@ -4328,6 +4328,11 @@ function showWelcomeBack(){
   vWelcome.classList.add('active');
   userInscribed = true;
   populateWelcomeBack();
+  // Sync immédiate après login : récupérer points/lots/notifications
+  setTimeout(function(){
+    if(typeof window.refreshUserStats === 'function') window.refreshUserStats();
+    if(typeof window.flowinCheckNotifications === 'function') window.flowinCheckNotifications();
+  }, 500);
   window.scrollTo(0, 0);
 }
 
