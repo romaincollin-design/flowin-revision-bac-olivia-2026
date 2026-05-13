@@ -10054,7 +10054,8 @@ function showGlobalUserMenu(p){
 
 // ── Listeners écran auth ──
 (function(){
-  function attachAuthBtns(){
+  // Exposée globalement pour pouvoir être rappelée depuis switchMode
+  window.attachAuthBtns = function attachAuthBtns(){
   var tabLogin  = document.getElementById('tab-login');
   var tabSignup = document.getElementById('tab-signup');
   var panLogin  = document.getElementById('panel-login');
@@ -10164,9 +10165,9 @@ function showGlobalUserMenu(p){
 
 }
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', attachAuthBtns);
+    document.addEventListener('DOMContentLoaded', window.attachAuthBtns);
   } else {
-    attachAuthBtns();
+    window.attachAuthBtns();
   }
 })();
 
