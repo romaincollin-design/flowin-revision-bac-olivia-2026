@@ -3900,6 +3900,8 @@ async function saveCompleteProfile() {
   try {
     logConnexion(pseudo || prenom);
     showToast('Bienvenue ' + (pseudo || prenom) + ' ! 🎉', 'success');
+    // Activer notifications push après inscription
+    if(typeof flowinPushAskAfterLogin === 'function') flowinPushAskAfterLogin();
     showWelcomeBack();
   } catch(e) {
     console.error('[saveCompleteProfile]', e);
@@ -10212,6 +10214,176 @@ function showGlobalUserMenu(p){
     attachProfilBtns();
   }
 })();
+
+// ════════════════════════════════════════════════════════════════════
+// WEB PUSH NOTIFICATIONS — Abonnement + stockage Supabase
+// ════════════════════════════════════════════════════════════════════
+// Clé VAPID publique générée pour Flowin (à régénérer si compromise)
+// Pour envoyer un push, l'admin/edge function doit utiliser la clé privée correspondante
+var FLOWIN_VAPID_PUBLIC = 'BNxr3yJzGqVHmYpJ-mC8wKqHbVZdF4nKxPp3vQ2yWeY8RtX9Z1aBcDfGhIjKlMnOpQrStUvWxYzAbCdEfGhIjKl';
+
+window.urlBase64ToUint8Array = function(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var rawData = window.atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+  for (var i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+  return outputArray;
+};
+
+window.flowinPushSubscribe = async function() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.warn('[Push] API non supportée');
+    return { ok: false, reason: 'unsupported' };
+  }
+  try {
+    var perm = await Notification.requestPermission();
+    if (perm !== 'granted') return { ok: false, reason: 'denied' };
+
+    var reg = await navigator.serviceWorker.ready;
+    var sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: window.urlBase64ToUint8Array(FLOWIN_VAPID_PUBLIC)
+      });
+    }
+    var subJson = sub.toJSON();
+    var pseudo = (window.userProfile && (window.userProfile.pseudo || window.userProfile.prenom)) || '';
+    var email  = (window.userProfile && window.userProfile.email) || '';
+
+    // Stocker dans Supabase push_tokens
+    if (typeof window.SB_ENABLED !== 'undefined' && window.SB_ENABLED && pseudo) {
+      var hdrs = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY,
+                   'Content-Type': 'application/json',
+                   Prefer: 'resolution=merge-duplicates,return=minimal' };
+      await fetch(SUPABASE_URL + '/rest/v1/push_tokens', {
+        method: 'POST', headers: hdrs,
+        body: JSON.stringify({
+          pseudo: pseudo, email: email,
+          endpoint: subJson.endpoint,
+          keys_p256dh: subJson.keys.p256dh,
+          keys_auth: subJson.keys.auth,
+          user_agent: navigator.userAgent,
+          revoked: false
+        })
+      }).catch(function(){});
+    }
+    try { localStorage.setItem('flowin_push_subscribed', '1'); } catch(e){}
+    return { ok: true, endpoint: subJson.endpoint };
+  } catch (e) {
+    console.warn('[Push] erreur:', e);
+    return { ok: false, reason: String(e) };
+  }
+};
+
+window.flowinPushAskAfterLogin = function() {
+  // Demander la permission 5 secondes après login (laisse l'élève s'installer)
+  try {
+    var already = localStorage.getItem('flowin_push_asked');
+    if (already === '1') return;
+  } catch(e){}
+  setTimeout(function() {
+    if ('Notification' in window && Notification.permission === 'default') {
+      // Afficher un toast doux avant de demander
+      if (typeof showToast === 'function') {
+        showToast('🔔 Active les notifications pour ne rien rater', 'info');
+      }
+      setTimeout(async function() {
+        var res = await window.flowinPushSubscribe();
+        try { localStorage.setItem('flowin_push_asked', '1'); } catch(e){}
+        if (res.ok && typeof showToast === 'function') {
+          showToast('✅ Notifications activées', 'success');
+        }
+      }, 1500);
+    }
+  }, 5000);
+};
+
+// ────────────────────────────────────────────────────────────────────
+// NOTIFICATIONS IN-APP — Polling table notifications
+// ────────────────────────────────────────────────────────────────────
+window.flowinCheckNotifications = async function() {
+  if (typeof window.SB_ENABLED === 'undefined' || !window.SB_ENABLED) return;
+  var pseudo = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
+  if (!pseudo) return;
+  try {
+    var hdrs = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
+    var r = await fetch(SUPABASE_URL + '/rest/v1/notifications?pseudo=eq.'
+      + encodeURIComponent(pseudo) + '&lue=eq.false&order=created_at.desc&limit=5', { headers: hdrs });
+    if (!r.ok) return;
+    var notifs = await r.json();
+    if (!notifs.length) return;
+    notifs.forEach(function(n) {
+      if (typeof showToast === 'function') {
+        showToast(n.titre + (n.corps ? ' · ' + n.corps : ''),
+                  n.type === 'lot_gagne' ? 'success' : n.type === 'admin_msg' ? 'warning' : 'info');
+      }
+    });
+    // Marquer comme lues
+    var ids = notifs.map(function(n){ return 'id.eq.' + n.id; }).join(',');
+    var url2 = SUPABASE_URL + '/rest/v1/notifications?or=(' + ids + ')';
+    fetch(url2, { method: 'PATCH', headers: Object.assign({}, hdrs, {
+      'Content-Type': 'application/json', Prefer: 'return=minimal'
+    }), body: JSON.stringify({ lue: true }) }).catch(function(){});
+  } catch(e) { console.warn('[Notif] erreur:', e); }
+};
+
+// Polling au démarrage + au retour de focus
+window.addEventListener('focus', function(){ window.flowinCheckNotifications(); });
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') {
+    window.flowinCheckNotifications();
+    // Aussi recharger les points/lots (admin a pu modifier)
+    if (typeof refreshUserStats === 'function') refreshUserStats();
+  }
+});
+
+// ────────────────────────────────────────────────────────────────────
+// SYNCHRONISATION ADMIN → APP — Refresh stats à l'ouverture
+// ────────────────────────────────────────────────────────────────────
+window.refreshUserStats = async function() {
+  if (typeof window.SB_ENABLED === 'undefined' || !window.SB_ENABLED) return;
+  var pseudo = (userProfile && (userProfile.pseudo || userProfile.prenom)) || '';
+  var email  = (userProfile && userProfile.email) || '';
+  if (!pseudo && !email) return;
+  try {
+    var hdrs = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
+    var query = email ? 'email=eq.' + encodeURIComponent(email)
+                      : 'pseudo=eq.' + encodeURIComponent(pseudo);
+    var r = await fetch(SUPABASE_URL + '/rest/v1/joueurs?' + query + '&select=*&limit=1', { headers: hdrs });
+    if (!r.ok) return;
+    var rows = await r.json();
+    if (!rows.length) return;
+    var fresh = rows[0];
+    // Si les points ont changé, mettre à jour le cache local
+    var oldPts = (userProfile.pts_total || 0);
+    if (fresh.pts_total !== oldPts && fresh.pts_total != null) {
+      var delta = fresh.pts_total - oldPts;
+      userProfile.pts_total = fresh.pts_total;
+      try { localStorage.setItem('flowin_user_profile', JSON.stringify(userProfile)); } catch(e){}
+      if (typeof showToast === 'function' && Math.abs(delta) >= 5) {
+        showToast((delta > 0 ? '🎉 +' : '⚠️ ') + delta + ' pts ajustés par l\'admin', delta > 0 ? 'success' : 'warning');
+      }
+      // Re-render
+      if (typeof renderProfil === 'function') renderProfil();
+      if (typeof updateBalanceDisplay === 'function') updateBalanceDisplay();
+    }
+    // Charger les gains pour MY_GAINS (lots)
+    var rg = await fetch(SUPABASE_URL + '/rest/v1/gains?pseudo=eq.'
+      + encodeURIComponent(pseudo) + '&order=created_at.desc&limit=20', { headers: hdrs });
+    if (rg.ok) {
+      var gains = await rg.json();
+      window.MY_GAINS = gains;
+      if (typeof renderGainsSection === 'function') renderGainsSection();
+    }
+  } catch(e) { console.warn('[refresh] erreur:', e); }
+};
+
+// Refresh au chargement initial après login
+if (typeof window.SB_ENABLED !== 'undefined') {
+  setTimeout(function(){ window.refreshUserStats(); }, 2000);
+}
 
 // ── Listeners écran auth ──
 (function(){
