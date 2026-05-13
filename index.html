@@ -3880,20 +3880,35 @@ async function saveCompleteProfile() {
       ref:       (function(){ try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
     };
     // UPSERT : crée ou met à jour le joueur (merge sur email si existant)
-    fetch(SUPABASE_URL + '/rest/v1/joueurs', {
-      method: 'POST',
-      headers: hdrs,
-      body: JSON.stringify(joueurPayload)
+    // PATCH d'abord (update du row créé au signup) — évite les doublons
+    var patchHdrs = Object.assign({}, hdrs, {'Prefer':'return=representation'});
+    fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(email), {
+      method: 'PATCH',
+      headers: patchHdrs,
+      body: JSON.stringify({
+        pseudo: pseudo, prenom: prenom, nom: nom, ecole: ecole,
+        classe: classe, genre: genre, ddn: ddn || null,
+        updated_at: new Date().toISOString()
+      })
     }).then(function(r){
-      if(!r.ok) {
-        // Fallback : PATCH par email si conflit
-        fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(email), {
-          method: 'PATCH',
+      return r.ok ? r.json() : [];
+    }).then(function(updated){
+      // Si aucune ligne PATCHée → c'est qu'il n'y avait pas de row précédent → POST
+      if(!Array.isArray(updated) || updated.length === 0) {
+        fetch(SUPABASE_URL + '/rest/v1/joueurs', {
+          method: 'POST',
           headers: hdrs,
-          body: JSON.stringify({pseudo:pseudo, prenom:prenom, nom:nom, ecole:ecole, classe:classe, genre:genre})
+          body: JSON.stringify(joueurPayload)
         }).catch(function(){});
       }
-    }).catch(function(){});
+    }).catch(function(){
+      // En cas d'erreur réseau, fallback POST
+      fetch(SUPABASE_URL + '/rest/v1/joueurs', {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify(joueurPayload)
+      }).catch(function(){});
+    });
   }
 
   // Dans tous les cas → continuer vers l'app
