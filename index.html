@@ -3241,13 +3241,13 @@ function switchMode(m){
 
   if(m==='pwa'){try{if(localStorage.getItem('pwa_installed'))m='app';}catch(e){}}
 
-  // ── GUARD : profil complet obligatoire pour accéder aux quiz/app ──
-  if(m === 'app' || m === 'theme' || m === 'quiz' || m === 'fiche') {
-    // Vérifier que userProfile est complet
+  // ── GUARD ASSOUPLI : accès libre aux fiches/cours (app, theme, fiche),
+  //   popup amical sur quiz / défis / profil si profil incomplet ──
+  var requiresProfile = (m === 'quiz' || m === 'defis' || m === 'defi' || m === 'profil');
+  if(requiresProfile) {
     var prof = userProfile || {};
     var profCompletLocal = prof.pseudo && prof.prenom && prof.nom && prof.ecole && prof.classe && prof.genre;
     if(!profCompletLocal) {
-      // Tenter de récupérer depuis localStorage
       try {
         var saved = JSON.parse(localStorage.getItem('flowin_profile') || '{}');
         if(saved.pseudo && saved.prenom && saved.nom && saved.ecole && saved.classe && saved.genre) {
@@ -3257,12 +3257,9 @@ function switchMode(m){
       } catch(e) {}
     }
     if(!profCompletLocal) {
-      console.log('[guard] Profil incomplet — redirect complete-profil');
-      m = 'complete-profil';
-      // Afficher toast d'info
-      setTimeout(function(){
-        if(typeof showToast === 'function') showToast('Complète ton profil pour accéder aux quiz', 'info');
-      }, 300);
+      console.log('[guard] Profil incomplet sur', m, '— popup invitation');
+      showSignupPrompt(m);
+      return; // bloque la navigation, popup affiché
     }
   }
 
@@ -3785,6 +3782,42 @@ async function sendMagicLink() {
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '✉️ Recevoir mon lien de connexion'; }
   }
+}
+
+// ── POPUP : invitation inscription sur action premium ──
+function showSignupPrompt(targetMode) {
+  // Supprimer overlay précédent si existe
+  var existing = document.getElementById('signup-prompt-overlay');
+  if(existing) existing.remove();
+
+  var ov = document.createElement('div');
+  ov.id = 'signup-prompt-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,14,26,.85);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease';
+
+  var modal = document.createElement('div');
+  modal.style.cssText = 'background:linear-gradient(135deg,#6C5FE8 0%,#9B7BFF 100%);border-radius:24px;padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 30px 80px rgba(108,95,232,.5);color:#fff';
+  modal.innerHTML =
+    '<div style="font-size:48px;margin-bottom:10px">🎯</div>'
+    + '<div style="font-family:\'Syne\',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px">Bienvenue sur Flowin !</div>'
+    + '<div style="font-size:14px;line-height:1.5;opacity:.92;margin-bottom:20px">Inscris-toi en quelques secondes et accède aux <b>quiz</b>, <b>défis</b> et <b>lots</b> 🎁</div>'
+    + '<button id="sp-btn-signup" style="background:#fff;color:#6C5FE8;border:none;border-radius:14px;padding:14px 20px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;width:100%;margin-bottom:8px">✨ Je m\'inscris (30 secondes)</button>'
+    + '<button id="sp-btn-later" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:14px;padding:12px 20px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;width:100%">Plus tard</button>';
+
+  ov.appendChild(modal);
+  document.body.appendChild(ov);
+
+  document.getElementById('sp-btn-signup').addEventListener('click', function(){
+    ov.remove();
+    switchMode('inscription');
+  });
+  document.getElementById('sp-btn-later').addEventListener('click', function(){
+    ov.remove();
+    switchMode('app'); // retour libre aux cours
+  });
+  // Clic à l'extérieur = fermer
+  ov.addEventListener('click', function(e){
+    if(e.target === ov) { ov.remove(); switchMode('app'); }
+  });
 }
 
 // ── AUTH : Google OAuth ──
