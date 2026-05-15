@@ -11185,7 +11185,18 @@ if (typeof window.SB_ENABLED !== 'undefined') {
         options: { emailRedirectTo: redirectTo, shouldCreateUser: true }
       });
       if(res.error) {
-        if(errEl) { errEl.textContent = '❌ ' + res.error.message; errEl.style.display = ''; }
+        var msg = res.error.message || '';
+        var errHtml = '';
+        if(msg.toLowerCase().includes('rate limit') || msg.toLowerCase().includes('too many') || msg.toLowerCase().includes('email rate')) {
+          errHtml = '⏳ Trop de tentatives. Réessaie dans <strong>1 heure</strong>.<br><span style="font-size:11px;opacity:.8">Ou utilise <a href="#" onclick="event.preventDefault();document.getElementById(\'btnShowPwdForm\')?.click();" style="color:#B06CE4;font-weight:700">le mot de passe classique</a></span>';
+        } else if(msg.toLowerCase().includes('already registered') || msg.toLowerCase().includes('user already exists')) {
+          errHtml = 'Cet email a déjà un compte. <a href="#" onclick="event.preventDefault();switchMode(\'recup\');" style="color:#B06CE4;font-weight:700">Se connecter →</a>';
+        } else if(msg.toLowerCase().includes('not valid') || msg.toLowerCase().includes('invalid')) {
+          errHtml = '❌ Adresse email invalide.';
+        } else {
+          errHtml = '❌ ' + msg;
+        }
+        if(errEl) { errEl.innerHTML = errHtml; errEl.style.display = ''; }
         btnML.disabled = false; btnML.textContent = '🔗 Recevoir un lien magique';
         return;
       }
