@@ -1516,26 +1516,81 @@ window.addEventListener('unhandledrejection', function(e){
 <!-- v-recup : récupération compte existant -->
 <div class="view" id="v-recup">
   <div style="min-height:100vh;background:#0F0E1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px">
-    <div style="text-align:center;margin-bottom:28px">
-      <div style="font-size:36px;margin-bottom:8px">🔍</div>
-      <div style="font-size:22px;font-weight:800;color:#fff">Retrouve ton compte</div>
-      <div style="font-size:13px;color:#9A8FBF;margin-top:6px">Entre ton pseudo pour récupérer ton profil</div>
+
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:44px;margin-bottom:8px">🌊</div>
+      <div style="font-size:26px;font-weight:800;color:#fff;font-family:Syne,sans-serif">Connexion</div>
+      <div style="font-size:13px;color:#9A8FBF;margin-top:4px">Bon retour sur Flowin ! 👋</div>
     </div>
-    <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:20px;padding:24px;width:100%;max-width:380px">
-      <div style="margin-bottom:14px">
-        <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ton pseudo</label>
-        <input id="recupPseudo" type="text" autocomplete="nickname" placeholder="Ex: olivia_vence"
-          style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none"
-          oninput="document.getElementById('recupResult').textContent=''">
+
+    <div style="background:#1A1730;border:1px solid rgba(176,108,228,.25);border-radius:24px;padding:28px 24px;width:100%;max-width:380px">
+
+      <!-- ÉTAPE 1 : Choix méthode -->
+      <div id="recup-step-choice">
+
+        <!-- Bouton Google -->
+        <button id="recupBtnGoogle" onclick="signInWithGoogle()" style="width:100%;background:#fff;color:#1A1730;border:1.5px solid rgba(176,108,228,.3);border-radius:14px;padding:13px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px">
+          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></g></svg>
+          Continuer avec Google
+        </button>
+
+        <div style="display:flex;align-items:center;gap:10px;margin:14px 0">
+          <div style="flex:1;height:1px;background:rgba(176,108,228,.2)"></div>
+          <span style="font-size:11px;color:#9A8FBF;font-weight:600">OU</span>
+          <div style="flex:1;height:1px;background:rgba(176,108,228,.2)"></div>
+        </div>
+
+        <!-- Form email/password -->
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
+          <input id="recupEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
+            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+        </div>
+
+        <div style="margin-bottom:10px;position:relative">
+          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe</label>
+          <input id="recupPwd" type="password" autocomplete="current-password" placeholder="••••••"
+            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 40px 13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
+          <button onclick="(function(b){var i=document.getElementById('recupPwd');if(i.type==='password'){i.type='text';b.textContent='🙈'}else{i.type='password';b.textContent='👁'}})(this)" style="position:absolute;right:10px;top:32px;background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:14px">👁</button>
+        </div>
+
+        <div id="recupError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:10px 12px;font-size:12px;color:#E84855;margin-bottom:10px;text-align:center"></div>
+
+        <button id="btnRecupLogin" onclick="loginWithPassword()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:8px">
+          🔑 Se connecter
+        </button>
+
+        <button onclick="sendPasswordReset()" style="width:100%;background:transparent;color:#9A8FBF;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:8px">
+          Mot de passe oublié ?
+        </button>
+
+        <div style="border-top:1px solid rgba(176,108,228,.15);margin-top:14px;padding-top:14px;text-align:center">
+          <div style="font-size:12px;color:#9A8FBF;margin-bottom:8px">Pas encore de compte ?</div>
+          <button onclick="switchMode('inscription')" style="background:transparent;color:#B06CE4;border:1px solid rgba(176,108,228,.4);border-radius:12px;padding:10px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">
+            ✨ Créer mon compte
+          </button>
+        </div>
+
       </div>
-      <div id="recupResult" style="min-height:20px;margin-bottom:12px;font-size:12px;text-align:center;color:#9A8FBF"></div>
-      <button id="btnRecupSearch" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:10px">
-        🔍 Rechercher mon compte
-      </button>
-      <button id="btnRecupBack" style="width:100%;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:600;padding:8px;cursor:pointer">
-        ← Retour
-      </button>
+
+      <!-- ÉTAPE 2 : reset password envoyé -->
+      <div id="recup-step-reset-sent" style="display:none;text-align:center">
+        <div style="font-size:54px;margin-bottom:12px">📬</div>
+        <div style="font-size:18px;font-weight:800;color:#fff;font-family:Syne,sans-serif;margin-bottom:8px">Email envoyé !</div>
+        <div style="font-size:13px;color:#9A8FBF;line-height:1.6;margin-bottom:18px">
+          Un lien pour réinitialiser ton mot de passe<br>
+          a été envoyé à <strong style="color:#B06CE4" id="recup-reset-email-recap"></strong>
+        </div>
+        <button onclick="document.getElementById('recup-step-reset-sent').style.display='none';document.getElementById('recup-step-choice').style.display=''" style="background:transparent;color:#9A8FBF;border:1px solid rgba(176,108,228,.4);border-radius:12px;padding:10px 18px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">
+          ← Retour
+        </button>
+      </div>
+
     </div>
+
+    <button onclick="switchMode('landing')" style="margin-top:18px;background:transparent;border:none;color:#9A8FBF;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px">
+      ← Accueil
+    </button>
   </div>
 </div>
 
@@ -3951,6 +4006,107 @@ async function deleteMyAccount() {
 
   showToast('✅ Compte supprimé. Au revoir !', 'success');
   setTimeout(function(){ window.location.href = window.location.pathname; }, 2000);
+}
+
+// ── AUTH : Login compte existant (depuis v-recup) ──
+async function loginWithPassword() {
+  var email = (document.getElementById('recupEmail').value || '').trim().toLowerCase();
+  var pwd = (document.getElementById('recupPwd').value || '');
+  var err = document.getElementById('recupError');
+  var btn = document.getElementById('btnRecupLogin');
+
+  if(!email || email.indexOf('@') < 0) {
+    err.textContent = '❌ Entre un email valide.';
+    err.style.display = 'block';
+    return;
+  }
+  if(!pwd) {
+    err.textContent = '❌ Entre ton mot de passe.';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Connexion...';
+
+  if(!sbClient) {
+    err.textContent = '❌ Erreur de connexion. Recharge la page.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '🔑 Se connecter';
+    return;
+  }
+
+  try {
+    var res = await sbClient.auth.signInWithPassword({ email: email, password: pwd });
+    if(res.error) {
+      if(res.error.message && (res.error.message.includes('Invalid') || res.error.message.includes('credentials'))) {
+        err.textContent = '❌ Email ou mot de passe incorrect.';
+      } else if(res.error.message && res.error.message.includes('Email not confirmed')) {
+        err.textContent = '📧 Confirme d\'abord ton email (vérifie ta boîte mail).';
+      } else {
+        err.textContent = '❌ ' + res.error.message;
+      }
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '🔑 Se connecter';
+      return;
+    }
+    btn.innerHTML = '✅ Connecté !';
+    try { localStorage.setItem('flowin_signup_email', email); } catch(e){}
+    // Redirection : si profil complet → app, sinon → complete-profil
+    setTimeout(function() {
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem('flowin_profile') || '{}'); } catch(e){}
+      var complete = saved.pseudo && saved.prenom && saved.nom && saved.ecole && saved.classe;
+      switchMode(complete ? 'app' : 'complete-profil');
+    }, 600);
+  } catch(e) {
+    console.error('[loginWithPassword]', e);
+    err.textContent = '❌ Erreur réseau. Réessaie.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '🔑 Se connecter';
+  }
+}
+
+// ── AUTH : Mot de passe oublié ──
+async function sendPasswordReset() {
+  var email = (document.getElementById('recupEmail').value || '').trim().toLowerCase();
+  var err = document.getElementById('recupError');
+
+  if(!email || email.indexOf('@') < 0) {
+    err.textContent = '❌ Entre ton email d\'abord, puis clique sur "Mot de passe oublié".';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+
+  if(!sbClient) {
+    err.textContent = '❌ Erreur de connexion.';
+    err.style.display = 'block';
+    return;
+  }
+
+  try {
+    var res = await sbClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname + '?mode=reset'
+    });
+    if(res.error) {
+      err.textContent = '❌ ' + res.error.message;
+      err.style.display = 'block';
+      return;
+    }
+    // Afficher écran "email envoyé"
+    document.getElementById('recup-step-choice').style.display = 'none';
+    document.getElementById('recup-step-reset-sent').style.display = '';
+    var recap = document.getElementById('recup-reset-email-recap');
+    if(recap) recap.textContent = email;
+  } catch(e) {
+    console.error('[sendPasswordReset]', e);
+    err.textContent = '❌ Erreur réseau.';
+    err.style.display = 'block';
+  }
 }
 
 // ── AUTH : Compte classique (email + password) ──
