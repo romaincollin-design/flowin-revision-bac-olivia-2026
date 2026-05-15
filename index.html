@@ -1323,6 +1323,46 @@ window.addEventListener('unhandledrejection', function(e){
           Continuer avec Google
         </button>
 
+        <!-- Toggle vers compte classique -->
+        <button id="btnShowPwdForm" onclick="togglePwdForm()" style="width:100%;background:transparent;color:#9A8FBF;border:1px solid rgba(176,108,228,.2);border-radius:14px;padding:13px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          🔐 Créer un compte avec mot de passe
+        </button>
+
+        <!-- Form compte classique (caché par défaut) -->
+        <div id="pwdFormBox" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(176,108,228,.15)">
+          <div style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;text-align:center">Compte classique</div>
+
+          <div style="margin-bottom:10px">
+            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
+            <input id="pwdEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
+              style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:12px 14px;color:#fff;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">
+          </div>
+
+          <div style="margin-bottom:10px;position:relative">
+            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe</label>
+            <input id="pwdPassword" type="password" autocomplete="new-password" placeholder="Min. 6 caractères" minlength="6"
+              style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:12px 40px 12px 14px;color:#fff;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">
+            <button onclick="togglePwdVisible('pwdPassword',this)" style="position:absolute;right:10px;top:32px;background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:14px">👁</button>
+          </div>
+
+          <div style="margin-bottom:10px;position:relative">
+            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Confirmer</label>
+            <input id="pwdConfirm" type="password" autocomplete="new-password" placeholder="Retape le mot de passe"
+              style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:12px 40px 12px 14px;color:#fff;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">
+            <button onclick="togglePwdVisible('pwdConfirm',this)" style="position:absolute;right:10px;top:32px;background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:14px">👁</button>
+          </div>
+
+          <div id="pwdError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:8px 12px;font-size:12px;color:#E84855;margin-bottom:10px;text-align:center"></div>
+
+          <button id="btnCreateAccount" onclick="createAccountWithPassword()" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:13px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px">
+            🚀 Créer mon compte
+          </button>
+
+          <button id="btnSwitchToLogin" onclick="switchToLoginMode()" style="width:100%;background:transparent;color:#9A8FBF;border:none;padding:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer">
+            J'ai déjà un compte → Se connecter
+          </button>
+        </div>
+
         <!-- IDs cachés pour compat avec ancien code (signInWithPassword, signUp etc) -->
         <input type="hidden" id="loginPassword" value="">
         <input type="hidden" id="signupEmail" value="">
@@ -3911,6 +3951,167 @@ async function deleteMyAccount() {
 
   showToast('✅ Compte supprimé. Au revoir !', 'success');
   setTimeout(function(){ window.location.href = window.location.pathname; }, 2000);
+}
+
+// ── AUTH : Compte classique (email + password) ──
+var _pwdMode = 'signup'; // 'signup' ou 'login'
+
+function togglePwdForm() {
+  var box = document.getElementById('pwdFormBox');
+  var btn = document.getElementById('btnShowPwdForm');
+  if(!box || !btn) return;
+  if(box.style.display === 'none' || !box.style.display) {
+    box.style.display = 'block';
+    btn.innerHTML = '⬆️ Masquer';
+    // Scroll au form
+    setTimeout(function(){ box.scrollIntoView({behavior:'smooth', block:'center'}); }, 100);
+  } else {
+    box.style.display = 'none';
+    btn.innerHTML = '🔐 Créer un compte avec mot de passe';
+  }
+}
+
+function togglePwdVisible(inputId, btn) {
+  var inp = document.getElementById(inputId);
+  if(!inp) return;
+  if(inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+function switchToLoginMode() {
+  _pwdMode = _pwdMode === 'signup' ? 'login' : 'signup';
+  var btnCreate = document.getElementById('btnCreateAccount');
+  var btnSwitch = document.getElementById('btnSwitchToLogin');
+  var confirmField = document.getElementById('pwdConfirm');
+  var confirmLabel = confirmField && confirmField.parentElement;
+  if(_pwdMode === 'login') {
+    btnCreate.innerHTML = '🔑 Se connecter';
+    btnSwitch.innerHTML = 'Pas encore de compte → Créer un compte';
+    if(confirmLabel) confirmLabel.style.display = 'none';
+  } else {
+    btnCreate.innerHTML = '🚀 Créer mon compte';
+    btnSwitch.innerHTML = 'J\'ai déjà un compte → Se connecter';
+    if(confirmLabel) confirmLabel.style.display = '';
+  }
+  var err = document.getElementById('pwdError');
+  if(err) err.style.display = 'none';
+}
+
+async function createAccountWithPassword() {
+  var email = (document.getElementById('pwdEmail').value || '').trim().toLowerCase();
+  var pwd = (document.getElementById('pwdPassword').value || '');
+  var confirm = (document.getElementById('pwdConfirm').value || '');
+  var err = document.getElementById('pwdError');
+  var btn = document.getElementById('btnCreateAccount');
+
+  // Validations
+  if(!email || email.indexOf('@') < 0 || email.indexOf('.') < 0) {
+    err.textContent = '❌ Entre un email valide.';
+    err.style.display = 'block';
+    return;
+  }
+  if(!pwd || pwd.length < 6) {
+    err.textContent = '❌ Mot de passe trop court (min. 6 caractères).';
+    err.style.display = 'block';
+    return;
+  }
+  if(_pwdMode === 'signup' && pwd !== confirm) {
+    err.textContent = '❌ Les mots de passe ne correspondent pas.';
+    err.style.display = 'block';
+    return;
+  }
+
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = _pwdMode === 'signup' ? '⏳ Création...' : '⏳ Connexion...';
+
+  if(!sbClient) {
+    err.textContent = '❌ Erreur de connexion à Supabase. Recharge la page.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = _pwdMode === 'signup' ? '🚀 Créer mon compte' : '🔑 Se connecter';
+    return;
+  }
+
+  try {
+    var res;
+    if(_pwdMode === 'login') {
+      // Connexion
+      res = await sbClient.auth.signInWithPassword({ email: email, password: pwd });
+      if(res.error) {
+        if(res.error.message && (res.error.message.includes('Invalid') || res.error.message.includes('credentials'))) {
+          err.textContent = '❌ Email ou mot de passe incorrect.';
+        } else if(res.error.message && res.error.message.includes('Email not confirmed')) {
+          err.textContent = '📧 Vérifie tes emails pour confirmer ton compte avant de te connecter.';
+        } else {
+          err.textContent = '❌ ' + res.error.message;
+        }
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '🔑 Se connecter';
+        return;
+      }
+      // Connexion OK
+      btn.innerHTML = '✅ Connecté !';
+      try { localStorage.setItem('flowin_signup_email', email); } catch(e){}
+      // Le handler onAuthStateChange (SIGNED_IN) prendra le relais
+      setTimeout(function() {
+        // Si le profil est complet → app, sinon complete-profil
+        var saved = {};
+        try { saved = JSON.parse(localStorage.getItem('flowin_profile') || '{}'); } catch(e){}
+        var complete = saved.pseudo && saved.prenom && saved.nom && saved.ecole && saved.classe;
+        switchMode(complete ? 'app' : 'complete-profil');
+      }, 600);
+    } else {
+      // Création de compte
+      res = await sbClient.auth.signUp({
+        email: email,
+        password: pwd,
+        options: { emailRedirectTo: window.location.origin + window.location.pathname + '?mode=login' }
+      });
+      if(res.error) {
+        if(res.error.message && res.error.message.includes('already registered')) {
+          err.innerHTML = 'Cet email a déjà un compte. <a href="#" onclick="switchToLoginMode();return false;" style="color:#B06CE4;font-weight:700">Se connecter →</a>';
+        } else {
+          err.textContent = '❌ ' + res.error.message;
+        }
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Créer mon compte';
+        return;
+      }
+      // Création OK
+      try { localStorage.setItem('flowin_signup_email', email); } catch(e){}
+      if(res.data && res.data.session) {
+        // Auto-confirmation activée → session active → complete-profil
+        btn.innerHTML = '✅ Compte créé !';
+        setTimeout(function(){ switchMode('complete-profil'); }, 600);
+      } else {
+        // Confirmation email requise → écran "Vérifie tes emails"
+        btn.innerHTML = '📬 Email envoyé !';
+        // Afficher l'écran ml-step-sent
+        var stepEmail = document.getElementById('ml-step-email');
+        var stepSent = document.getElementById('ml-step-sent');
+        if(stepEmail) stepEmail.style.display = 'none';
+        if(stepSent) {
+          stepSent.style.display = '';
+          var recap = document.getElementById('ml-email-recap');
+          if(recap) recap.textContent = email;
+        }
+      }
+    }
+  } catch(e) {
+    console.error('[createAccountWithPassword]', e);
+    err.textContent = '❌ Erreur réseau. Réessaie.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = _pwdMode === 'signup' ? '🚀 Créer mon compte' : '🔑 Se connecter';
+  }
 }
 
 // ── AUTH : Google OAuth ──
