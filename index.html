@@ -1660,6 +1660,24 @@ window.addEventListener('unhandledrejection', function(e){
           <input id="cpDdn" type="date" class="finput" style="color:#1E1048;background:#fff" max="2012-12-31" min="2000-01-01">
         </div>
 
+        <!-- 🔐 MOT DE PASSE (création obligatoire pour pouvoir se reconnecter plus tard) -->
+        <div style="background:rgba(176,108,228,.06);border:1px solid rgba(176,108,228,.2);border-radius:12px;padding:14px;margin-top:4px">
+          <div style="font-size:11px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🔐 Définis ton mot de passe</div>
+          <div style="font-size:11px;color:#9A8FBF;margin-bottom:10px;line-height:1.5">Pour pouvoir te reconnecter sans recevoir d'email à chaque fois.</div>
+
+          <div style="margin-bottom:10px;position:relative">
+            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe *</label>
+            <input id="cpPwd" type="password" autocomplete="new-password" placeholder="Min. 6 caractères" minlength="6" class="finput" style="padding-right:40px">
+            <button type="button" onclick="(function(b){var i=document.getElementById('cpPwd');if(i.type==='password'){i.type='text';b.textContent='🙈'}else{i.type='password';b.textContent='👁'}})(this)" style="position:absolute;right:10px;top:32px;background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:14px">👁</button>
+          </div>
+
+          <div style="position:relative">
+            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Confirme *</label>
+            <input id="cpPwdConfirm" type="password" autocomplete="new-password" placeholder="Retape le mot de passe" class="finput" style="padding-right:40px">
+            <button type="button" onclick="(function(b){var i=document.getElementById('cpPwdConfirm');if(i.type==='password'){i.type='text';b.textContent='🙈'}else{i.type='password';b.textContent='👁'}})(this)" style="position:absolute;right:10px;top:32px;background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:14px">👁</button>
+          </div>
+        </div>
+
         <div id="cpAccordRow" style="display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:12px 14px">
           <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
             <input type="checkbox" id="cpAccord" style="margin-top:2px;flex-shrink:0">
@@ -4301,6 +4319,8 @@ async function saveCompleteProfile() {
   var classe  = (document.getElementById('cpClasse')?.value || '').trim();
   var genre   = document.querySelector('.g-btn.sel')?.textContent?.trim() || '';
   var ddn     = document.getElementById('cpDdn')?.value || '';
+  var pwd     = document.getElementById('cpPwd')?.value || '';
+  var pwdConf = document.getElementById('cpPwdConfirm')?.value || '';
   var accord  = document.getElementById('cpAccord')?.checked || false;
   var rgpd    = document.getElementById('cpRgpd')?.checked || false;
 
@@ -4313,12 +4333,27 @@ async function saveCompleteProfile() {
   if (!classe) missing.push('Classe');
   if (!genre)  missing.push('Genre');
   if (!ddn)    missing.push('Date de naissance');
+  if (!pwd)    missing.push('Mot de passe');
   if (!rgpd)   missing.push('Accord RGPD');
+
+  // Validations password additionnelles
+  if (pwd && pwd.length < 6) {
+    showToast('⚠️ Mot de passe trop court (min. 6 caractères)', 'error');
+    var pwdEl = document.getElementById('cpPwd');
+    if(pwdEl) pwdEl.style.borderColor = '#E84855';
+    return;
+  }
+  if (pwd && pwd !== pwdConf) {
+    showToast('⚠️ Les mots de passe ne correspondent pas', 'error');
+    var pwdConfEl = document.getElementById('cpPwdConfirm');
+    if(pwdConfEl) pwdConfEl.style.borderColor = '#E84855';
+    return;
+  }
 
   if (missing.length > 0) {
     showToast('⚠️ Champs obligatoires : ' + missing.join(', '), 'error');
     // Marquer visuellement les champs manquants
-    ['cpPseudo','cpPrenom','cpNom','cpEcole','cpClasse','cpDdn'].forEach(function(id) {
+    ['cpPseudo','cpPrenom','cpNom','cpEcole','cpClasse','cpDdn','cpPwd','cpPwdConfirm'].forEach(function(id) {
       var el = document.getElementById(id);
       if(el && !el.value.trim()) el.style.borderColor = '#E84855';
       else if(el) el.style.borderColor = '';
@@ -4348,6 +4383,22 @@ async function saveCompleteProfile() {
       if (sessionRes.data && sessionRes.data.session) {
         userId = sessionRes.data.session.user.id;
         email  = sessionRes.data.session.user.email || email;
+
+        // ── Définir le mot de passe sur le compte Auth ──
+        if (pwd && pwd.length >= 6) {
+          try {
+            var pwdRes = await sbClient.auth.updateUser({ password: pwd });
+            if (pwdRes.error) {
+              console.warn('[updateUser password]', pwdRes.error.message);
+              // Ne bloque pas la sauvegarde du profil pour autant
+              if(!pwdRes.error.message.includes('same') && !pwdRes.error.message.includes('identical')) {
+                showToast('⚠️ Mot de passe non sauvegardé : ' + pwdRes.error.message, 'warning');
+              }
+            } else {
+              console.log('[saveProfile] Password set OK');
+            }
+          } catch(pe) { console.error('[updateUser password]', pe); }
+        }
       }
     }
   } catch(e) { console.error('[getSession]', e); }
