@@ -4276,7 +4276,13 @@ async function signInWithGoogle() {
   try {
     await sbClient.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: 'https://flowrevis.vercel.app' }
+      options: {
+        redirectTo: window.location.origin + window.location.pathname,
+        queryParams: {
+          prompt: 'select_account',  // Force Google à montrer le sélecteur de compte
+          access_type: 'offline'
+        }
+      }
     });
   } catch(e) {
     showToast('Erreur Google', 'error');
@@ -4640,6 +4646,26 @@ function applyFormConfig() {
 (function restoreProfile(){
   loadConfigFromSupabase();
   loadLotsConfig();
+
+  // ── Force-logout via ?logout=1 dans l'URL ──
+  if((window.location.search||'').includes('logout=1') || (window.location.search||'').includes('reset=1')) {
+    try {
+      if(sbClient) sbClient.auth.signOut().catch(function(){});
+      localStorage.removeItem('flowin_profile');
+      localStorage.removeItem('flowin_signup_email');
+      localStorage.removeItem('flowin_balance');
+      sessionStorage.removeItem('flowin_profile');
+      // Nettoyer aussi les clés Supabase auth
+      Object.keys(localStorage).forEach(function(k){
+        if(k.indexOf('sb-') === 0 || k.indexOf('supabase') >= 0) {
+          try { localStorage.removeItem(k); } catch(e){}
+        }
+      });
+    } catch(e){}
+    // Rediriger vers URL propre
+    setTimeout(function(){ window.location.href = window.location.pathname; }, 200);
+    return;
+  }
 
   // ── Détecter lien d'activation (hash Supabase dans l'URL) ──
   var urlHash = window.location.hash || '';
