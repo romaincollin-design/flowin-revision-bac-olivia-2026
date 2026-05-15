@@ -5975,6 +5975,28 @@ function saveShareLog(log){
   try { localStorage.setItem('flowin_share_log', JSON.stringify(log)); } catch(e){}
 }
 function trackShare(method){
+  // ── GUARD FUNNEL : compte complet obligatoire pour partager ──
+  var hasProfile = userProfile && userProfile.pseudo && userProfile.prenom && userProfile.email;
+  if(!hasProfile) {
+    // Tenter de récupérer depuis localStorage avant de bloquer
+    try {
+      var saved = JSON.parse(localStorage.getItem('flowin_profile') || '{}');
+      if(saved.pseudo && saved.prenom && saved.email) {
+        userProfile = saved;
+        hasProfile = true;
+      }
+    } catch(e){}
+  }
+  if(!hasProfile) {
+    if(typeof showSignupPrompt === 'function') {
+      showSignupPrompt('parrainage');
+    } else {
+      showShareToast('🎯 Inscris-toi en 30 secondes pour partager et gagner des points !');
+      setTimeout(function(){ switchMode('inscription'); }, 1500);
+    }
+    return;
+  }
+
   // Demande à qui c'est partagé — OBLIGATOIRE, pas de partage anonyme
   var dest = '';
   var attempts = 0;
@@ -5998,7 +6020,7 @@ function trackShare(method){
     date: new Date().toISOString(),
     method: method,            // 'whatsapp', 'telegram', 'copy', 'native'
     destinataire: dest,
-    sender: (userProfile && (userProfile.prenom||userProfile.pseudo)) || 'Olivia',
+    sender: (userProfile && (userProfile.pseudo||userProfile.prenom)) || '',
     senderEmail: (userProfile && userProfile.email) || '',
     pts: SHARE_PTS
   };
