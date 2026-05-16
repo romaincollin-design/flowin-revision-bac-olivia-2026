@@ -11323,3 +11323,480 @@ function showPtsAnimation(pts, originEl) {
 
 
 </script>
+
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FLOWIN UI v2 — Module additionnel (16/05/2026)                    -->
+<!-- - Modal détail lot avec bouton "marquer utilisé"                  -->
+<!-- - Bloc Ligue en cours (v-app + v-profil)                          -->
+<!-- - Avatar initiale auto-update partout                             -->
+<!-- - Conditionné à window.LOTS_ON                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<style>
+.fl-lot-modal{position:fixed;inset:0;background:rgba(10,5,30,.92);z-index:100000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:flFade .25s ease}
+.fl-lot-modal.open{display:flex}
+.fl-lot-modal-inner{background:linear-gradient(160deg,#1A0E40 0%,#0E0728 100%);border:1px solid rgba(244,168,58,.4);border-radius:24px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 30px 90px rgba(0,0,0,.7);animation:flSlide .3s ease}
+.fl-lot-modal-head{position:relative;padding:24px 24px 16px;text-align:center;border-bottom:1px dashed rgba(244,168,58,.2)}
+.fl-lot-modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.08);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.fl-lot-modal-emoji{font-size:48px;margin-bottom:8px}
+.fl-lot-modal-title{font-size:18px;font-weight:800;color:#F4A83A;margin-bottom:4px}
+.fl-lot-modal-subtitle{font-size:12px;color:#9A8FBF}
+.fl-lot-modal-body{padding:20px 24px}
+.fl-lot-code-box{background:linear-gradient(135deg,rgba(244,168,58,.2),rgba(244,168,58,.05));border:2px solid rgba(244,168,58,.5);border-radius:14px;padding:16px;text-align:center;margin-bottom:16px}
+.fl-lot-code-label{font-size:10px;font-weight:800;color:rgba(244,168,58,.8);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.fl-lot-code-val{font-size:28px;font-weight:900;color:#fff;letter-spacing:.18em;font-family:'Courier New',monospace}
+.fl-lot-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:8px;transition:transform .15s ease}
+.fl-lot-btn:active{transform:scale(.98)}
+.fl-lot-btn-primary{background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff}
+.fl-lot-btn-secondary{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15)}
+.fl-lot-status{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
+.fl-lot-status.active{background:rgba(34,201,160,.15);color:#22C9A0;border:1px solid rgba(34,201,160,.4)}
+.fl-lot-status.used{background:rgba(154,143,191,.15);color:#9A8FBF;border:1px solid rgba(154,143,191,.3)}
+
+.fl-ligue-bloc{background:linear-gradient(135deg,rgba(176,108,228,.12),rgba(123,79,191,.04));border:1.5px solid rgba(176,108,228,.3);border-radius:18px;padding:14px 16px;margin:12px 16px;cursor:pointer;transition:transform .2s ease}
+.fl-ligue-bloc:active{transform:scale(.98)}
+.fl-ligue-bloc.profile{margin:16px 0}
+.fl-ligue-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.fl-ligue-title{font-size:12px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:.06em}
+.fl-ligue-countdown{font-size:10px;color:#9A8FBF;font-weight:700}
+.fl-ligue-rank{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.fl-ligue-rank-num{font-size:24px;font-weight:900;color:#fff}
+.fl-ligue-rank-label{font-size:11px;color:#9A8FBF;font-weight:600}
+.fl-ligue-bar-wrap{background:rgba(255,255,255,.06);border-radius:8px;height:6px;overflow:hidden;margin:8px 0 6px}
+.fl-ligue-bar-fill{height:100%;background:linear-gradient(90deg,#B06CE4,#7B4FBF);border-radius:8px;transition:width .4s ease}
+.fl-ligue-tip{font-size:11px;color:rgba(255,255,255,.7);font-weight:600}
+.fl-ligue-tip.top3{color:#22C9A0;font-weight:800}
+
+@keyframes flFade{from{opacity:0}to{opacity:1}}
+@keyframes flSlide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+#profilGains > div{cursor:pointer;transition:transform .15s ease}
+#profilGains > div:hover{transform:translateY(-2px)}
+</style>
+
+<div id="flLotModal" class="fl-lot-modal" onclick="if(event.target===this)flCloseLotModal()">
+  <div class="fl-lot-modal-inner">
+    <div class="fl-lot-modal-head">
+      <button class="fl-lot-modal-close" onclick="flCloseLotModal()">✕</button>
+      <div class="fl-lot-modal-emoji" id="flLotEmoji">🎁</div>
+      <div class="fl-lot-modal-title" id="flLotTitle">Mon lot</div>
+      <div class="fl-lot-modal-subtitle" id="flLotDate"></div>
+      <div id="flLotStatusWrap"></div>
+    </div>
+    <div class="fl-lot-modal-body">
+      <div class="fl-lot-code-box">
+        <div class="fl-lot-code-label">Ton code à présenter</div>
+        <div class="fl-lot-code-val" id="flLotCode">—</div>
+      </div>
+      <button class="fl-lot-btn fl-lot-btn-primary" onclick="flCopyLotCode()" id="flLotCopyBtn">📋 Copier le code</button>
+      <button class="fl-lot-btn fl-lot-btn-secondary" onclick="flMarkLotUsed()" id="flLotUseBtn">✅ J'ai utilisé ce code</button>
+      <div id="flLotInfo" style="font-size:11px;color:#9A8FBF;margin-top:14px;line-height:1.5;padding:10px;background:rgba(255,255,255,.03);border-radius:10px"></div>
+    </div>
+  </div>
+</div>
+
+<div id="flLigueModal" class="fl-lot-modal" onclick="if(event.target===this)flCloseLigueModal()">
+  <div class="fl-lot-modal-inner" style="max-width:460px">
+    <div class="fl-lot-modal-head">
+      <button class="fl-lot-modal-close" onclick="flCloseLigueModal()">✕</button>
+      <div class="fl-lot-modal-emoji">🏆</div>
+      <div class="fl-lot-modal-title" id="flLigueModalTitle">Classement</div>
+      <div class="fl-lot-modal-subtitle" id="flLigueModalSubtitle"></div>
+    </div>
+    <div class="fl-lot-modal-body">
+      <div id="flLigueList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var SB_URL_FL = (typeof SUPABASE_URL !== 'undefined') ? SUPABASE_URL : '';
+  var SB_KEY_FL = (typeof SUPABASE_KEY !== 'undefined') ? SUPABASE_KEY : '';
+  var _flCurrentGain = null;
+
+  function _hdrs(){
+    return {apikey: SB_KEY_FL, Authorization: 'Bearer ' + SB_KEY_FL};
+  }
+
+  function _hdrsJson(){
+    return {apikey: SB_KEY_FL, Authorization: 'Bearer ' + SB_KEY_FL, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'};
+  }
+
+  function _getUser(){
+    try {
+      if(typeof userProfile !== 'undefined' && userProfile && userProfile.pseudo){
+        return userProfile;
+      }
+      var raw = localStorage.getItem('flowin_profile');
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }
+
+  // 1. AVATAR — update partout
+  window.flowinUpdateAvatar = function(){
+    var u = _getUser();
+    if(!u) return;
+    var ini = ((u.prenom || u.pseudo || '?').charAt(0) || '?').toUpperCase();
+    if(u.nom) ini += u.nom.charAt(0).toUpperCase();
+    var els = ['welcomeProfilAvatar', 'appProfilAvatar'];
+    for(var i = 0; i < els.length; i++){
+      var el = document.getElementById(els[i]);
+      if(el) el.textContent = ini.substring(0, 2);
+    }
+  };
+
+  // Auto-update à chaque switchMode
+  var _origSwitchMode = (typeof switchMode === 'function') ? switchMode : null;
+  if(_origSwitchMode){
+    window.switchMode = function(m){
+      var r = _origSwitchMode.apply(this, arguments);
+      setTimeout(function(){
+        window.flowinUpdateAvatar();
+        if(m === 'app' || m === 'profil'){
+          window.flowinLoadLigueEnCours();
+        }
+      }, 50);
+      return r;
+    };
+  }
+
+  // 2. MODAL DÉTAIL LOT
+  window.flShowLotModal = function(gainData){
+    _flCurrentGain = gainData;
+    var emoji = document.getElementById('flLotEmoji');
+    var title = document.getElementById('flLotTitle');
+    var dateEl = document.getElementById('flLotDate');
+    var code = document.getElementById('flLotCode');
+    var statusWrap = document.getElementById('flLotStatusWrap');
+    var useBtn = document.getElementById('flLotUseBtn');
+    var info = document.getElementById('flLotInfo');
+
+    if(emoji) emoji.textContent = gainData.lot_emoji || '🎁';
+    if(title) title.textContent = gainData.lot_nom || gainData.lot_titre || gainData.lot_id || 'Mon lot';
+    if(code) code.textContent = gainData.code || '—';
+
+    var dateStr = '';
+    try { dateStr = new Date(gainData.ts || gainData.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}); } catch(e){}
+    if(dateEl) dateEl.textContent = dateStr ? 'Reçu le ' + dateStr : '';
+
+    var isUsed = gainData.utilise === true || gainData.utilise === 'true';
+    if(statusWrap){
+      if(isUsed){
+        var usedDate = '';
+        try { usedDate = new Date(gainData.utilise_ts).toLocaleDateString('fr-FR'); } catch(e){}
+        statusWrap.innerHTML = '<span class="fl-lot-status used">✓ Utilisé' + (usedDate ? ' le ' + usedDate : '') + '</span>';
+      } else {
+        statusWrap.innerHTML = '<span class="fl-lot-status active">● Actif</span>';
+      }
+    }
+
+    if(useBtn){
+      if(isUsed){
+        useBtn.style.display = 'none';
+      } else {
+        useBtn.style.display = 'block';
+        useBtn.disabled = false;
+        useBtn.textContent = "✅ J'ai utilisé ce code";
+      }
+    }
+
+    if(info){
+      var msg = "Présente ce code en caisse chez le partenaire. ";
+      msg += gainData.partenaire ? "Partenaire : " + gainData.partenaire + ". " : "";
+      msg += "Le partenaire validera ton code via sa borne admin. ";
+      msg += "Tu peux aussi marquer toi-même comme utilisé une fois consommé.";
+      info.textContent = msg;
+    }
+
+    var modal = document.getElementById('flLotModal');
+    if(modal) modal.classList.add('open');
+  };
+
+  window.flCloseLotModal = function(){
+    var modal = document.getElementById('flLotModal');
+    if(modal) modal.classList.remove('open');
+    _flCurrentGain = null;
+  };
+
+  window.flCopyLotCode = function(){
+    if(!_flCurrentGain || !_flCurrentGain.code) return;
+    var btn = document.getElementById('flLotCopyBtn');
+    var code = _flCurrentGain.code;
+    var copied = false;
+    try {
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(code);
+        copied = true;
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = code;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        copied = true;
+      }
+    } catch(e){}
+    if(btn && copied){
+      var orig = btn.textContent;
+      btn.textContent = '✓ Copié !';
+      btn.disabled = true;
+      setTimeout(function(){ btn.textContent = orig; btn.disabled = false; }, 1500);
+    }
+  };
+
+  window.flMarkLotUsed = function(){
+    if(!_flCurrentGain || !_flCurrentGain.code) return;
+    if(!confirm('Marquer ce code comme utilisé ?\nTu ne pourras plus le présenter ensuite.')) return;
+    var btn = document.getElementById('flLotUseBtn');
+    if(btn){ btn.disabled = true; btn.textContent = 'Validation...'; }
+    var url = SB_URL_FL + '/rest/v1/gains?code=eq.' + encodeURIComponent(_flCurrentGain.code);
+    fetch(url, {
+      method: 'PATCH',
+      headers: _hdrsJson(),
+      body: JSON.stringify({utilise: true, utilise_ts: new Date().toISOString()})
+    })
+    .then(function(r){
+      if(r.ok){
+        _flCurrentGain.utilise = true;
+        _flCurrentGain.utilise_ts = new Date().toISOString();
+        window.flShowLotModal(_flCurrentGain);
+        if(typeof loadProfilGains === 'function') setTimeout(loadProfilGains, 300);
+      } else {
+        if(btn){ btn.disabled = false; btn.textContent = "✅ J'ai utilisé ce code"; }
+        alert('Erreur lors de la validation. Réessaie.');
+      }
+    })
+    .catch(function(){
+      if(btn){ btn.disabled = false; btn.textContent = "✅ J'ai utilisé ce code"; }
+      alert('Erreur réseau.');
+    });
+  };
+
+  // 3. CARDS GAINS CLIQUABLES via MutationObserver
+  function _setupGainsClickable(){
+    var container = document.getElementById('profilGains');
+    if(!container) return;
+    var observer = new MutationObserver(function(){
+      var cards = container.children;
+      for(var i = 0; i < cards.length; i++){
+        var card = cards[i];
+        if(card._flBound) continue;
+        card._flBound = true;
+        (function(c){
+          c.addEventListener('click', function(){
+            var codeEl = c.querySelector('div[style*="letter-spacing"]');
+            var codeTxt = codeEl ? codeEl.textContent.trim() : '';
+            if(!codeTxt) return;
+            fetch(SB_URL_FL + '/rest/v1/gains?code=eq.' + encodeURIComponent(codeTxt) + '&select=*&limit=1', {headers: _hdrs()})
+              .then(function(r){ return r.ok ? r.json() : []; })
+              .then(function(rows){
+                if(rows && rows.length){
+                  window.flShowLotModal(rows[0]);
+                }
+              }).catch(function(){});
+          });
+        })(card);
+      }
+    });
+    observer.observe(container, {childList: true});
+  }
+
+  // 4. BLOC LIGUE — injection HTML
+  function _injectLigueBlocs(){
+    var vApp = document.getElementById('v-app');
+    if(vApp && !document.getElementById('flLigueAppBloc')){
+      var listScreen = document.getElementById('listScreen');
+      if(listScreen){
+        var bloc = document.createElement('div');
+        bloc.id = 'flLigueAppBloc';
+        bloc.className = 'fl-ligue-bloc';
+        bloc.onclick = window.flShowClassementModal;
+        bloc.style.display = 'none';
+        bloc.innerHTML =
+          '<div class="fl-ligue-head">'
+          + '<span class="fl-ligue-title">🏆 Ligue de <span id="flLigueAppMonth">…</span></span>'
+          + '<span class="fl-ligue-countdown" id="flLigueAppCountdown">— j</span>'
+          + '</div>'
+          + '<div class="fl-ligue-rank">'
+          + '<span class="fl-ligue-rank-num" id="flLigueAppRank">—</span>'
+          + '<span class="fl-ligue-rank-label">de ton classement</span>'
+          + '</div>'
+          + '<div class="fl-ligue-bar-wrap"><div class="fl-ligue-bar-fill" id="flLigueAppBar" style="width:0%"></div></div>'
+          + '<div class="fl-ligue-tip" id="flLigueAppTip">Charge ton classement…</div>';
+        listScreen.parentNode.insertBefore(bloc, listScreen);
+      }
+    }
+
+    var pGains = document.getElementById('profilGains');
+    if(pGains && !document.getElementById('flLigueProfilBloc')){
+      var bp = document.createElement('div');
+      bp.id = 'flLigueProfilBloc';
+      bp.className = 'fl-ligue-bloc profile';
+      bp.onclick = window.flShowClassementModal;
+      bp.style.display = 'none';
+      bp.innerHTML =
+        '<div class="fl-ligue-head">'
+        + '<span class="fl-ligue-title">🏆 Ma ligue · <span id="flLigueProfMonth">…</span></span>'
+        + '<span class="fl-ligue-countdown" id="flLigueProfCountdown">— j</span>'
+        + '</div>'
+        + '<div class="fl-ligue-rank">'
+        + '<span class="fl-ligue-rank-num" id="flLigueProfRank">—</span>'
+        + '<span class="fl-ligue-rank-label" id="flLigueProfPts">— pts</span>'
+        + '</div>'
+        + '<div class="fl-ligue-bar-wrap"><div class="fl-ligue-bar-fill" id="flLigueProfBar" style="width:0%"></div></div>'
+        + '<div class="fl-ligue-tip" id="flLigueProfTip">Voir le classement complet →</div>';
+      pGains.parentNode.insertBefore(bp, pGains);
+    }
+  }
+
+  window.flowinLoadLigueEnCours = function(){
+    var appBloc = document.getElementById('flLigueAppBloc');
+    var profBloc = document.getElementById('flLigueProfilBloc');
+    var lotsOn = (typeof window.LOTS_ON !== 'undefined') && window.LOTS_ON;
+    if(!lotsOn){
+      if(appBloc) appBloc.style.display = 'none';
+      if(profBloc) profBloc.style.display = 'none';
+      return;
+    }
+    if(appBloc) appBloc.style.display = 'block';
+    if(profBloc) profBloc.style.display = 'block';
+
+    var u = _getUser();
+    if(!u || !u.pseudo) return;
+
+    var now = new Date();
+    var monthName = now.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'});
+    var finMois = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    var jLeft = Math.max(0, Math.ceil((finMois - now) / 86400000));
+
+    var setEl = function(id, val){ var el = document.getElementById(id); if(el) el.textContent = val; };
+    setEl('flLigueAppMonth', monthName);
+    setEl('flLigueProfMonth', monthName);
+    setEl('flLigueAppCountdown', jLeft + 'j restant' + (jLeft > 1 ? 's' : ''));
+    setEl('flLigueProfCountdown', jLeft + 'j restant' + (jLeft > 1 ? 's' : ''));
+
+    fetch(SB_URL_FL + '/rest/v1/joueurs?select=pseudo,prenom,pts_total,ecole&pts_total=gte.0&order=pts_total.desc&limit=50', {headers: _hdrs()})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows){
+        if(!Array.isArray(rows)) return;
+        var myIdx = -1;
+        for(var i = 0; i < rows.length; i++){
+          if(rows[i].pseudo === u.pseudo){ myIdx = i; break; }
+        }
+        var myPts = myIdx >= 0 ? (rows[myIdx].pts_total || 0) : (u.pts || 0);
+        var top3Pts = rows[2] ? (rows[2].pts_total || 1) : 1000;
+        var topPts = rows[0] ? (rows[0].pts_total || 1) : 1;
+
+        var myRank = myIdx >= 0 ? (myIdx + 1) + (myIdx === 0 ? 'er' : 'e') : '—';
+        setEl('flLigueAppRank', myRank);
+        setEl('flLigueProfRank', myRank);
+        setEl('flLigueProfPts', (myPts > 0 ? myPts.toLocaleString('fr') + ' pts' : 'Pas encore'));
+
+        var pct = Math.min(100, Math.max(0, Math.round((myPts / topPts) * 100)));
+        var appBar = document.getElementById('flLigueAppBar');
+        var profBar = document.getElementById('flLigueProfBar');
+        if(appBar) appBar.style.width = pct + '%';
+        if(profBar) profBar.style.width = pct + '%';
+
+        var appTip = document.getElementById('flLigueAppTip');
+        var profTip = document.getElementById('flLigueProfTip');
+        var tipMsg = '';
+        var isTop3 = myIdx >= 0 && myIdx <= 2;
+        if(isTop3){
+          tipMsg = '✨ Tu es dans le top 3 — tiens bon !';
+          if(appTip){ appTip.textContent = tipMsg; appTip.className = 'fl-ligue-tip top3'; }
+          if(profTip){ profTip.textContent = tipMsg; profTip.className = 'fl-ligue-tip top3'; }
+        } else if(myPts < 100){
+          tipMsg = 'Encore ' + (100 - myPts) + ' pts pour être éligible';
+          if(appTip){ appTip.textContent = tipMsg; appTip.className = 'fl-ligue-tip'; }
+          if(profTip){ profTip.textContent = tipMsg; profTip.className = 'fl-ligue-tip'; }
+        } else {
+          var diff = Math.max(0, top3Pts - myPts);
+          tipMsg = diff > 0 ? 'Encore ' + diff + ' pts pour atteindre le top 3 !' : 'Bientôt dans le top 3 !';
+          if(appTip){ appTip.textContent = tipMsg; appTip.className = 'fl-ligue-tip'; }
+          if(profTip){ profTip.textContent = tipMsg; profTip.className = 'fl-ligue-tip'; }
+        }
+      })
+      .catch(function(){});
+  };
+
+  // 5. MODAL CLASSEMENT COMPLET
+  window.flShowClassementModal = function(){
+    var modal = document.getElementById('flLigueModal');
+    if(!modal) return;
+    var now = new Date();
+    var monthName = now.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'});
+    var titleEl = document.getElementById('flLigueModalTitle');
+    var subEl = document.getElementById('flLigueModalSubtitle');
+    if(titleEl) titleEl.textContent = 'Classement ' + monthName;
+    if(subEl) subEl.textContent = 'Top 50 toutes écoles confondues';
+
+    var listEl = document.getElementById('flLigueList');
+    if(listEl) listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#9A8FBF">Chargement...</div>';
+
+    modal.classList.add('open');
+
+    var u = _getUser();
+    var myPseudo = u ? u.pseudo : null;
+
+    fetch(SB_URL_FL + '/rest/v1/joueurs?select=pseudo,prenom,ecole,pts_total&pts_total=gte.0&order=pts_total.desc&limit=50', {headers: _hdrs()})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows){
+        if(!listEl) return;
+        if(!Array.isArray(rows) || !rows.length){
+          listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#9A8FBF">Pas encore de classement.</div>';
+          return;
+        }
+        var html = '';
+        for(var i = 0; i < rows.length; i++){
+          var r = rows[i];
+          var rank = i + 1;
+          var medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
+          var isMe = myPseudo && r.pseudo === myPseudo;
+          var bg = isMe ? 'rgba(176,108,228,.18)' : (rank <= 3 ? 'rgba(244,168,58,.06)' : 'rgba(255,255,255,.02)');
+          var border = isMe ? '1px solid rgba(176,108,228,.5)' : '1px solid rgba(255,255,255,.05)';
+          var ecoleStr = r.ecole ? ' · ' + r.ecole : '';
+          var medalStyle = 'font-size:14px;font-weight:800;color:' + (rank <= 3 ? '#F4A83A' : '#9A8FBF') + ';min-width:36px';
+          var nameStyle = 'flex:1;font-size:13px;font-weight:' + (isMe ? '800' : '600') + ';color:#fff';
+          var ptsStyle = 'font-size:13px;font-weight:800;color:#F4A83A';
+          html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:' + bg + ';border:' + border + ';border-radius:10px;margin-bottom:6px">';
+          html += '<div style="' + medalStyle + '">' + medal + '</div>';
+          html += '<div style="' + nameStyle + '">' + (r.prenom || r.pseudo) + (isMe ? ' (toi)' : '') + '<div style="font-size:10px;color:#9A8FBF;font-weight:500;margin-top:2px">' + (r.pseudo || '') + ecoleStr + '</div></div>';
+          html += '<div style="' + ptsStyle + '">' + (r.pts_total || 0) + ' pts</div>';
+          html += '</div>';
+        }
+        listEl.innerHTML = html;
+      })
+      .catch(function(){
+        if(listEl) listEl.innerHTML = '<div style="text-align:center;padding:24px;color:#E84855">Erreur chargement</div>';
+      });
+  };
+
+  window.flCloseLigueModal = function(){
+    var modal = document.getElementById('flLigueModal');
+    if(modal) modal.classList.remove('open');
+  };
+
+  // 6. INIT
+  function _init(){
+    _injectLigueBlocs();
+    _setupGainsClickable();
+    setTimeout(function(){
+      window.flowinUpdateAvatar();
+      window.flowinLoadLigueEnCours();
+    }, 600);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', _init);
+  } else {
+    _init();
+  }
+})();
+</script>
+
