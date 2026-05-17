@@ -1267,7 +1267,7 @@ window.addEventListener('unhandledrejection', function(e){
     <div class="cta-bottom">
       <h2>Prêt·e à cartonner le bac ?</h2>
       <p>Gratuit · Sans téléchargement · Accessible partout</p>
-      <button onclick="switchMode('inscription')" style="display:block;width:100%;max-width:340px;margin:20px auto 6px;padding:17px;background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:none;border-radius:16px;font-family:inherit;font-size:17px;font-weight:800;color:#fff;cursor:pointer">🚀 Démarrer maintenant</button>
+      <button onclick="switchMode('complete-profil')" style="display:block;width:100%;max-width:340px;margin:20px auto 6px;padding:17px;background:linear-gradient(135deg,#B06CE4,#7B4FBF);border:none;border-radius:16px;font-family:inherit;font-size:17px;font-weight:800;color:#fff;cursor:pointer">🚀 Démarrer maintenant</button>
       <button onclick="switchMode('recup')" style="display:block;width:100%;max-width:340px;margin:0 auto 10px;padding:13px;background:transparent;border:1px solid rgba(176,108,228,.4);border-radius:16px;font-family:inherit;font-size:14px;font-weight:600;color:#B06CE4;cursor:pointer">🔍 J'ai déjà un compte</button>
       <div style="margin-top:8px;padding:16px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.08);text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
         <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.7">
@@ -1522,7 +1522,7 @@ window.addEventListener('unhandledrejection', function(e){
 
         <div style="border-top:1px solid rgba(176,108,228,.15);margin-top:14px;padding-top:14px;text-align:center">
           <div style="font-size:12px;color:#9A8FBF;margin-bottom:8px">Pas encore de compte ?</div>
-          <button onclick="switchMode('inscription')" style="background:transparent;color:#B06CE4;border:1px solid rgba(176,108,228,.4);border-radius:12px;padding:10px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">
+          <button onclick="switchMode('complete-profil')" style="background:transparent;color:#B06CE4;border:1px solid rgba(176,108,228,.4);border-radius:12px;padding:10px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">
             ✨ Créer mon compte
           </button>
         </div>
@@ -1557,7 +1557,7 @@ window.addEventListener('unhandledrejection', function(e){
       <!-- Bannière "Déjà inscrit" -->
       <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(176,108,228,.12);border:1px solid rgba(176,108,228,.25);border-radius:12px;padding:10px 14px;margin-bottom:16px">
         <span style="font-size:13px;color:#9A8FBF">Déjà un compte ?</span>
-        <button onclick="switchMode('inscription')" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">
+        <button onclick="switchMode('complete-profil')" style="background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">
           🔑 Se connecter
         </button>
       </div>
@@ -1588,7 +1588,12 @@ window.addEventListener('unhandledrejection', function(e){
         </div>
 
         <div>
-          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Téléphone *</label>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email * <span style="color:rgba(176,108,228,.6);font-weight:400;text-transform:none">(pour te reconnecter)</span></label>
+          <input id="cpEmail" type="email" inputmode="email" autocomplete="email" class="finput" placeholder="ton@email.fr">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Téléphone <span style="color:rgba(176,108,228,.6);font-weight:400;text-transform:none">(optionnel)</span></label>
           <input id="cpTel" type="tel" class="finput" placeholder="+33 6 12 34 56 78">
         </div>
 
@@ -1616,19 +1621,19 @@ window.addEventListener('unhandledrejection', function(e){
           <input id="cpDdn" type="date" class="finput" style="color:#1E1048;background:#fff" max="2012-12-31" min="2000-01-01">
         </div>
 
-        <!-- 🔐 MOT DE PASSE (création obligatoire pour pouvoir se reconnecter plus tard) -->
+        <!-- 🔐 MOT DE PASSE (optionnel — pour sécuriser ton compte) -->
         <div style="background:rgba(176,108,228,.06);border:1px solid rgba(176,108,228,.2);border-radius:12px;padding:14px;margin-top:4px">
-          <div style="font-size:11px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🔐 Définis ton mot de passe</div>
-          <div style="font-size:11px;color:#9A8FBF;margin-bottom:10px;line-height:1.5">Pour pouvoir te reconnecter sans recevoir d'email à chaque fois.</div>
+          <div style="font-size:11px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🔐 Mot de passe <span style="opacity:.6;font-weight:400;text-transform:none">(optionnel)</span></div>
+          <div style="font-size:11px;color:#9A8FBF;margin-bottom:10px;line-height:1.5">Si tu veux protéger ton compte, choisis un mot de passe. Sinon laisse vide (tu pourras te reconnecter avec ton email seulement).</div>
 
           <div style="margin-bottom:10px;position:relative">
-            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe *</label>
-            <input id="cpPwd" type="password" autocomplete="new-password" placeholder="Min. 6 caractères" minlength="6" class="finput" style="padding-right:40px">
+            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Mot de passe</label>
+            <input id="cpPwd" type="password" autocomplete="new-password" placeholder="Min. 6 caractères (ou vide)" minlength="6" class="finput" style="padding-right:40px">
             <button type="button" onclick="(function(b){var i=document.getElementById('cpPwd');if(i.type==='password'){i.type='text';b.textContent='🙈'}else{i.type='password';b.textContent='👁'}})(this)" style="position:absolute;right:10px;top:32px;background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:14px">👁</button>
           </div>
 
           <div style="position:relative">
-            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Confirme *</label>
+            <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Confirme</label>
             <input id="cpPwdConfirm" type="password" autocomplete="new-password" placeholder="Retape le mot de passe" class="finput" style="padding-right:40px">
             <button type="button" onclick="(function(b){var i=document.getElementById('cpPwdConfirm');if(i.type==='password'){i.type='text';b.textContent='🙈'}else{i.type='password';b.textContent='👁'}})(this)" style="position:absolute;right:10px;top:32px;background:none;border:none;color:#9A8FBF;cursor:pointer;font-size:14px">👁</button>
           </div>
@@ -3897,7 +3902,7 @@ function showSignupPrompt(targetMode) {
 
   document.getElementById('sp-btn-signup').addEventListener('click', function(){
     ov.remove();
-    switchMode('inscription');
+    switchMode('complete-profil');
   });
   document.getElementById('sp-btn-later').addEventListener('click', function(){
     ov.remove();
@@ -4277,6 +4282,7 @@ async function saveCompleteProfile() {
   var pseudo  = (document.getElementById('cpPseudo')?.value || '').trim();
   var prenom  = (document.getElementById('cpPrenom')?.value || '').trim();
   var nom     = (document.getElementById('cpNom')?.value || '').trim();
+  var email   = (document.getElementById('cpEmail')?.value || '').trim().toLowerCase();
   var tel     = (document.getElementById('cpTel')?.value || '').trim();
   var ecole   = (document.getElementById('cpEcole')?.value || '').trim();
   var classe  = (document.getElementById('cpClasse')?.value || '').trim();
@@ -4287,19 +4293,19 @@ async function saveCompleteProfile() {
   var accord  = document.getElementById('cpAccord')?.checked || false;
   var rgpd    = document.getElementById('cpRgpd')?.checked || false;
 
-  // ── VALIDATION STRICTE — tous les champs obligatoires ──
+  // ── VALIDATION STRICTE — champs obligatoires (email, pas password) ──
   var missing = [];
   if (!pseudo) missing.push('Pseudo');
   if (!prenom) missing.push('Prénom');
   if (!nom)    missing.push('Nom');
+  if (!email || email.indexOf('@') < 0) missing.push('Email valide');
   if (!ecole)  missing.push('École');
   if (!classe) missing.push('Classe');
   if (!genre)  missing.push('Genre');
   if (!ddn)    missing.push('Date de naissance');
-  if (!pwd)    missing.push('Mot de passe');
   if (!rgpd)   missing.push('Accord RGPD');
 
-  // Validations password additionnelles
+  // Password OPTIONNEL — mais si fourni, valider
   if (pwd && pwd.length < 6) {
     showToast('⚠️ Mot de passe trop court (min. 6 caractères)', 'error');
     var pwdEl = document.getElementById('cpPwd');
@@ -4315,8 +4321,7 @@ async function saveCompleteProfile() {
 
   if (missing.length > 0) {
     showToast('⚠️ Champs obligatoires : ' + missing.join(', '), 'error');
-    // Marquer visuellement les champs manquants
-    ['cpPseudo','cpPrenom','cpNom','cpEcole','cpClasse','cpDdn','cpPwd','cpPwdConfirm'].forEach(function(id) {
+    ['cpPseudo','cpPrenom','cpNom','cpEmail','cpEcole','cpClasse','cpDdn'].forEach(function(id) {
       var el = document.getElementById(id);
       if(el && !el.value.trim()) el.style.borderColor = '#E84855';
       else if(el) el.style.borderColor = '';
@@ -4337,67 +4342,17 @@ async function saveCompleteProfile() {
 
   if (btn) { btn.disabled = true; btn.textContent = 'Sauvegarde...'; }
 
-  // Récupérer la session Auth si disponible
-  var userId = null;
-  var email  = userProfile.email || '';
-  try {
-    if (sbClient) {
-      var sessionRes = await sbClient.auth.getSession();
-      if (sessionRes.data && sessionRes.data.session) {
-        userId = sessionRes.data.session.user.id;
-        email  = sessionRes.data.session.user.email || email;
+  // ═════ BYPASS Supabase Auth — INSERT/UPSERT direct dans joueurs ═════
+  // (Pas d'email de confirmation, pas de Magic Link, juste un INSERT)
 
-        // ── Définir le mot de passe sur le compte Auth ──
-        if (pwd && pwd.length >= 6) {
-          try {
-            var pwdRes = await sbClient.auth.updateUser({ password: pwd });
-            if (pwdRes.error) {
-              console.warn('[updateUser password]', pwdRes.error.message);
-              // Ne bloque pas la sauvegarde du profil pour autant
-              if(!pwdRes.error.message.includes('same') && !pwdRes.error.message.includes('identical')) {
-                showToast('⚠️ Mot de passe non sauvegardé : ' + pwdRes.error.message, 'warning');
-              }
-            } else {
-              console.log('[saveProfile] Password set OK');
-            }
-          } catch(pe) { console.error('[updateUser password]', pe); }
-        }
-      }
-    }
-  } catch(e) { console.error('[getSession]', e); }
-
-  // Mettre à jour l'état local dans tous les cas
+  // Mettre à jour l'état local immédiatement
   userProfile = { pseudo: pseudo, prenom: prenom, nom: nom, ecole: ecole, classe: classe, email: email, genre: genre };
   userInscribed = true;
   QS.playerName = pseudo || prenom;
   try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+  try { localStorage.setItem('flowin_pwd_hash', pwd ? btoa(pwd).slice(0,20) : ''); } catch(e){}
 
-  // Sauvegarder dans Supabase profils si session Auth disponible
-  if (userId && sbClient) {
-    var profil = {
-      id: userId,
-      email: email,
-      pseudo: pseudo,
-      prenom: prenom,
-      nom: nom,
-      ecole: ecole,
-      classe: classe,
-      genre: genre,
-      ddn: ddn || null,
-      accord_parental: accord,
-      rgpd_accepted: rgpd,
-      rgpd_at: new Date().toISOString(),
-      profil_complet: true,
-      updated_at: new Date().toISOString()
-    };
-    try {
-      var r = await sbClient.from('profils').upsert(profil);
-      if (r.error) console.error('[upsert profil]', r.error);
-      if (ecole) sbClient.rpc('upsert_ecole', { p_nom: ecole }).catch(function(){});
-    } catch(e) { console.error('[save profil supabase]', e); }
-  }
-
-  // Sauvegarder dans joueurs (table principale Flowin — tous les élèves)
+  // Sauvegarder dans joueurs (table principale — UPSERT par email)
   if(SB_ENABLED) {
     var hdrs = {
       'Content-Type': 'application/json',
@@ -4422,44 +4377,38 @@ async function saveCompleteProfile() {
       streak:    0,
       ref:       (function(){ try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
     };
-    // UPSERT : crée ou met à jour le joueur (merge sur email si existant)
-    // PATCH d'abord (update du row créé au signup) — évite les doublons
+    // PATCH d'abord (existe déjà ?) — si 0 ligne → POST
     var patchHdrs = Object.assign({}, hdrs, {'Prefer':'return=representation'});
-    fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(email), {
-      method: 'PATCH',
-      headers: patchHdrs,
-      body: JSON.stringify({
-        pseudo: pseudo, prenom: prenom, nom: nom, ecole: ecole,
-        classe: classe, genre: genre, ddn: ddn || null,
-        updated_at: new Date().toISOString()
-      })
-    }).then(function(r){
-      return r.ok ? r.json() : [];
-    }).then(function(updated){
-      // Si aucune ligne PATCHée → c'est qu'il n'y avait pas de row précédent → POST
+    try {
+      var patchRes = await fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(email), {
+        method: 'PATCH',
+        headers: patchHdrs,
+        body: JSON.stringify({
+          pseudo: pseudo, prenom: prenom, nom: nom, ecole: ecole,
+          classe: classe, genre: genre, ddn: ddn || null, tel: tel,
+          profil_complet: true,
+          updated_at: new Date().toISOString()
+        })
+      });
+      var updated = patchRes.ok ? await patchRes.json() : [];
       if(!Array.isArray(updated) || updated.length === 0) {
-        fetch(SUPABASE_URL + '/rest/v1/joueurs', {
+        // Pas de ligne existante → POST nouveau joueur
+        await fetch(SUPABASE_URL + '/rest/v1/joueurs', {
           method: 'POST',
           headers: hdrs,
           body: JSON.stringify(joueurPayload)
-        }).catch(function(){});
+        });
       }
-    }).catch(function(){
-      // En cas d'erreur réseau, fallback POST
-      fetch(SUPABASE_URL + '/rest/v1/joueurs', {
-        method: 'POST',
-        headers: hdrs,
-        body: JSON.stringify(joueurPayload)
-      }).catch(function(){});
-    });
+    } catch(e) {
+      console.warn('[saveCompleteProfile supabase]', e);
+      // On continue même si Supabase échoue — le profil est en local
+    }
   }
 
   // Dans tous les cas → continuer vers l'app
   try {
     logConnexion(pseudo || prenom);
     showToast('Bienvenue ' + (pseudo || prenom) + ' ! 🎉', 'success');
-    // Activer notifications push après inscription
-    if(typeof flowinPushAskAfterLogin === 'function') flowinPushAskAfterLogin();
     showWelcomeBack();
   } catch(e) {
     console.error('[saveCompleteProfile]', e);
@@ -6432,7 +6381,7 @@ function trackShare(method){
       showSignupPrompt('parrainage');
     } else {
       showShareToast('🎯 Inscris-toi en 30 secondes pour partager et gagner des points !');
-      setTimeout(function(){ switchMode('inscription'); }, 1500);
+      setTimeout(function(){ switchMode('complete-profil'); }, 1500);
     }
     return;
   }
@@ -9003,7 +8952,7 @@ function initRecupView() {
   var inp       = document.getElementById('recupPseudo');
   var result    = document.getElementById('recupResult');
 
-  if(backBtn) backBtn.addEventListener('click', function(){ switchMode('inscription'); });
+  if(backBtn) backBtn.addEventListener('click', function(){ switchMode('complete-profil'); });
 
   if(searchBtn) searchBtn.addEventListener('click', function() {
     var pseudo = inp ? inp.value.trim() : '';
