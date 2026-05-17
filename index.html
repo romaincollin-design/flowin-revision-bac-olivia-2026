@@ -1294,44 +1294,12 @@ window.addEventListener('unhandledrejection', function(e){
 
       <div id="ml-step-email">
         <div style="text-align:center;margin-bottom:22px">
-          <div style="font-size:18px;font-weight:800;color:#fff;font-family:Syne,sans-serif;margin-bottom:6px">Connexion sans mot de passe</div>
-          <div style="font-size:12px;color:#9A8FBF;line-height:1.5">Reçois un lien magique par email.<br>Pas besoin de retenir un mot de passe ! ✨</div>
+          <div style="font-size:18px;font-weight:800;color:#fff;font-family:Syne,sans-serif;margin-bottom:6px">Créer mon compte</div>
+          <div style="font-size:12px;color:#9A8FBF;line-height:1.5">Choisis un email et un mot de passe.<br>C'est tout ! ✨</div>
         </div>
 
-        <div style="margin-bottom:14px">
-          <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
-          <input id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
-            style="width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(176,108,228,.3);border-radius:12px;padding:13px 14px;color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;outline:none">
-        </div>
-
-        <div id="mlError" style="display:none;background:rgba(232,72,85,.1);border:1px solid rgba(232,72,85,.3);border-radius:10px;padding:10px 12px;font-size:12px;color:#E84855;margin-bottom:12px;text-align:center"></div>
-
-        <button id="btnMagicLink" style="width:100%;background:linear-gradient(135deg,#B06CE4,#7B4FBF);color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px">
-          🔗 Recevoir un lien magique
-        </button>
-
-        <!-- Séparateur OU -->
-        <div style="display:flex;align-items:center;gap:10px;margin:14px 0">
-          <div style="flex:1;height:1px;background:rgba(176,108,228,.2)"></div>
-          <span style="font-size:11px;color:#9A8FBF;font-weight:600">OU</span>
-          <div style="flex:1;height:1px;background:rgba(176,108,228,.2)"></div>
-        </div>
-
-        <!-- Bouton Google Sign-In -->
-        <button id="btnGoogleSignIn" onclick="signInWithGoogle()" style="width:100%;background:#fff;color:#1A1730;border:1.5px solid rgba(176,108,228,.3);border-radius:14px;padding:13px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
-          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></g></svg>
-          Continuer avec Google
-        </button>
-
-        <!-- Toggle vers compte classique -->
-        <button id="btnShowPwdForm" onclick="togglePwdForm()" style="width:100%;background:transparent;color:#9A8FBF;border:1px solid rgba(176,108,228,.2);border-radius:14px;padding:13px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-          🔐 Créer un compte avec mot de passe
-        </button>
-
-        <!-- Form compte classique (caché par défaut) -->
-        <div id="pwdFormBox" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(176,108,228,.15)">
-          <div style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;text-align:center">Compte classique</div>
-
+        <!-- Form compte classique (toujours visible) -->
+        <div id="pwdFormBox" style="display:block">
           <div style="margin-bottom:10px">
             <label style="font-size:11px;font-weight:700;color:#9A8FBF;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Email</label>
             <input id="pwdEmail" type="email" inputmode="email" autocomplete="email" placeholder="ton@email.fr"
@@ -1527,18 +1495,6 @@ window.addEventListener('unhandledrejection', function(e){
 
       <!-- ÉTAPE 1 : Choix méthode -->
       <div id="recup-step-choice">
-
-        <!-- Bouton Google -->
-        <button id="recupBtnGoogle" onclick="signInWithGoogle()" style="width:100%;background:#fff;color:#1A1730;border:1.5px solid rgba(176,108,228,.3);border-radius:14px;padding:13px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px">
-          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></g></svg>
-          Continuer avec Google
-        </button>
-
-        <div style="display:flex;align-items:center;gap:10px;margin:14px 0">
-          <div style="flex:1;height:1px;background:rgba(176,108,228,.2)"></div>
-          <span style="font-size:11px;color:#9A8FBF;font-weight:600">OU</span>
-          <div style="flex:1;height:1px;background:rgba(176,108,228,.2)"></div>
-        </div>
 
         <!-- Form email/password -->
         <div style="margin-bottom:12px">
@@ -3788,7 +3744,14 @@ const SB_ENABLED = true; // ← mettre false pour mode démo/offline
 // ── SUPABASE JS CLIENT (Auth) ──
 var sbClient = null;
 try {
-  sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      flowType: 'pkce',           // PKCE résiste au pré-scan email (Gmail/Outlook)
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true
+    }
+  });
 } catch(e) { console.error('[sbClient]', e); }
 
 // ── AUTH STATE : détecter connexion/déconnexion ──
@@ -3892,7 +3855,7 @@ async function sendMagicLink() {
   try {
     var r = await sbClient.auth.signInWithOtp({
       email: email,
-      options: { emailRedirectTo: 'https://flowrevis.vercel.app' }
+      options: { emailRedirectTo: window.location.origin + window.location.pathname }
     });
     if (r.error) {
       showToast('Erreur : ' + r.error.message, 'error');
@@ -4718,19 +4681,62 @@ function applyFormConfig() {
     return;
   }
 
-  // ── Détecter lien d'activation (hash Supabase dans l'URL) ──
+  // ── Détecter retour d'auth (Magic Link / Google OAuth) ──
   var urlHash = window.location.hash || '';
   var urlSearch = window.location.search || '';
-  var isActivation = urlSearch.includes('mode=activation')
+  var isAuthCallback = urlSearch.includes('mode=activation')
     || urlHash.includes('access_token')
     || urlHash.includes('type=recovery')
-    || urlHash.includes('type=signup');
+    || urlHash.includes('type=signup')
+    || urlHash.includes('type=magiclink')
+    || urlSearch.includes('code=');
 
-  if(isActivation && sbClient) {
+  if(isAuthCallback && sbClient) {
+    // FIX urgent (17/05) — vérifier si le user a déjà un profil joueur
+    // Si oui → welcome direct. Si non → écran complete-profil.
     sbClient.auth.getSession().then(function(res) {
       hideSplash();
-      if(res.data && res.data.session) {
-        switchMode('activation');
+      if(res.data && res.data.session && res.data.session.user) {
+        var u = res.data.session.user;
+        // Nettoyer l'URL (enlever le hash) pour éviter de re-détecter au refresh
+        try {
+          history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]code=[^&]*/g,''));
+        } catch(e){}
+        var hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
+        fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.'
+          + encodeURIComponent(u.email||'') + '&select=*&limit=1', {headers:hdrs})
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .then(function(rows) {
+            if(rows && rows.length && rows[0].pseudo) {
+              // Profil existant complet → welcome direct
+              var j = rows[0];
+              userProfile = {
+                pseudo: j.pseudo || '', prenom: j.prenom || '',
+                nom: j.nom || '', ecole: j.ecole || '',
+                classe: j.classe || '', email: j.email || u.email || '',
+                genre: j.genre || '', pts: j.pts_total || 0
+              };
+              userInscribed = true;
+              QS.playerName = userProfile.pseudo || userProfile.prenom;
+              try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+              showWelcomeBack();
+            } else {
+              // Nouveau user OAuth/Magic → préremplir + complete-profil
+              userProfile = userProfile || {};
+              userProfile.email = u.email || '';
+              if(u.user_metadata) {
+                if(u.user_metadata.given_name) userProfile.prenom = u.user_metadata.given_name;
+                if(u.user_metadata.family_name) userProfile.nom = u.user_metadata.family_name;
+              }
+              switchMode('complete-profil');
+            }
+          })
+          .catch(function(){
+            // En cas d'erreur fetch, fallback vers complete-profil (mieux que dead-end)
+            userProfile = userProfile || {};
+            userProfile.email = u.email || '';
+            switchMode('complete-profil');
+          });
       } else {
         checkLS();
       }
@@ -11160,7 +11166,7 @@ if (typeof window.SB_ENABLED !== 'undefined') {
   if(btnForgot) btnForgot.addEventListener('click', async function(){
     var email=(document.getElementById('loginEmail').value||'').trim();
     if(!email){ var e=document.getElementById('loginError'); e.textContent='Entre ton email d\'abord.'; e.style.display=''; return; }
-    await sbClient.auth.resetPasswordForEmail(email, {redirectTo:'https://flowrevis.vercel.app/'});
+    await sbClient.auth.resetPasswordForEmail(email, {redirectTo: window.location.origin + window.location.pathname});
     showToast('Email de réinitialisation envoyé 📬', 'success');
   });
 
