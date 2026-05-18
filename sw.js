@@ -1,5 +1,5 @@
-// Flowin Service Worker — v7 (push + no cache index)
-const CACHE = 'flowin-v7';
+// Flowin Service Worker — v8 (auth direct via joueurs.password_hash)
+const CACHE = 'flowin-v8';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
