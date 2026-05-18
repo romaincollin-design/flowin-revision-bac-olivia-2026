@@ -6144,10 +6144,16 @@ function renderStats(){
   // ── Gains ──
   var gainsEl=document.getElementById('sp-gains');
   var gainsList=document.getElementById('sp-gains-list');
+  var gainsEmpty=document.getElementById('sp-gains-empty');
+  var gainsHelper=document.getElementById('sp-gains-helper');
+  var gainsCount = document.getElementById('sp-gains-count');
   if(gainsEl&&gainsList&&typeof window.MY_GAINS!=='undefined'&&window.MY_GAINS.length){
-    gainsEl.style.display='block';
-    var gainsCount = document.getElementById('sp-gains-count');
-    if(gainsCount) gainsCount.textContent = window.MY_GAINS.length + ' code' + (window.MY_GAINS.length>1?'s':'');
+    if(gainsEmpty) gainsEmpty.style.display='none';
+    if(gainsHelper) gainsHelper.style.display='block';
+    if(gainsCount) {
+      gainsCount.textContent = window.MY_GAINS.length + ' code' + (window.MY_GAINS.length>1?'s':'');
+      gainsCount.style.display='inline-block';
+    }
     gainsList.innerHTML=window.MY_GAINS.map(function(g){
       var isUsed = g.utilise;
       return '<div style="background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;margin-bottom:8px">'+
@@ -6170,7 +6176,10 @@ function renderStats(){
       '</div>';
     }).join('');
   } else if(gainsEl){
-    gainsEl.style.display='none';
+    if(gainsList) gainsList.innerHTML='';
+    if(gainsEmpty) gainsEmpty.style.display='block';
+    if(gainsHelper) gainsHelper.style.display='none';
+    if(gainsCount) gainsCount.style.display='none';
   }
   }catch(e){console.error('[renderStats]',e);}
 }
@@ -10099,13 +10108,18 @@ async function dfLoadPrivateRooms() {
       <div id="sp-theme-cards"></div>
     </div>
 
-    <!-- Gains obtenus -->
-    <div id="sp-gains" style="display:none" class="sp3-gains-card">
+    <!-- Gains obtenus (toujours visible, état vide si pas de lot) -->
+    <div id="sp-gains" class="sp3-gains-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div class="sp3-gains-title" style="margin-bottom:0">🏅 Mes récompenses</div>
-        <span style="font-size:10px;color:#22C9A0;font-weight:600;background:rgba(34,201,160,.1);padding:3px 8px;border-radius:20px" id="sp-gains-count"></span>
+        <span style="font-size:10px;color:#22C9A0;font-weight:600;background:rgba(34,201,160,.1);padding:3px 8px;border-radius:20px;display:none" id="sp-gains-count"></span>
       </div>
-      <div style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:12px">Présente le code au partenaire pour profiter de ton offre</div>
+      <div id="sp-gains-empty" style="text-align:center;padding:20px 12px">
+        <div style="font-size:42px;opacity:.4;margin-bottom:10px">🎁</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);font-weight:700;margin-bottom:6px">Aucun lot pour le moment</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.45);line-height:1.5">Joue et finis en haut du classement mensuel<br>pour gagner ta première récompense ✨</div>
+      </div>
+      <div id="sp-gains-helper" style="display:none;font-size:11px;color:rgba(255,255,255,.55);margin-bottom:12px">Présente le code au partenaire pour profiter de ton offre</div>
       <div id="sp-gains-list"></div>
     </div>
 
