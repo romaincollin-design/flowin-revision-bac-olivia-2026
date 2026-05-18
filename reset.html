@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Flowin — Reset</title>
+<style>
+body { margin: 0; padding: 0; background: linear-gradient(135deg,#1E1048 0%,#2D1A66 100%); color: #fff; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+.box { max-width: 380px; background: rgba(255,255,255,0.06); border: 1px solid rgba(176,108,228,0.3); border-radius: 20px; padding: 32px 24px; text-align: center; }
+h1 { font-size: 24px; margin: 0 0 12px; font-weight: 800; }
+p { font-size: 14px; color: #C8B8F0; line-height: 1.5; margin: 8px 0; }
+.spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid rgba(176,108,228,0.3); border-top-color: #B06CE4; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.log { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; font-family: ui-monospace, monospace; font-size: 11px; text-align: left; margin-top: 16px; max-height: 200px; overflow-y: auto; }
+.log .ok { color: #34D399; }
+.log .err { color: #F87171; }
+.btn { display: inline-block; background: linear-gradient(135deg,#B06CE4,#7B4FBF); color: #fff; padding: 14px 28px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 15px; margin-top: 16px; border: none; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div style="font-size:48px">🧹</div>
+  <h1>Nettoyage Flowin</h1>
+  <p>Suppression du cache et du Service Worker bloqué…</p>
+  <div class="spinner" id="spin"></div>
+  <div class="log" id="log"></div>
+  <a href="https://flowrevis.vercel.app/" class="btn" id="goBtn" style="display:none">→ Aller à l'app</a>
+</div>
+
+<script>
+var log = document.getElementById('log');
+var spin = document.getElementById('spin');
+var goBtn = document.getElementById('goBtn');
+
+function logLine(msg, cls) {
+  var div = document.createElement('div');
+  if(cls) div.className = cls;
+  div.textContent = msg;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+async function reset() {
+  logLine('▶ Début du nettoyage…');
+
+  // 1. Désinscrire tous les Service Workers
+  if('serviceWorker' in navigator) {
+    try {
+      var regs = await navigator.serviceWorker.getRegistrations();
+      logLine('Service Workers trouvés : ' + regs.length);
+      for(var i = 0; i < regs.length; i++) {
+        var ok = await regs[i].unregister();
+        logLine('  • Désinscrit : ' + (ok ? 'OK' : 'FAIL') + ' (' + (regs[i].scope || '?') + ')', ok ? 'ok' : 'err');
+      }
+    } catch(e) {
+      logLine('Erreur SW : ' + e.message, 'err');
+    }
+  } else {
+    logLine('Pas de Service Worker support');
+  }
+
+  // 2. Clear tous les caches
+  if('caches' in window) {
+    try {
+      var keys = await caches.keys();
+      logLine('Caches trouvés : ' + keys.length);
+      for(var i = 0; i < keys.length; i++) {
+        await caches.delete(keys[i]);
+        logLine('  • Cache supprimé : ' + keys[i], 'ok');
+      }
+    } catch(e) {
+      logLine('Erreur cache : ' + e.message, 'err');
+    }
+  }
+
+  // 3. Clear localStorage SAUF le profil (pour ne pas perdre l'auto-login)
+  try {
+    var profile = localStorage.getItem('flowin_profile');
+    var ref = localStorage.getItem('flowin_ref');
+    localStorage.clear();
+    if(profile) localStorage.setItem('flowin_profile', profile);
+    if(ref) localStorage.setItem('flowin_ref', ref);
+    logLine('localStorage nettoyé (profil préservé)', 'ok');
+  } catch(e) {
+    logLine('Erreur localStorage : ' + e.message, 'err');
+  }
+
+  // 4. Clear sessionStorage
+  try {
+    sessionStorage.clear();
+    logLine('sessionStorage nettoyé', 'ok');
+  } catch(e) {}
+
+  logLine('✅ Nettoyage terminé !');
+  logLine('▶ Redirection dans 2 secondes…');
+
+  spin.style.display = 'none';
+  goBtn.style.display = 'inline-block';
+
+  setTimeout(function() {
+    window.location.href = 'https://flowrevis.vercel.app/?fresh=' + Date.now();
+  }, 2000);
+}
+
+reset();
+</script>
+</body>
+</html>
