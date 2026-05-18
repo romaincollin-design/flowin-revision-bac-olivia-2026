@@ -3994,6 +3994,21 @@ async function deleteMyAccount() {
   setTimeout(function(){ window.location.href = window.location.pathname; }, 2000);
 }
 
+// ── Helper : hash SHA-256 d'un mot de passe (avec sel statique) ──
+async function hashPwd(pwd) {
+  if (!pwd) return null;
+  try {
+    var encoder = new TextEncoder();
+    var data = encoder.encode(pwd + '|flowin_salt_2026');
+    var buf = await crypto.subtle.digest('SHA-256', data);
+    var arr = Array.from(new Uint8Array(buf));
+    return arr.map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  } catch(e) {
+    // Fallback btoa si crypto.subtle indisponible
+    return 'b64:' + btoa(pwd + '|flowin_salt_2026');
+  }
+}
+
 // ── AUTH : Login compte existant (depuis v-recup) ──
 async function loginWithPassword() {
   var email = (document.getElementById('recupEmail').value || '').trim().toLowerCase();
@@ -4006,47 +4021,79 @@ async function loginWithPassword() {
     err.style.display = 'block';
     return;
   }
-  if(!pwd) {
-    err.textContent = '❌ Entre ton mot de passe.';
-    err.style.display = 'block';
-    return;
-  }
   err.style.display = 'none';
   btn.disabled = true;
   btn.innerHTML = '⏳ Connexion...';
 
-  if(!sbClient) {
-    err.textContent = '❌ Erreur de connexion. Recharge la page.';
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = '🔑 Se connecter';
-    return;
-  }
-
   try {
-    var res = await sbClient.auth.signInWithPassword({ email: email, password: pwd });
-    if(res.error) {
-      if(res.error.message && (res.error.message.includes('Invalid') || res.error.message.includes('credentials'))) {
-        err.textContent = '❌ Email ou mot de passe incorrect.';
-      } else if(res.error.message && res.error.message.includes('Email not confirmed')) {
-        err.textContent = '📧 Confirme d\'abord ton email (vérifie ta boîte mail).';
-      } else {
-        err.textContent = '❌ ' + res.error.message;
-      }
+    // Lookup direct dans la table joueurs (BYPASS Supabase Auth)
+    var hdrs = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    };
+    var url = SUPABASE_URL + '/rest/v1/joueurs?email=ilike.' + encodeURIComponent(email) + '&select=*&limit=1';
+    var res = await fetch(url, { headers: hdrs });
+    if(!res.ok) {
+      err.textContent = '❌ Erreur réseau. Réessaie.';
       err.style.display = 'block';
       btn.disabled = false;
       btn.innerHTML = '🔑 Se connecter';
       return;
     }
+    var rows = await res.json();
+    if(!rows || !rows.length) {
+      err.textContent = '❌ Aucun compte avec cet email. Crée-toi un compte !';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '🔑 Se connecter';
+      return;
+    }
+    var j = rows[0];
+    var hash = pwd ? await hashPwd(pwd) : null;
+
+    // Cas 1 : compte avec password_hash défini → comparer
+    if(j.password_hash) {
+      if(hash !== j.password_hash) {
+        err.textContent = '❌ Mot de passe incorrect.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '🔑 Se connecter';
+        return;
+      }
+    } else {
+      // Cas 2 : compte sans password (legacy ou créé sans pwd) → définir maintenant si fourni
+      if(pwd && hash) {
+        try {
+          await fetch(SUPABASE_URL + '/rest/v1/joueurs?email=ilike.' + encodeURIComponent(email), {
+            method: 'PATCH',
+            headers: Object.assign({}, hdrs, {'Content-Type':'application/json','Prefer':'return=minimal'}),
+            body: JSON.stringify({ password_hash: hash, updated_at: new Date().toISOString() })
+          });
+        } catch(e) {}
+      }
+      // Si pas de pwd fourni et pas de pwd en base, on accepte (mode permissif MVP)
+    }
+
+    // ✅ Login OK → restore le profil en local
+    userProfile = {
+      pseudo: j.pseudo || '', prenom: j.prenom || '', nom: j.nom || '',
+      ecole: j.ecole || '', classe: j.classe || '', email: j.email || email,
+      genre: j.genre || '', pts: j.pts_total || 0
+    };
+    userInscribed = true;
+    QS.playerName = userProfile.pseudo || userProfile.prenom;
+    QS.totalScore = j.pts_total || 0;
+    try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
+
     btn.innerHTML = '✅ Connecté !';
-    try { localStorage.setItem('flowin_signup_email', email); } catch(e){}
-    // Redirection : si profil complet → app, sinon → complete-profil
     setTimeout(function() {
-      var saved = {};
-      try { saved = JSON.parse(localStorage.getItem('flowin_profile') || '{}'); } catch(e){}
-      var complete = saved.pseudo && saved.prenom && saved.nom && saved.ecole && saved.classe;
-      switchMode(complete ? 'app' : 'complete-profil');
-    }, 600);
+      var complete = j.pseudo && j.prenom && j.nom && j.ecole && j.classe;
+      if(complete) {
+        showWelcomeBack();
+      } else {
+        switchMode('complete-profil');
+      }
+    }, 500);
   } catch(e) {
     console.error('[loginWithPassword]', e);
     err.textContent = '❌ Erreur réseau. Réessaie.';
@@ -4350,7 +4397,9 @@ async function saveCompleteProfile() {
   userInscribed = true;
   QS.playerName = pseudo || prenom;
   try { localStorage.setItem('flowin_profile', JSON.stringify(userProfile)); } catch(e){}
-  try { localStorage.setItem('flowin_pwd_hash', pwd ? btoa(pwd).slice(0,20) : ''); } catch(e){}
+
+  // Hash du password (si fourni) pour stocker dans joueurs.password_hash
+  var pwdHash = pwd ? await hashPwd(pwd) : null;
 
   // Sauvegarder dans joueurs (table principale — UPSERT par email)
   if(SB_ENABLED) {
@@ -4377,18 +4426,21 @@ async function saveCompleteProfile() {
       streak:    0,
       ref:       (function(){ try { return localStorage.getItem('flowin_ref')||''; } catch(e){ return ''; }})()
     };
+    if (pwdHash) joueurPayload.password_hash = pwdHash;
     // PATCH d'abord (existe déjà ?) — si 0 ligne → POST
     var patchHdrs = Object.assign({}, hdrs, {'Prefer':'return=representation'});
     try {
-      var patchRes = await fetch(SUPABASE_URL + '/rest/v1/joueurs?email=eq.' + encodeURIComponent(email), {
+      var patchBody = {
+        pseudo: pseudo, prenom: prenom, nom: nom, ecole: ecole,
+        classe: classe, genre: genre, ddn: ddn || null, tel: tel,
+        profil_complet: true,
+        updated_at: new Date().toISOString()
+      };
+      if (pwdHash) patchBody.password_hash = pwdHash;
+      var patchRes = await fetch(SUPABASE_URL + '/rest/v1/joueurs?email=ilike.' + encodeURIComponent(email), {
         method: 'PATCH',
         headers: patchHdrs,
-        body: JSON.stringify({
-          pseudo: pseudo, prenom: prenom, nom: nom, ecole: ecole,
-          classe: classe, genre: genre, ddn: ddn || null, tel: tel,
-          profil_complet: true,
-          updated_at: new Date().toISOString()
-        })
+        body: JSON.stringify(patchBody)
       });
       var updated = patchRes.ok ? await patchRes.json() : [];
       if(!Array.isArray(updated) || updated.length === 0) {
