@@ -11820,4 +11820,100 @@ function showPtsAnimation(pts, originEl) {
   }
 })();
 </script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   FLOWIN — MODE PREVIEW NAVIGABLE  (activé UNIQUEMENT par ?preview=1)
+   - Barre d'onglets en haut, écran par écran en dessous
+   - Toutes les fonctions réelles opérantes (switchMode)
+   - Écritures Supabase (POST/PUT/PATCH/DELETE) neutralisées
+   - AUCUN effet si ?preview=1 est absent → zéro régression
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var isPreview = false;
+  try { isPreview = new URLSearchParams(location.search).get('preview') === '1'; } catch(e){ return; }
+  if(!isPreview) return;
+
+  /* 1) Neutraliser toutes les écritures base */
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts){
+    try {
+      var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      var m = ((opts && opts.method) || 'GET').toUpperCase();
+      if((m==='POST'||m==='PUT'||m==='PATCH'||m==='DELETE') && /supabase|\/rest\/v1\//i.test(u)) {
+        return Promise.resolve(new Response('[]', {status:200, headers:{'Content-Type':'application/json'}}));
+      }
+    } catch(e){}
+    return _origFetch.apply(this, arguments);
+  };
+
+  /* 2) Faux profil complet → les guards quiz/défis/profil passent */
+  function seedProfile(){
+    try {
+      var demo = {pseudo:'PREVIEW', prenom:'Aperçu', nom:'Démo', ecole:'Lycée de Vence', classe:'Terminale', genre:'F', email:'preview@flowin.app'};
+      window.userProfile = Object.assign(window.userProfile||{}, demo);
+      localStorage.setItem('flowin_profile', JSON.stringify(demo));
+    } catch(e){}
+  }
+
+  /* 3) Barre d'onglets → écrans réels */
+  var VIEWS = [
+    ['splash','Splash'], ['landing','Landing'], ['welcome','Accueil'],
+    ['inscription','Inscription'], ['complete-profil','Créer profil'],
+    ['activation','Activation'], ['recup','Récup mdp'], ['pwa','PWA'],
+    ['app','Hub / Biblio'], ['quiz','Quiz'], ['defis','Défis'],
+    ['stats','Stats'], ['profil','Profil']
+  ];
+  var chips = {};
+
+  function setActive(v){
+    for(var k in chips){
+      chips[k].style.background = (k===v) ? '#E6187F' : 'rgba(255,255,255,.08)';
+      chips[k].style.color      = (k===v) ? '#fff'    : '#cfd4e6';
+    }
+  }
+
+  function go(v){
+    seedProfile();
+    try {
+      if(typeof switchMode === 'function'){ switchMode(v); }
+      else {
+        document.querySelectorAll('.view').forEach(function(x){ x.classList.remove('active'); });
+        var t = document.getElementById('v-'+v); if(t) t.classList.add('active');
+      }
+    } catch(e){ console.warn('[preview] switch', v, e); }
+    setActive(v);
+    try { window.scrollTo(0,0); } catch(e){}
+  }
+
+  function build(){
+    seedProfile();
+    var bar = document.createElement('div');
+    bar.id = 'flowin-preview-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#0a1020;border-bottom:1px solid rgba(255,255,255,.14);padding:6px 8px;display:flex;gap:6px;overflow-x:auto;font-family:system-ui,-apple-system,sans-serif;-webkit-overflow-scrolling:touch;box-shadow:0 2px 12px rgba(0,0,0,.4)';
+
+    var tag = document.createElement('div');
+    tag.textContent = '👁 PREVIEW · écritures OFF';
+    tag.style.cssText = 'flex:0 0 auto;display:flex;align-items:center;font-size:11px;font-weight:800;color:#F4B544;padding:0 8px;white-space:nowrap';
+    bar.appendChild(tag);
+
+    VIEWS.forEach(function(pair){
+      var v = pair[0], label = pair[1];
+      var b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText = 'flex:0 0 auto;border:none;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;background:rgba(255,255,255,.08);color:#cfd4e6;font-family:inherit';
+      b.addEventListener('click', function(){ go(v); });
+      chips[v] = b;
+      bar.appendChild(b);
+    });
+
+    document.body.appendChild(bar);
+    document.body.style.paddingTop = '46px';
+    go('welcome');
+  }
+
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', build); }
+  else { build(); }
+})();
+</script>
+
 
