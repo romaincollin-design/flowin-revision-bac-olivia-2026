@@ -3744,6 +3744,30 @@ let userInscribed = false;
 let userProfile = { prenom:'', nom:'', ecole:'', classe:'', email:'', pseudo:'' };
 const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
+
+/* ═══ FILTRE NDS — SOURCE UNIQUE : toute lecture partenaires/lots_stock exclut le NDS ═══ */
+(function(){
+  if(window.__ndsFilterInstalled) return; window.__ndsFilterInstalled = true;
+  var _f = window.fetch;
+  window.fetch = function(url, opts){
+    try {
+      var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      var m = ((opts && opts.method) || (url && url.method) || 'GET').toUpperCase();
+      if (m === 'GET' && /\/rest\/v1\/(partenaires|lots_stock)(\?|$|\/)/.test(u)) {
+        if (/\/rest\/v1\/partenaires/.test(u) && u.indexOf('super_event_id=') === -1) {
+          u += (u.indexOf('?')>=0?'&':'?') + 'super_event_id=is.null';
+        }
+        if (/\/rest\/v1\/lots_stock/.test(u) && u.indexOf('lot_id=') === -1) {
+          u += (u.indexOf('?')>=0?'&':'?') + 'lot_id=not.ilike.lot-nds-*';
+        }
+        if (typeof url === 'string') return _f.call(this, u, opts);
+        return _f.call(this, new Request(u, url), opts);
+      }
+    } catch(e){}
+    return _f.call(this, url, opts);
+  };
+})();
+
 const SB_ENABLED = true; // ← mettre false pour mode démo/offline
 
 // ── SUPABASE JS CLIENT (Auth) ──
