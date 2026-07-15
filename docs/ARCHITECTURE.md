@@ -152,6 +152,11 @@ Filet AVANT migration (déblocage immédiat du dashboard, réversible) :
 - Décision produit prise le 15/07 : "vrai élève = pseudo + email pas en j-nd-".
 
 
+[FAIT 15/07] flowin_daily / flowin_funnel / flowin_engagement / flowin_demographie
+       créés et testés sur données réelles (19 élèves). Paramétrés par p_ecole.
+       Additifs — aucune ligne de l app existante modifiée. Reste : brancher le
+       cockpit dessus, vue par vue (après validation UX).
+
 §8. RPC GÉNÉRIQUES CIBLES (Étape 4 du prompt structurel)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 À créer, paramétrés par l'entité (école OU station), jamais de filtre en dur :
