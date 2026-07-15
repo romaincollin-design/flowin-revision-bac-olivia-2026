@@ -128,6 +128,11 @@ Flux cible :
   au wallet du prof et à sa classe.
 
 
+NOTE 15/07 : séparation en DEUX projets Supabase = REPORTÉE, NON BLOQUANTE.
+Les lignes sont déjà distinguables par source+client_type (voir D4). Aucun mélange
+de données au sens strict. La migration physique reste souhaitable pour la vente
+(un projet par produit) mais se fera plus tard, proprement.
+
 §7. PLAN DE MIGRATION (quand le SQL sera revenu — BACKUP D'ABORD)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Ordre strict, aucune étape sautée :
@@ -193,6 +198,8 @@ Ces briques doivent être LUES dans le code réel avant d'être portées :
 - D1. Deux projets Supabase séparés (PAS une colonne 'projet' dans une base unique).
 - D2. Un moteur commun flowin-core, écrit une fois, importé par les deux apps.
 - D3. Ne pas réécrire ce qui fonctionne dans Events : on importe les briques.
-- D4. Vrai élève Flowin = pseudo NON NULL ET email NON 'j-nd-%'.
+- D4. Vrai élève Flowin = source NULL ET client_type NULL (discriminant CONÇU).
+       Les joueurs Events sont toujours tagués source(nds2026/brigade-manuel/spin)
+       et/ou client_type(btoc/btob). CORRIGE le critère 'j-nd-' (faux: 0 j-nd dans joueurs).
 - D5. L'élève peut devenir une station de jeu (défi QR cour d'école).
 - D6. Le prof devient détenteur de points distribuables lors de challenges.
