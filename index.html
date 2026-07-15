@@ -5064,7 +5064,7 @@ async function loadLeaderboardFromSupabase() {
     const hdrs = {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY};
     // Charger depuis la table joueurs (pts_total réel, pas sessions)
     const res = await fetch(
-      SUPABASE_URL + '/rest/v1/joueurs?select=pseudo,pts_total,streak&order=pts_total.desc&limit=100',
+      SUPABASE_URL + '/rest/v1/joueurs?select=pseudo,pts_total,streak&source=is.null&client_type=is.null&order=pts_total.desc&limit=100',
       { headers: hdrs }
     );
 
